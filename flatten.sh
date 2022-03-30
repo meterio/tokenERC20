@@ -1,0 +1,1 @@
+npx hardhat flatten contracts/ERC20MintablePauseable.sol > ./flattened/ERC20MintablePauseable.sol

@@ -1,0 +1,7 @@
+node_modules
+.idea/*
+.vscode/
+cache/
+flattened
+.env.development
+.env
