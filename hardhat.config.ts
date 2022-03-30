@@ -15,7 +15,7 @@ import {
   getContract,
   getContractJson,
   overrides,
-  expandTo18Decimals,
+  MINTER_ROLE,
 } from "./scripts/helper";
 
 import { ERC20MintablePauseable } from './typechain'
@@ -57,7 +57,7 @@ task("deploy", "deploy contract")
     }
   );
 // npx hardhat setBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
-task("setBlackList", "deploy contract")
+task("setBlackList", "set BlackList")
   .addParam("account", "black list account")
   .setAction(
     async ({ account }, { ethers, run, network }) => {
@@ -75,7 +75,7 @@ task("setBlackList", "deploy contract")
     }
   );
 // npx hardhat getBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
-task("getBlackList", "deploy contract")
+task("getBlackList", "get BlackList")
   .addParam("account", "black list account")
   .setAction(
     async ({ account }, { ethers, run, network }) => {
@@ -93,7 +93,7 @@ task("getBlackList", "deploy contract")
     }
   );
 // npx hardhat mint --to 0x319a0cfD7595b0085fF6003643C7eD685269F851 amount 10000000000000000000000
-task("mint", "deploy contract")
+task("mint", "mint token")
   .addParam("to", "mint to address")
   .addParam("amount", "mint amount")
   .setAction(
@@ -112,7 +112,7 @@ task("mint", "deploy contract")
     }
   );
 // npx hardhat pause
-task("pause", "deploy contract")
+task("pause", "pause contract")
   .setAction(
     async (taskArgs, { ethers, run, network }) => {
 
@@ -129,7 +129,7 @@ task("pause", "deploy contract")
     }
   );
 // npx hardhat unpause
-task("unpause", "deploy contract")
+task("unpause", "unpause contract")
   .setAction(
     async (taskArgs, { ethers, run, network }) => {
 
@@ -143,6 +143,42 @@ task("unpause", "deploy contract")
       )) as ERC20MintablePauseable;
 
       await token.unpause();
+    }
+  );
+// npx hardhat grant --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
+task("grant", "grant minter Role")
+  .addParam("account", "account")
+  .setAction(
+    async ({ account }, { ethers, run, network }) => {
+
+      await run("compile");
+      const signers = await ethers.getSigners();
+
+      let token = (await ethers.getContractAt(
+        "ERC20MintablePauseable",
+        getContract(network.name, "ERC20MintablePauseable"),
+        signers[0]
+      )) as ERC20MintablePauseable;
+
+      await token.grantRole(MINTER_ROLE, account);
+    }
+  );
+// npx hardhat revoke --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
+task("revoke", "revoke minter Role")
+  .addParam("account", "account")
+  .setAction(
+    async ({ account }, { ethers, run, network }) => {
+
+      await run("compile");
+      const signers = await ethers.getSigners();
+
+      let token = (await ethers.getContractAt(
+        "ERC20MintablePauseable",
+        getContract(network.name, "ERC20MintablePauseable"),
+        signers[0]
+      )) as ERC20MintablePauseable;
+
+      await token.revokeRole(MINTER_ROLE, account);
     }
   );
 // npx hardhat veri
