@@ -1,4 +1,4 @@
-# DRepublic Contracts
+# Token Contracts
 
 ## Install
 ```
