@@ -5,7 +5,7 @@ import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import { task } from "hardhat/config";
-import { ContractTransaction, BytesLike, utils, constants } from "ethers";
+import { ContractTransaction, BytesLike, utils, Signer } from "ethers";
 import { compileSetting, allowVerifyChain } from "./scripts/deployTool";
 import { RPCS } from "./scripts/network";
 
@@ -14,9 +14,9 @@ import {
   BN,
   getContract,
   getContractJson,
-  overrides,
   MINTER_ROLE,
 } from "./scripts/helper";
+import { getSign } from "./scripts/permitSign"
 
 import { ERC20MintablePauseable } from './typechain'
 
@@ -179,6 +179,45 @@ task("revoke", "revoke minter Role")
       )) as ERC20MintablePauseable;
 
       await token.revokeRole(MINTER_ROLE, account);
+    }
+  );
+// npx hardhat permit --spender 0x319a0cfD7595b0085fF6003643C7eD685269F851 --value 10000000000000000000000
+task("permit", "revoke minter Role")
+  .addParam("spender", "spender")
+  .addParam("value", "value")
+  .setAction(
+    async ({ spender, value }, { ethers, run, network }) => {
+
+      await run("compile");
+      const signers = await ethers.getSigners();
+
+      let token = (await ethers.getContractAt(
+        "ERC20MintablePauseable",
+        getContract(network.name, "ERC20MintablePauseable"),
+        signers[0]
+      )) as ERC20MintablePauseable;
+      let nonce = 1;
+      let deadline = Math.floor(Date.now() / 1000) + 999;
+      const chainId = network.name == "ganache" ? 1 : await signers[0].getChainId();
+
+      let signature = await getSign(
+        signers[0] as Signer,
+        token.address,
+        signers[0].address,
+        spender,
+        value,
+        nonce,
+        deadline,
+        chainId
+      );
+      let receipt = await token.permit(
+        signers[0].address,
+        spender,
+        value,
+        deadline,
+        signature
+      );
+      console.log(await receipt.wait());
     }
   );
 // npx hardhat veri

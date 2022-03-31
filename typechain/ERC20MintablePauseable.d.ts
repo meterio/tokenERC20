@@ -24,6 +24,7 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
+    "PERMIT_TYPEHASH()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -40,8 +41,10 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "nonces(address)": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "permit(address,address,uint256,uint256,bytes)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setBlackList(address)": FunctionFragment;
@@ -59,6 +62,10 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "MINTER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "PERMIT_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -113,8 +120,13 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "permit",
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
@@ -154,6 +166,10 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
     functionFragment: "MINTER_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "PERMIT_TYPEHASH",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -188,8 +204,10 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -261,6 +279,14 @@ export class ERC20MintablePauseable extends Contract {
     }>;
 
     "MINTER_ROLE()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
 
@@ -466,6 +492,20 @@ export class ERC20MintablePauseable extends Contract {
       0: string;
     }>;
 
+    nonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "nonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     pause(overrides?: Overrides): Promise<ContractTransaction>;
 
     "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -477,6 +517,24 @@ export class ERC20MintablePauseable extends Contract {
     "paused()"(overrides?: CallOverrides): Promise<{
       0: boolean;
     }>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "permit(address,address,uint256,uint256,bytes)"(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     renounceRole(
       role: BytesLike,
@@ -580,6 +638,10 @@ export class ERC20MintablePauseable extends Contract {
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   "MINTER_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+  PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+  "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     owner: string,
@@ -738,6 +800,13 @@ export class ERC20MintablePauseable extends Contract {
 
   "name()"(overrides?: CallOverrides): Promise<string>;
 
+  nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "nonces(address)"(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   pause(overrides?: Overrides): Promise<ContractTransaction>;
 
   "pause()"(overrides?: Overrides): Promise<ContractTransaction>;
@@ -745,6 +814,24 @@ export class ERC20MintablePauseable extends Contract {
   paused(overrides?: CallOverrides): Promise<boolean>;
 
   "paused()"(overrides?: CallOverrides): Promise<boolean>;
+
+  permit(
+    owner: string,
+    spender: string,
+    value: BigNumberish,
+    deadline: BigNumberish,
+    signature: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "permit(address,address,uint256,uint256,bytes)"(
+    owner: string,
+    spender: string,
+    value: BigNumberish,
+    deadline: BigNumberish,
+    signature: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   renounceRole(
     role: BytesLike,
@@ -836,6 +923,10 @@ export class ERC20MintablePauseable extends Contract {
     MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     "MINTER_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<string>;
+
+    "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<string>;
 
     allowance(
       owner: string,
@@ -991,6 +1082,13 @@ export class ERC20MintablePauseable extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<string>;
 
+    nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "nonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pause(overrides?: CallOverrides): Promise<void>;
 
     "pause()"(overrides?: CallOverrides): Promise<void>;
@@ -998,6 +1096,24 @@ export class ERC20MintablePauseable extends Contract {
     paused(overrides?: CallOverrides): Promise<boolean>;
 
     "paused()"(overrides?: CallOverrides): Promise<boolean>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "permit(address,address,uint256,uint256,bytes)"(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceRole(
       role: BytesLike,
@@ -1119,6 +1235,10 @@ export class ERC20MintablePauseable extends Contract {
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "MINTER_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "PERMIT_TYPEHASH()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -1280,6 +1400,13 @@ export class ERC20MintablePauseable extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    nonces(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "nonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     pause(overrides?: Overrides): Promise<BigNumber>;
 
     "pause()"(overrides?: Overrides): Promise<BigNumber>;
@@ -1287,6 +1414,24 @@ export class ERC20MintablePauseable extends Contract {
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     "paused()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "permit(address,address,uint256,uint256,bytes)"(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     renounceRole(
       role: BytesLike,
@@ -1380,6 +1525,12 @@ export class ERC20MintablePauseable extends Contract {
     MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "MINTER_ROLE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    PERMIT_TYPEHASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "PERMIT_TYPEHASH()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -1547,6 +1698,16 @@ export class ERC20MintablePauseable extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    nonces(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "nonces(address)"(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     pause(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "pause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
@@ -1554,6 +1715,24 @@ export class ERC20MintablePauseable extends Contract {
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "paused()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    permit(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "permit(address,address,uint256,uint256,bytes)"(
+      owner: string,
+      spender: string,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     renounceRole(
       role: BytesLike,

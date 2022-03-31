@@ -5,15 +5,13 @@ export const RPCS = {
     allowUnlimitedContractSize: false,
     accounts: {
       mnemonic: process.env.MNEMONIC,
-      initialIndex: 2,
     },
   },
   ganache: {
-    url: `http://127.0.0.1:7545`,
+    url: `http://127.0.0.1:8545`,
     chainId: 1337,
     accounts: {
       mnemonic: process.env.MNEMONIC,
-      initialIndex: 2,
     },
   },
   ropsten: {
@@ -43,7 +41,6 @@ export const RPCS = {
     gasPrice: 20000000000,
     accounts: {
       mnemonic: process.env.MNEMONIC,
-      initialIndex: 2,
     },
   },
   bscmain: {
@@ -61,7 +58,6 @@ export const RPCS = {
     gasLimit: 8000000,
     accounts: {
       mnemonic: process.env.MNEMONIC,
-      initialIndex: 2,
     },
   },
   hecomain: {

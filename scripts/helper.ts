@@ -30,38 +30,6 @@ export const MINTER_ROLE: BytesLike =
 
 export const gasLeft = BN(28975827); //1ba22d3
 
-export async function getSign(
-  wallet: SignerWithAddress,
-  verifyingContract: string,
-  contract: string,
-  deployer: string
-): Promise<BytesLike> {
-  const EIP712Domain = [
-    { name: "name", type: "string" },
-    { name: "version", type: "string" },
-    { name: "chainId", type: "uint256" },
-    { name: "verifyingContract", type: "address" },
-  ];
-
-  const name = "Mythverse";
-  const version = "1.0";
-  let chainId =
-    (await wallet.getChainId()) == 1337 ? 1 : await wallet.getChainId();
-
-  let signature = await wallet._signTypedData(
-    { name, version, chainId, verifyingContract },
-    {
-      _setDeployer: [
-        { name: "_contract", type: "address" },
-        { name: "_deployer", type: "address" },
-      ],
-    },
-    { _contract: contract, _deployer: deployer }
-  );
-
-  return signature;
-}
-
 export function getContract(network: string, name: string) {
   const nameArr = name.split(":");
   const contractName = nameArr.length > 1 ? nameArr[1] : nameArr[0];
