@@ -1,6 +1,5 @@
 import "hardhat-typechain";
 import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
@@ -18,12 +17,14 @@ import {
 } from "./scripts/helper";
 import { getSign } from "./scripts/permitSign"
 
-import { ERC20MintablePauseable } from './typechain'
+import { ERC20MintablePauseable, ERC20MintablePauseableUpgradeable } from './typechain'
+import { makeUpgradeProxy } from "@openzeppelin/hardhat-upgrades/dist/upgrade-proxy";
+
 
 const dotenv = require("dotenv");
 dotenv.config();
-import Colors = require("colors.ts");
-Colors.enable();
+// import Colors = require("colors.ts");
+// Colors.enable();
 
 task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
   const accounts = await bre.ethers.getSigners();
@@ -32,10 +33,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
     let address = await account.getAddress();
     console.log(
       address,
-      (await bre.ethers.provider.getBalance(address)).toString().white
+      (await bre.ethers.provider.getBalance(address)).toString()
     );
   }
 });
+
 // npx hardhat deploy --name ttt --symbol ttt --supply 1000000000000000000000000 --owner 0x319a0cfD7595b0085fF6003643C7eD685269F851
 task("deploy", "deploy contract")
   .addParam("name", "Token name")
@@ -53,7 +55,8 @@ task("deploy", "deploy contract")
         network.name,
         signers[0],
         [name, symbol, supply, owner]
-      ) as ERC20MintablePauseable;
+      ) as ERC20MintablePauseableUpgradeable;
+
     }
   );
 // npx hardhat setBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851

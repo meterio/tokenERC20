@@ -54,3 +54,10 @@ npx hardhat revoke --account 0x319a0cfD7595b0085fF6003643C7eD685269F851 --networ
 ```
 npx hardhat veri --network metermain
 ```
+
+## Deploy upgradeable contract
+1. edit file[./scripts/deployProxy.js](./scripts/deployProxy.js)
+2. run
+```
+npx hardhat run ./scripts/deployProxy.js --network metermain
+```

@@ -72,13 +72,13 @@ export async function deployContract(
       libraries: libraries,
     });
     const contract = await factory.deploy(...args, overrides);
-    console.log("Deploying:", name.white);
-    console.log("  to", contract.address.white);
-    console.log("  in", contract.deployTransaction.hash.white);
+    console.log("Deploying:", name);
+    console.log("  to", contract.address);
+    console.log("  in", contract.deployTransaction.hash);
     await saveFile(network, name, contract, args, libraries);
     return contract.deployed();
   } else {
-    console.log("Contract:", name.white);
+    console.log("Contract:", name);
     console.log("  on", address.white);
     return await ethers.getContractAt(name, address, signer);
   }
