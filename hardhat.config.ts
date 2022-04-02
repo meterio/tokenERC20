@@ -55,7 +55,7 @@ task("deploy", "deploy contract")
         network.name,
         signers[0],
         [name, symbol, supply, owner]
-      ) as ERC20MintablePauseableUpgradeable;
+      ) as ERC20MintablePauseable;
 
     }
   );
@@ -69,10 +69,10 @@ task("setBlackList", "set BlackList")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
 
       await token.setBlackList(account);
     }
@@ -87,15 +87,16 @@ task("getBlackList", "get BlackList")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
 
-      await token.getBlackList(account);
+      let result = await token.getBlackList(account);
+      console.log(result);
     }
   );
-// npx hardhat mint --to 0x319a0cfD7595b0085fF6003643C7eD685269F851 amount 10000000000000000000000
+// npx hardhat mint --to 0x319a0cfD7595b0085fF6003643C7eD685269F851 --amount 10000000000000000000000
 task("mint", "mint token")
   .addParam("to", "mint to address")
   .addParam("amount", "mint amount")
@@ -106,10 +107,10 @@ task("mint", "mint token")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
 
       await token.mint(to, amount);
     }
@@ -123,10 +124,10 @@ task("pause", "pause contract")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
 
       await token.pause();
     }
@@ -140,10 +141,10 @@ task("unpause", "unpause contract")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
 
       await token.unpause();
     }
@@ -158,10 +159,10 @@ task("grant", "grant minter Role")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
 
       await token.grantRole(MINTER_ROLE, account);
     }
@@ -176,10 +177,10 @@ task("revoke", "revoke minter Role")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
 
       await token.revokeRole(MINTER_ROLE, account);
     }
@@ -195,10 +196,10 @@ task("permit", "revoke minter Role")
       const signers = await ethers.getSigners();
 
       let token = (await ethers.getContractAt(
-        "ERC20MintablePauseable",
-        getContract(network.name, "ERC20MintablePauseable"),
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
-      )) as ERC20MintablePauseable;
+      )) as ERC20MintablePauseableUpgradeable;
       let nonce = 1;
       let deadline = Math.floor(Date.now() / 1000) + 999;
       const chainId = network.name == "ganache" ? 1 : await signers[0].getChainId();
@@ -229,7 +230,7 @@ task("veri", "verify contracts").setAction(
     if (allowVerifyChain.indexOf(network.name) > -1) {
       await run(
         "verify:verify",
-        getContractJson(network.name, "ERC20MintablePauseable")
+        getContractJson(network.name, "ERC20MintablePauseableUpgradeable")
       );
     }
   }
