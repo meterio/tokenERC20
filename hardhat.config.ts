@@ -2,9 +2,8 @@ import "hardhat-typechain";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import { task } from "hardhat/config";
-import { ContractTransaction, BytesLike, utils, Signer } from "ethers";
+import { Signer } from "ethers";
 import { compileSetting, allowVerifyChain } from "./scripts/deployTool";
 import { RPCS } from "./scripts/network";
 
@@ -18,7 +17,6 @@ import {
 import { getSign } from "./scripts/permitSign"
 
 import { ERC20MintablePauseable, ERC20MintablePauseableUpgradeable } from './typechain'
-import { makeUpgradeProxy } from "@openzeppelin/hardhat-upgrades/dist/upgrade-proxy";
 
 
 const dotenv = require("dotenv");
@@ -38,7 +36,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
   }
 });
 
-// npx hardhat deploy --name ttt --symbol ttt --supply 1000000000000000000000000 --owner 0x319a0cfD7595b0085fF6003643C7eD685269F851
+// npx hardhat deploy --name ttt --symbol ttt --supply 1000000000000000000000000 --owner 0x319a0cfD7595b0085fF6003643C7eD685269F851 --network metermain
 task("deploy", "deploy contract")
   .addParam("name", "Token name")
   .addParam("symbol", "Token symbol")
@@ -59,7 +57,7 @@ task("deploy", "deploy contract")
 
     }
   );
-// npx hardhat setBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
+// npx hardhat setBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851 --network metermain
 task("setBlackList", "set BlackList")
   .addParam("account", "black list account")
   .setAction(
@@ -77,7 +75,7 @@ task("setBlackList", "set BlackList")
       await token.setBlackList(account);
     }
   );
-// npx hardhat getBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
+// npx hardhat getBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851 --network metermain
 task("getBlackList", "get BlackList")
   .addParam("account", "black list account")
   .setAction(
@@ -96,7 +94,7 @@ task("getBlackList", "get BlackList")
       console.log(result);
     }
   );
-// npx hardhat mint --to 0x319a0cfD7595b0085fF6003643C7eD685269F851 --amount 10000000000000000000000
+// npx hardhat mint --to 0x319a0cfD7595b0085fF6003643C7eD685269F851 --amount 10000000000000000000000 --network metermain
 task("mint", "mint token")
   .addParam("to", "mint to address")
   .addParam("amount", "mint amount")
@@ -149,7 +147,7 @@ task("unpause", "unpause contract")
       await token.unpause();
     }
   );
-// npx hardhat grant --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
+// npx hardhat grant --account 0x319a0cfD7595b0085fF6003643C7eD685269F851 --network metermain
 task("grant", "grant minter Role")
   .addParam("account", "account")
   .setAction(
@@ -167,7 +165,7 @@ task("grant", "grant minter Role")
       await token.grantRole(MINTER_ROLE, account);
     }
   );
-// npx hardhat revoke --account 0x319a0cfD7595b0085fF6003643C7eD685269F851
+// npx hardhat revoke --account 0x319a0cfD7595b0085fF6003643C7eD685269F851 --network metermain
 task("revoke", "revoke minter Role")
   .addParam("account", "account")
   .setAction(
@@ -185,7 +183,7 @@ task("revoke", "revoke minter Role")
       await token.revokeRole(MINTER_ROLE, account);
     }
   );
-// npx hardhat permit --spender 0x319a0cfD7595b0085fF6003643C7eD685269F851 --value 10000000000000000000000
+// npx hardhat permit --spender 0x319a0cfD7595b0085fF6003643C7eD685269F851 --value 10000000000000000000000 --network metermain
 task("permit", "revoke minter Role")
   .addParam("spender", "spender")
   .addParam("value", "value")
