@@ -27,6 +27,9 @@ export type { ERC165 } from "./ERC165";
 export type { IERC165 } from "./IERC165";
 export type { ERC20MintablePauseable } from "./ERC20MintablePauseable";
 export type { ERC20MintablePauseableUpgradeable } from "./ERC20MintablePauseableUpgradeable";
+export type { IEIP712 } from "./IEIP712";
+export type { IUniswapV2Pair } from "./IUniswapV2Pair";
+export type { PermitRouter } from "./PermitRouter";
 
 export { AccessControlEnumerableUpgradeable__factory } from "./factories/AccessControlEnumerableUpgradeable__factory";
 export { AccessControlUpgradeable__factory } from "./factories/AccessControlUpgradeable__factory";
@@ -54,3 +57,6 @@ export { ERC165__factory } from "./factories/ERC165__factory";
 export { IERC165__factory } from "./factories/IERC165__factory";
 export { ERC20MintablePauseable__factory } from "./factories/ERC20MintablePauseable__factory";
 export { ERC20MintablePauseableUpgradeable__factory } from "./factories/ERC20MintablePauseableUpgradeable__factory";
+export { IEIP712__factory } from "./factories/IEIP712__factory";
+export { IUniswapV2Pair__factory } from "./factories/IUniswapV2Pair__factory";
+export { PermitRouter__factory } from "./factories/PermitRouter__factory";
