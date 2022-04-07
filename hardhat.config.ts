@@ -183,6 +183,25 @@ task("revoke", "revoke minter Role")
       await token.revokeRole(MINTER_ROLE, account);
     }
   );
+// npx hardhat info --network metermain
+task("info", "token info")
+  .setAction(
+    async ({  }, { ethers, run, network }) => {
+
+      await run("compile");
+      const signers = await ethers.getSigners();
+
+      let token = (await ethers.getContractAt(
+        "ERC20MintablePauseableUpgradeable",
+        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
+        signers[0]
+      )) as ERC20MintablePauseableUpgradeable;
+
+      console.log("name:",await token.name());
+      console.log("symbol:",await token.symbol());
+      console.log("totalSupply:",await token.totalSupply());
+    }
+  );
 // npx hardhat permit --spender 0x319a0cfD7595b0085fF6003643C7eD685269F851 --value 10000000000000000000000 --network metermain
 task("permit", "revoke minter Role")
   .addParam("spender", "spender")

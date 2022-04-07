@@ -76,7 +76,7 @@ export const RPCS = {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  mtrmain: {
+  metermain: {
     url: `https://rpc.meter.io`,
     chainId: 82,
     gasPrice: 500000000000,
