@@ -7,10 +7,10 @@ npm install
 
 ## Compile
 ```
-set the following two enviorment variables
+%%set the following two enviorment variables
 export INFURA_API_KEY=
 export MNEMONIC=
-npm compile
+npm run compile
 ```
 
 ## Deploy upgradeable contract
