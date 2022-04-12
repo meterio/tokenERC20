@@ -7,7 +7,10 @@ npm install
 
 ## Compile
 ```
-npm compile
+%%set the following two enviorment variables
+export INFURA_API_KEY=
+export MNEMONIC=
+npm run compile
 ```
 
 ## Deploy upgradeable contract
@@ -34,7 +37,7 @@ npx hardhat getBlackList --account 0x319a0cfD7595b0085fF6003643C7eD685269F851 --
 
 ## mint
 ```
-npx npx hardhat mint --to 0x319a0cfD7595b0085fF6003643C7eD685269F851 amount 10000000000000000000000 --network metermain
+npx hardhat mint --to 0x319a0cfD7595b0085fF6003643C7eD685269F851 --amount 10000000000000000000000 --network metermain
 ```
 
 ## pause
