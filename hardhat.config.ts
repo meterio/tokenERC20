@@ -255,28 +255,29 @@ task("veri", "verify contracts").setAction(
 
 task("cf", "contracts factory").setAction(
   async ({ }, { ethers, run, network }) => {
-    const signers = await ethers.getSigners();
+    const [wallet] = await ethers.getSigners();
 
-    await signers[0].sendTransaction({
+    await wallet.sendTransaction({
       to: "0x4c8d290a1b368ac4728d83a9e8321fc3af2b39b1",
-      value: utils.parseEther("0.01")
+      value: utils.parseEther("0.05"),
+      nonce: BN(0)
     })
     let tx = "0xf87e8085174876e800830186a08080ad601f80600e600039806000f350fe60003681823780368234f58015156014578182fd5b80825250506014600cf31ba02222222222222222222222222222222222222222222222222222222222222222a02222222222222222222222222222222222222222222222222222222222222222"
     let receipt = await ethers.provider.sendTransaction(tx);
     console.log(await receipt.wait());
     let BYTECODE = "0x6080604052348015600f57600080fd5b5060848061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063c3cafc6f14602d575b600080fd5b6033604f565b604051808260ff1660ff16815260200191505060405180910390f35b6000602a90509056fea165627a7a72305820ab7651cb86b8c1487590004c2444f26ae30077a6b96c6bc62dda37f1328539250029"
 
-    let address = await signers[0].call({
+    let address = await wallet.call({
       to: "0x7a0d94f55792c434d74a40883c6ed8545e406d12",
       data: BYTECODE
     })
-    console.log("address: ",address);
-    receipt = await signers[0].sendTransaction({
+    console.log("address: ", address);
+    receipt = await wallet.sendTransaction({
       to: "0x7a0d94f55792c434d74a40883c6ed8545e406d12",
       data: BYTECODE
     })
     console.log(await receipt.wait());
-    let result = await signers[0].call({
+    let result = await wallet.call({
       to: address,
       data: "0xc3cafc6f"
     })
