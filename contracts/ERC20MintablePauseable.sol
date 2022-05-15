@@ -80,6 +80,7 @@ contract ERC20MintablePauseable is
         uint256 deadline,
         bytes memory signature
     ) public {
+        require(deadline >= block.timestamp, "expired!");
         // hash调用方法和参数
         bytes32 structHash = keccak256(
             abi.encode(
