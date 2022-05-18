@@ -30,7 +30,9 @@ export type { ERC20MintablePauseableUpgradeable } from "./ERC20MintablePauseable
 export type { IMeterNative } from "./IMeterNative";
 export type { LockedMeterGovERC20 } from "./LockedMeterGovERC20";
 export type { MeterERC20 } from "./MeterERC20";
+export type { MeterERC20Upgradeable } from "./MeterERC20Upgradeable";
 export type { MeterERC20 } from "./MeterERC20";
+export type { MeterGovERC20Upgradeable } from "./MeterGovERC20Upgradeable";
 export type { IEIP712 } from "./IEIP712";
 export type { IUniswapV2Pair } from "./IUniswapV2Pair";
 export type { PermitRouter } from "./PermitRouter";
@@ -64,7 +66,9 @@ export { ERC20MintablePauseableUpgradeable__factory } from "./factories/ERC20Min
 export { IMeterNative__factory } from "./factories/IMeterNative__factory";
 export { LockedMeterGovERC20__factory } from "./factories/LockedMeterGovERC20__factory";
 export { MeterERC20__factory } from "./factories/MeterERC20__factory";
+export { MeterERC20Upgradeable__factory } from "./factories/MeterERC20Upgradeable__factory";
 export { MeterERC20__factory } from "./factories/MeterERC20__factory";
+export { MeterGovERC20Upgradeable__factory } from "./factories/MeterGovERC20Upgradeable__factory";
 export { IEIP712__factory } from "./factories/IEIP712__factory";
 export { IUniswapV2Pair__factory } from "./factories/IUniswapV2Pair__factory";
 export { PermitRouter__factory } from "./factories/PermitRouter__factory";
