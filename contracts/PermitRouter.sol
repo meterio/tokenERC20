@@ -10,8 +10,9 @@ interface IEIP712 {
         bytes memory signature
     ) external;
 }
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract PermitRouter {
+contract PermitRouter is Ownable {
     address public immutable pair;
     address public immutable token0;
     address public immutable token1;
@@ -51,12 +52,12 @@ contract PermitRouter {
     }
 
     function swapExactTokensForTokens(
+        address owner,
         uint256 amountIn,
         uint256 amountOutMin,
-        address to,
         uint256 deadline,
         bytes memory signature
-    ) external ensure(deadline) returns (uint256[] memory amounts) {
+    ) external onlyOwner ensure(deadline) returns (uint256[] memory amounts) {
         address[] memory path = new address[](2);
         path[0] = token1;
         path[1] = token2;
@@ -66,24 +67,24 @@ contract PermitRouter {
             "UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT"
         );
         IEIP712(token0).permit(
-            msg.sender,
+            owner,
             address(this),
             amountIn,
             deadline,
             signature
         );
 
-        TransferHelper.safeTransferFrom(token0, msg.sender, pair, amounts[0]);
-        _swap(amounts, path, to);
+        TransferHelper.safeTransferFrom(token0, owner, pair, amounts[0]);
+        _swap(amounts, path, owner);
     }
 
     function swapTokensForExactTokens(
+        address owner,
         uint256 amountOut,
         uint256 amountInMax,
-        address to,
         uint256 deadline,
         bytes memory signature
-    ) external ensure(deadline) returns (uint256[] memory amounts) {
+    ) external onlyOwner ensure(deadline) returns (uint256[] memory amounts) {
         address[] memory path = new address[](2);
         path[0] = token1;
         path[1] = token2;
@@ -93,14 +94,14 @@ contract PermitRouter {
             "UniswapV2Router: EXCESSIVE_INPUT_AMOUNT"
         );
         IEIP712(token0).permit(
-            msg.sender,
+            owner,
             address(this),
             amountInMax,
             deadline,
             signature
         );
-        TransferHelper.safeTransferFrom(token0, msg.sender, pair, amounts[0]);
-        _swap(amounts, path, to);
+        TransferHelper.safeTransferFrom(token0, owner, pair, amounts[0]);
+        _swap(amounts, path, owner);
     }
 }
 
