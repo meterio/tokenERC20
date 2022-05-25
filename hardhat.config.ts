@@ -13,10 +13,16 @@ import {
   getContract,
   getContractJson,
   MINTER_ROLE,
+  expandTo18Decimals
 } from "./scripts/helper";
 import { getSign } from "./scripts/permitSign"
 
-import { ERC20MintablePauseable, ERC20MintablePauseableUpgradeable } from './typechain'
+import {
+  ERC20MintablePauseable,
+  ERC20MintablePauseableUpgradeable,
+  PermitRouter,
+  MeterGovERC20
+} from './typechain'
 
 
 const dotenv = require("dotenv");
@@ -285,6 +291,96 @@ task("cf", "contracts factory").setAction(
     console.log(result);
   }
 );
+// npx hardhat permit --spender 0x319a0cfD7595b0085fF6003643C7eD685269F851 --value 10000000000000000000000 --network metermain
+task("gasLess", "gas less swap")
+  .setAction(
+    async ({ }, { ethers, run, network }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+      let pair = "0x87d244897695a5a0481057f217dbadda5c8d6a7e"; // MeterSwap LP Token (MLP:MTR-MTRG)
+      let token0 = "0x69d0E2BDC045A57cd0304A5a831E43651B4050FD"; // MTRG
+      let token1 = "0x8A419Ef4941355476cf04933E90Bf3bbF2F73814"; // MTRG
+      let token2 = "0x4cb6cef87d8cadf966b455e8bd58fff32aba49d1"; // MTR
+      const deployer = signers[6];
+
+      // const router = await deployContract(
+      //   ethers,
+      //   "PermitRouter",
+      //   network.name,
+      //   deployer,
+      //   [pair, token0, token1, token2]
+      // ) as PermitRouter;
+
+
+      const router = (await ethers.getContractAt(
+        "PermitRouter",
+        getContract(network.name, "PermitRouter"),
+        deployer
+      )) as PermitRouter;
+
+
+      let token = (await ethers.getContractAt(
+        "MeterGovERC20",
+        token0,
+        deployer
+      )) as MeterGovERC20;
+
+      const nonce = (await token.nonces(deployer.address)).toNumber();
+      const deadline = Math.floor(Date.now() / 1000) + 999;
+      const chainId = network.name == "ganache" ? 1 : await signers[0].getChainId();
+      const value = expandTo18Decimals(1);
+
+      console.log(
+        {
+          signer: deployer.address,
+          token: token0,
+          owner: deployer.address,
+          spender: router.address,
+          value: value.toString(),
+          nonce: nonce,
+          deadline: deadline,
+          chainId: chainId
+        }
+      )
+
+      let signature = await getSign(
+        deployer as Signer,
+        token0,
+        deployer.address,
+        router.address,
+        value,
+        nonce,
+        deadline,
+        chainId
+      );
+
+      console.log(
+        {
+          owner: deployer.address,
+          spender: router.address,
+          value: value.toString(),
+          deadline: deadline,
+          signature: signature
+        }
+      )
+
+      // let receipt = await token.estimateGas.permit(
+      //   deployer.address,
+      //   router.address,
+      //   value,
+      //   deadline,
+      //   signature
+      // );
+      let receipt = await router.swapExactTokensForTokens(
+        deployer.address,
+        value,
+        0,
+        deadline,
+        signature
+      )
+      console.log(await receipt.wait());
+    }
+  );
 export default {
   networks: RPCS,
   etherscan: {

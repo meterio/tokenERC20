@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import "./interfaces/IMeterNative.sol";
 
 /// @title Meter implements VIP180(ERC20) standard, to present Meter/ Meter Gov tokens.
-contract MeterERC20 is IERC20, EIP712, AccessControlEnumerable {
+contract MeterGovERC20 is IERC20, EIP712, AccessControlEnumerable {
     mapping(address => mapping(address => uint256)) allowed;
     IMeterNative _meterTracker;
     mapping(address => bool) private blackList;

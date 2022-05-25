@@ -13,6 +13,7 @@ interface IEIP712 {
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PermitRouter is Ownable {
+    // event
     address public immutable pair;
     address public immutable token0;
     address public immutable token1;

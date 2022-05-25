@@ -27,6 +27,21 @@ export function compileSetting(version: string, runs: number) {
         enabled: true,
         runs: runs,
       },
+      outputSelection: {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "storageLayout"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      }
     },
   };
 }
