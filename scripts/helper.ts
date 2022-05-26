@@ -66,7 +66,7 @@ export async function deployContract(
   libraries: Libraries = {}
 ): Promise<Contract> {
   let address = getContract(network, name);
-  if (address == constants.AddressZero || network == "hardhat") {
+  // if (address == constants.AddressZero || network == "hardhat") {
     const factory = await ethers.getContractFactory(name, {
       signer: signer,
       libraries: libraries,
@@ -77,11 +77,11 @@ export async function deployContract(
     console.log("  in", contract.deployTransaction.hash);
     await saveFile(network, name, contract, args, libraries);
     return contract.deployed();
-  } else {
-    console.log("Contract:", name);
-    console.log("  on", address.white);
-    return await ethers.getContractAt(name, address, signer);
-  }
+  // } else {
+    // console.log("Contract:", name);
+    // console.log("  on", address.white);
+    // return await ethers.getContractAt(name, address, signer);
+  // }
 }
 
 export async function saveFile(

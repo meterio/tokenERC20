@@ -51,12 +51,26 @@ contract MeterGovERC20 is IERC20, EIP712, AccessControlEnumerable {
         return _meterTracker.native_mtrg_totalBurned();
     }
 
-    function balanceOf(address _owner) public view override returns (uint256 balance) {
+    function balanceOf(address _owner)
+        public
+        view
+        override
+        returns (uint256 balance)
+    {
         return _meterTracker.native_mtrg_get(_owner);
     }
 
+    function stakeBalance(address _owner)
+        public
+        view
+        returns (uint256 balance)
+    {
+        return _meterTracker.native_mtrg_locked_get(_owner);
+    }
+
     function transfer(address _to, uint256 _amount)
-        public override
+        public
+        override
         returns (bool success)
     {
         _transfer(msg.sender, _to, _amount);
@@ -80,14 +94,16 @@ contract MeterGovERC20 is IERC20, EIP712, AccessControlEnumerable {
 
     function allowance(address _owner, address _spender)
         public
-        view override
+        view
+        override
         returns (uint256 remaining)
     {
         return allowed[_owner][_spender];
     }
 
     function approve(address _spender, uint256 _value)
-        public override
+        public
+        override
         returns (bool success)
     {
         allowed[msg.sender][_spender] = _value;

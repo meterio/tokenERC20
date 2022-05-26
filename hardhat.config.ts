@@ -21,7 +21,7 @@ import {
   ERC20MintablePauseable,
   ERC20MintablePauseableUpgradeable,
   PermitRouter,
-  MeterGovERC20
+  MeterERC20
 } from './typechain'
 
 
@@ -291,8 +291,9 @@ task("cf", "contracts factory").setAction(
     console.log(result);
   }
 );
-// npx hardhat permit --spender 0x319a0cfD7595b0085fF6003643C7eD685269F851 --value 10000000000000000000000 --network metermain
-task("gasLess", "gas less swap")
+
+// npx hardhat deployRouter --network metermain
+task("deployRouter", "gas less swap")
   .setAction(
     async ({ }, { ethers, run, network }) => {
       await run("compile");
@@ -302,6 +303,26 @@ task("gasLess", "gas less swap")
       let token1 = "0x8A419Ef4941355476cf04933E90Bf3bbF2F73814"; // MTRG
       let token2 = "0x4cb6cef87d8cadf966b455e8bd58fff32aba49d1"; // MTR
       const deployer = signers[6];
+
+      const router = await deployContract(
+        ethers,
+        "PermitRouter",
+        network.name,
+        deployer,
+        [pair, token0, token1, token2, 30]
+      ) as PermitRouter;
+    });
+// npx hardhat gasLess --network metermain
+task("gasLess", "gas less swap")
+  .setAction(
+    async ({ }, { ethers, run, network }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+      let pair = "0x87d244897695a5a0481057f217dbadda5c8d6a7e"; // MeterSwap LP Token (MLP:MTR-MTRG)
+      let token0 = "0x69d0E2BDC045A57cd0304A5a831E43651B4050FD"; // MTRG
+      let token1 = "0x8A419Ef4941355476cf04933E90Bf3bbF2F73814"; // MTRG
+      let token2 = "0x4cb6cef87d8cadf966b455e8bd58fff32aba49d1"; // MTR
+      const deployer = signers[0];
 
       // const router = await deployContract(
       //   ethers,
@@ -318,12 +339,11 @@ task("gasLess", "gas less swap")
         deployer
       )) as PermitRouter;
 
-
       let token = (await ethers.getContractAt(
         "MeterGovERC20",
         token0,
         deployer
-      )) as MeterGovERC20;
+      )) as MeterERC20;
 
       const nonce = (await token.nonces(deployer.address)).toNumber();
       const deadline = Math.floor(Date.now() / 1000) + 999;
@@ -371,6 +391,7 @@ task("gasLess", "gas less swap")
       //   deadline,
       //   signature
       // );
+
       let receipt = await router.swapExactTokensForTokens(
         deployer.address,
         value,
@@ -382,7 +403,14 @@ task("gasLess", "gas less swap")
     }
   );
 export default {
-  networks: RPCS,
+  networks: {
+    metertest: {
+      url: `https://rpctest.meter.io`,
+      chainId: 83,
+      gasPrice: 500000000000,
+      accounts: ['0x7f078d9a9e34dcaa2fcd9ec0e80a23c3e2552c7d8d65e9fe65107b3fbf8deed5'],
+    },
+  },
   etherscan: {
     apiKey: process.env.ETHERSCAN_APIKEY,
   },

@@ -22,22 +22,35 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface PermitRouterInterface extends ethers.utils.Interface {
   functions: {
+    "fee()": FunctionFragment;
+    "feeBalance()": FunctionFragment;
     "owner()": FunctionFragment;
     "pair()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setFee(uint256)": FunctionFragment;
     "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)": FunctionFragment;
     "swapTokensForExactTokens(address,uint256,uint256,uint256,bytes)": FunctionFragment;
     "token0()": FunctionFragment;
     "token1()": FunctionFragment;
     "token2()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "withdrawFee()": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "fee", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "feeBalance",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pair", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFee",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "swapExactTokensForTokens",
@@ -54,13 +67,20 @@ interface PermitRouterInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawFee",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeBalance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pair", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "swapExactTokensForTokens",
     data: BytesLike
@@ -76,11 +96,17 @@ interface PermitRouterInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawFee",
+    data: BytesLike
+  ): Result;
 
   events: {
+    "GaslessSwap(address,uint256,uint256,uint256,bytes)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "GaslessSwap"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
@@ -98,6 +124,22 @@ export class PermitRouter extends Contract {
   interface: PermitRouterInterface;
 
   functions: {
+    fee(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "fee()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    feeBalance(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "feeBalance()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
     owner(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
@@ -117,6 +159,16 @@ export class PermitRouter extends Contract {
     renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    setFee(
+      _fee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setFee(uint256)"(
+      _fee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     swapExactTokensForTokens(
       owner: string,
@@ -187,7 +239,19 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    withdrawFee(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "withdrawFee()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
+
+  fee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "fee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  feeBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -200,6 +264,16 @@ export class PermitRouter extends Contract {
   renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
   "renounceOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  setFee(
+    _fee: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setFee(uint256)"(
+    _fee: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   swapExactTokensForTokens(
     owner: string,
@@ -259,7 +333,19 @@ export class PermitRouter extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  withdrawFee(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "withdrawFee()"(overrides?: Overrides): Promise<ContractTransaction>;
+
   callStatic: {
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "fee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     "owner()"(overrides?: CallOverrides): Promise<string>;
@@ -271,6 +357,13 @@ export class PermitRouter extends Contract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+
+    setFee(_fee: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    "setFee(uint256)"(
+      _fee: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     swapExactTokensForTokens(
       owner: string,
@@ -329,9 +422,21 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    withdrawFee(overrides?: CallOverrides): Promise<void>;
+
+    "withdrawFee()"(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
+    GaslessSwap(
+      owner: null,
+      amountIn: null,
+      amountOut: null,
+      deadline: null,
+      signature: null
+    ): EventFilter;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
@@ -339,6 +444,14 @@ export class PermitRouter extends Contract {
   };
 
   estimateGas: {
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "fee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -350,6 +463,13 @@ export class PermitRouter extends Contract {
     renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<BigNumber>;
+
+    setFee(_fee: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    "setFee(uint256)"(
+      _fee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     swapExactTokensForTokens(
       owner: string,
@@ -408,9 +528,21 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    withdrawFee(overrides?: Overrides): Promise<BigNumber>;
+
+    "withdrawFee()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "fee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "feeBalance()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -422,6 +554,16 @@ export class PermitRouter extends Contract {
     renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "renounceOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    setFee(
+      _fee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setFee(uint256)"(
+      _fee: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     swapExactTokensForTokens(
       owner: string,
@@ -480,5 +622,9 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    withdrawFee(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "withdrawFee()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }

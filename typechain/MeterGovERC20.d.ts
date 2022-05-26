@@ -40,6 +40,7 @@ interface MeterGovERC20Interface extends ethers.utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setBlackList(address)": FunctionFragment;
+    "stakeBalance(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalBurned()": FunctionFragment;
@@ -109,6 +110,10 @@ interface MeterGovERC20Interface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "stakeBalance",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
@@ -170,6 +175,10 @@ interface MeterGovERC20Interface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setBlackList",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "stakeBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -450,6 +459,22 @@ export class MeterGovERC20 extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    stakeBalance(
+      _owner: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      balance: BigNumber;
+      0: BigNumber;
+    }>;
+
+    "stakeBalance(address)"(
+      _owner: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      balance: BigNumber;
+      0: BigNumber;
+    }>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
@@ -681,6 +706,13 @@ export class MeterGovERC20 extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  stakeBalance(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "stakeBalance(address)"(
+    _owner: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
@@ -892,6 +924,13 @@ export class MeterGovERC20 extends Contract {
       account: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stakeBalance(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stakeBalance(address)"(
+      _owner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -1140,6 +1179,13 @@ export class MeterGovERC20 extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    stakeBalance(_owner: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "stakeBalance(address)"(
+      _owner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
@@ -1372,6 +1418,16 @@ export class MeterGovERC20 extends Contract {
     "setBlackList(address)"(
       account: string,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    stakeBalance(
+      _owner: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "stakeBalance(address)"(
+      _owner: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(

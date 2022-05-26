@@ -259,48 +259,5 @@ export const RPCS = {
     accounts: {
       mnemonic: process.env.MNEMONIC,
     },
-  },
-  tkmtest1: {
-    url: `http://43.247.184.48:32021`,
-    chianId: 60001,
-    gasPrice: 400000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-    timeout: 9999999,
-  },
-  tkmtest2: {
-    url: `http://43.247.184.49:32016`,
-    chianId: 60002,
-    gasPrice: 400000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  tkmtest103: {
-    url: `http://43.247.184.49:32021`,
-    chianId: 60103,
-    gasPrice: 400000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  tkm1: {
-    url: `https://test103.thinkiumrpc.net`,
-    chianId: 70001,
-    gasPrice: 400000000000,
-    gasLimit: 6000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  tkm103: {
-    url: `http://proxy103.thinkiumrpc.net`,
-    chianId: 70103,
-    gasPrice: 400000000000,
-    gasLimit: 6000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
+  }
 };

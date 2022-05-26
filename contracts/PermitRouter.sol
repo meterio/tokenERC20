@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 interface IEIP712 {
     function permit(
         address owner,
@@ -14,10 +16,20 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PermitRouter is Ownable {
     // event
+    event GaslessSwap(
+        address owner,
+        uint256 amountIn,
+        uint256 amountOut,
+        uint256 deadline,
+        bytes signature
+    );
+
     address public immutable pair;
     address public immutable token0;
     address public immutable token1;
     address public immutable token2;
+    uint256 public fee;
+    uint256 public feeBalance;
 
     modifier ensure(uint256 deadline) {
         require(deadline >= block.timestamp, "UniswapV2Router: EXPIRED");
@@ -28,12 +40,26 @@ contract PermitRouter is Ownable {
         address _pair,
         address _token0,
         address _token1,
-        address _token2
+        address _token2,
+        uint256 _fee
     ) {
         pair = _pair;
         token0 = _token0;
         token1 = _token1;
         token2 = _token2;
+        fee = _fee;
+    }
+
+    function setFee(uint256 _fee) public onlyOwner {
+        fee = _fee;
+    }
+
+    function withdrawFee() public onlyOwner {
+        IERC20(token2).transfer(
+            msg.sender,
+            IERC20(token2).balanceOf(address(this))
+        );
+        feeBalance = IERC20(token2).balanceOf(address(this));
     }
 
     // **** SWAP ****
@@ -52,13 +78,19 @@ contract PermitRouter is Ownable {
         IUniswapV2Pair(pair).swap(amount0Out, amount1Out, _to, new bytes(0));
     }
 
+    function _handleFee(address to) internal {
+        uint256 balance = IERC20(token2).balanceOf(address(this)) - feeBalance;
+        IERC20(token2).transfer(to, (balance * (10000 - fee)) / 10000);
+        feeBalance = IERC20(token2).balanceOf(address(this));
+    }
+
     function swapExactTokensForTokens(
         address owner,
         uint256 amountIn,
         uint256 amountOutMin,
         uint256 deadline,
         bytes memory signature
-    ) external onlyOwner ensure(deadline) returns (uint256[] memory amounts) {
+    ) external ensure(deadline) returns (uint256[] memory amounts) {
         address[] memory path = new address[](2);
         path[0] = token1;
         path[1] = token2;
@@ -76,7 +108,9 @@ contract PermitRouter is Ownable {
         );
 
         TransferHelper.safeTransferFrom(token0, owner, pair, amounts[0]);
-        _swap(amounts, path, owner);
+        _swap(amounts, path, address(this));
+        _handleFee(owner);
+        emit GaslessSwap(owner, amounts[0], amounts[1], deadline, signature);
     }
 
     function swapTokensForExactTokens(
@@ -85,7 +119,7 @@ contract PermitRouter is Ownable {
         uint256 amountInMax,
         uint256 deadline,
         bytes memory signature
-    ) external onlyOwner ensure(deadline) returns (uint256[] memory amounts) {
+    ) external ensure(deadline) returns (uint256[] memory amounts) {
         address[] memory path = new address[](2);
         path[0] = token1;
         path[1] = token2;
@@ -103,6 +137,8 @@ contract PermitRouter is Ownable {
         );
         TransferHelper.safeTransferFrom(token0, owner, pair, amounts[0]);
         _swap(amounts, path, owner);
+        _handleFee(owner);
+        emit GaslessSwap(owner, amounts[0], amounts[1], deadline, signature);
     }
 }
 
