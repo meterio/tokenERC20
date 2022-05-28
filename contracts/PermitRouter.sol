@@ -17,7 +17,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract PermitRouter is Ownable {
     // event
     event GaslessSwap(
-        address owner,
+        address indexed owner,
         uint256 amountIn,
         uint256 amountOut,
         uint256 deadline,
@@ -225,7 +225,7 @@ library UniswapV2Library {
         address pair,
         uint256 amountIn,
         address[] memory path
-    ) internal view returns (uint256[] memory amounts) {
+    ) public view returns (uint256[] memory amounts) {
         require(path.length >= 2, "UniswapV2Library: INVALID_PATH");
         amounts = new uint256[](path.length);
         amounts[0] = amountIn;
@@ -244,7 +244,7 @@ library UniswapV2Library {
         address pair,
         uint256 amountOut,
         address[] memory path
-    ) internal view returns (uint256[] memory amounts) {
+    ) public view returns (uint256[] memory amounts) {
         require(path.length >= 2, "UniswapV2Library: INVALID_PATH");
         amounts = new uint256[](path.length);
         amounts[amounts.length - 1] = amountOut;

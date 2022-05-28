@@ -430,7 +430,7 @@ export class PermitRouter extends Contract {
 
   filters: {
     GaslessSwap(
-      owner: null,
+      owner: string | null,
       amountIn: null,
       amountOut: null,
       deadline: null,
