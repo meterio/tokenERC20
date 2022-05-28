@@ -309,7 +309,7 @@ task("deployRouter", "gas less swap")
         "PermitRouter",
         network.name,
         deployer,
-        [pair, token0, token1, token2, 30]
+        [pair, token0, token1, token2, 300]
       ) as PermitRouter;
     });
 // npx hardhat gasLess --network metermain

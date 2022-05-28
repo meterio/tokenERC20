@@ -140,6 +140,29 @@ contract PermitRouter is Ownable {
         _handleFee(owner);
         emit GaslessSwap(owner, amounts[0], amounts[1], deadline, signature);
     }
+
+    function getAmountsOut(uint256 amountIn)
+        public
+        view
+        returns (uint256[] memory amounts)
+    {
+        address[] memory path = new address[](2);
+        path[0] = token1;
+        path[1] = token2;
+        amounts = UniswapV2Library.getAmountsOut(pair, amountIn, path);
+    }
+
+    // performs chained getAmountIn calculations on any number of pairs
+    function getAmountsIn(uint256 amountOut)
+        internal
+        view
+        returns (uint256[] memory amounts)
+    {
+        address[] memory path = new address[](2);
+        path[0] = token1;
+        path[1] = token2;
+        amounts = UniswapV2Library.getAmountsIn(pair, amountOut, path);
+    }
 }
 
 interface IUniswapV2Pair {
@@ -225,7 +248,7 @@ library UniswapV2Library {
         address pair,
         uint256 amountIn,
         address[] memory path
-    ) public view returns (uint256[] memory amounts) {
+    ) internal view returns (uint256[] memory amounts) {
         require(path.length >= 2, "UniswapV2Library: INVALID_PATH");
         amounts = new uint256[](path.length);
         amounts[0] = amountIn;
@@ -244,7 +267,7 @@ library UniswapV2Library {
         address pair,
         uint256 amountOut,
         address[] memory path
-    ) public view returns (uint256[] memory amounts) {
+    ) internal view returns (uint256[] memory amounts) {
         require(path.length >= 2, "UniswapV2Library: INVALID_PATH");
         amounts = new uint256[](path.length);
         amounts[amounts.length - 1] = amountOut;
