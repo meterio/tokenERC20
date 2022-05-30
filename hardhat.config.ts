@@ -298,11 +298,17 @@ task("deployRouter", "gas less swap")
     async ({ }, { ethers, run, network }) => {
       await run("compile");
       const signers = await ethers.getSigners();
-      let pair = "0x87d244897695a5a0481057f217dbadda5c8d6a7e"; // MeterSwap LP Token (MLP:MTR-MTRG)
-      let token0 = "0x69d0E2BDC045A57cd0304A5a831E43651B4050FD"; // MTRG
-      let token1 = "0x8A419Ef4941355476cf04933E90Bf3bbF2F73814"; // MTRG
-      let token2 = "0x4cb6cef87d8cadf966b455e8bd58fff32aba49d1"; // MTR
-      const deployer = signers[6];
+      // Testnet
+      // let pair = "0x87d244897695a5a0481057f217dbadda5c8d6a7e"; // MeterSwap LP Token (MLP:MTR-MTRG)
+      // let token0 = "0x69d0E2BDC045A57cd0304A5a831E43651B4050FD"; // MTRG
+      // let token1 = "0x8A419Ef4941355476cf04933E90Bf3bbF2F73814"; // MTRG
+      // let token2 = "0x4cb6cef87d8cadf966b455e8bd58fff32aba49d1"; // MTR    
+      // Mainnet  
+      let pair = "0x0d7365300E85fC87EF4dA53aB05f1637dD4f73CC"; // MeterSwap LP Token (MLP:MTR-MTRG)
+      let token0 = "0x5729cB3716a315d0bDE3b5e489163bf8b9659436"; // MTRG
+      let token1 = "0x228ebBeE999c6a7ad74A6130E81b12f9Fe237Ba3"; // MTRG
+      let token2 = "0x687A6294D0D6d63e751A059bf1ca68E4AE7B13E2"; // MTR
+      const deployer = signers[0];
 
       const router = await deployContract(
         ethers,
@@ -408,7 +414,13 @@ export default {
       url: `https://rpctest.meter.io`,
       chainId: 83,
       gasPrice: 500000000000,
-      accounts: ['0x7f078d9a9e34dcaa2fcd9ec0e80a23c3e2552c7d8d65e9fe65107b3fbf8deed5'],
+      // accounts: [''],
+    },
+    metermain: {
+      url: `https://rpc.meter.io`,
+      chainId: 82,
+      gasPrice: 500000000000,
+      // accounts: [''],
     },
   },
   etherscan: {

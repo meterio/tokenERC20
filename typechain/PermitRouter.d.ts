@@ -24,6 +24,7 @@ interface PermitRouterInterface extends ethers.utils.Interface {
   functions: {
     "fee()": FunctionFragment;
     "feeBalance()": FunctionFragment;
+    "getAmountsIn(uint256)": FunctionFragment;
     "getAmountsOut(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "pair()": FunctionFragment;
@@ -42,6 +43,10 @@ interface PermitRouterInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "feeBalance",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAmountsIn",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getAmountsOut",
@@ -79,6 +84,10 @@ interface PermitRouterInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeBalance", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAmountsIn",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getAmountsOut",
     data: BytesLike
@@ -147,6 +156,22 @@ export class PermitRouter extends Contract {
 
     "feeBalance()"(overrides?: CallOverrides): Promise<{
       0: BigNumber;
+    }>;
+
+    getAmountsIn(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      amounts: BigNumber[];
+      0: BigNumber[];
+    }>;
+
+    "getAmountsIn(uint256)"(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      amounts: BigNumber[];
+      0: BigNumber[];
     }>;
 
     getAmountsOut(
@@ -278,6 +303,16 @@ export class PermitRouter extends Contract {
 
   "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getAmountsIn(
+    amountOut: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "getAmountsIn(uint256)"(
+    amountOut: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getAmountsOut(
     amountIn: BigNumberish,
     overrides?: CallOverrides
@@ -380,6 +415,16 @@ export class PermitRouter extends Contract {
     feeBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAmountsIn(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "getAmountsIn(uint256)"(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getAmountsOut(
       amountIn: BigNumberish,
@@ -497,6 +542,16 @@ export class PermitRouter extends Contract {
 
     "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAmountsIn(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getAmountsIn(uint256)"(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getAmountsOut(
       amountIn: BigNumberish,
       overrides?: CallOverrides
@@ -597,6 +652,16 @@ export class PermitRouter extends Contract {
     feeBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "feeBalance()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getAmountsIn(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getAmountsIn(uint256)"(
+      amountOut: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getAmountsOut(
       amountIn: BigNumberish,

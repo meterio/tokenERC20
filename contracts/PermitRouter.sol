@@ -142,7 +142,7 @@ contract PermitRouter is Ownable {
     }
 
     function getAmountsOut(uint256 amountIn)
-        public
+        external
         view
         returns (uint256[] memory amounts)
     {
@@ -154,7 +154,7 @@ contract PermitRouter is Ownable {
 
     // performs chained getAmountIn calculations on any number of pairs
     function getAmountsIn(uint256 amountOut)
-        internal
+        external
         view
         returns (uint256[] memory amounts)
     {
