@@ -422,6 +422,14 @@ export default {
       gasPrice: 500000000000,
       // accounts: [''],
     },
+    metermain: {
+      url: `https://rpc.meter.io`,
+      chainId: 82,
+      gasPrice: 500000000000,
+      accounts: [process.env.MAINNET_CONTRACT_ADMIN_PRIVKEY],
+    },
+
+
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_APIKEY,
