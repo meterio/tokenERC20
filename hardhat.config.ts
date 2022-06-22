@@ -223,7 +223,7 @@ task("permit", "revoke minter Role")
         getContract(network.name, "ERC20MintablePauseableUpgradeable"),
         signers[0]
       )) as ERC20MintablePauseableUpgradeable;
-      let nonce = 1;
+      const nonce = (await token.nonces(signers[0].address)).toNumber();
       let deadline = Math.floor(Date.now() / 1000) + 999;
       const chainId = network.name == "ganache" ? 1 : await signers[0].getChainId();
 
@@ -414,7 +414,9 @@ export default {
       url: `https://rpctest.meter.io`,
       chainId: 83,
       gasPrice: 500000000000,
-      // accounts: [''],
+      accounts: {
+        mnemonic: process.env.MNEMONIC
+      },
     },
     metermain: {
       url: `https://rpc.meter.io`,
@@ -429,7 +431,7 @@ export default {
     apiKey: process.env.ETHERSCAN_APIKEY,
   },
   solidity: {
-    compilers: [compileSetting("0.8.7", 200)],
+    compilers: [compileSetting("0.8.11", 200)],
   },
   mocha: {
     timeout: 200000,
