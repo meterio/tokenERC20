@@ -14,10 +14,8 @@ npm run compile
 ```
 
 ## Deploy upgradeable contract
-1. edit file[./scripts/deployProxy.js](./scripts/deployProxy.js)
-2. run
 ```
-npx hardhat run ./scripts/deployProxy.js --network metermain
+// npx hardhat deploy-upgrade --name "USDT" --symbol "USDT" --supply 1000000000000000000000000000 --owner 0xa5F1e2596DC1e878a6a039f41330d9A97c771bE9 --network metermain
 ```
 
 ## Deploy MTR & MTRG upgradeable contract

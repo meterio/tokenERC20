@@ -6,6 +6,7 @@ import { task } from "hardhat/config";
 import { Signer, utils } from "ethers";
 import { compileSetting, allowVerifyChain } from "./scripts/deployTool";
 import { RPCS } from "./scripts/network";
+import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 
 import {
   deployContract,
@@ -13,7 +14,8 @@ import {
   getContract,
   getContractJson,
   MINTER_ROLE,
-  expandTo18Decimals
+  expandTo18Decimals,
+  saveFile
 } from "./scripts/helper";
 import { getSign } from "./scripts/permitSign"
 
@@ -42,6 +44,79 @@ task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
   }
 });
 
+// npx hardhat upgrade --params ["USDT","USDT","1000000000000000000000000000","0xa5F1e2596DC1e878a6a039f41330d9A97c771bE9"] --network metermain
+task("upgrade", "deploy upgrade contract")
+  .addParam("contract", "contract name")
+  .addParam("params", "params")
+  .setAction(
+    async ({ contract, params }, { ethers, run, network, upgrades }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+
+      const _token = await ethers.getContractFactory(contract)
+
+      const token = await upgrades.deployProxy(_token, JSON.parse(params), {
+        initializer: "initialize"
+      });
+      await token.deployed();
+
+      console.log("Deploying:", contract);
+      console.log("  to", token.address);
+      console.log("  in", token.deployTransaction.hash);
+      await saveFile(network.name, contract, token, [], {});
+    }
+  );
+// npx hardhat deploy-upgrade --name "USDT" --symbol "USDT" --supply 1000000000000000000000000000 --owner 0xa5F1e2596DC1e878a6a039f41330d9A97c771bE9 --network metermain
+task("deploy-upgrade", "deploy upgrade contract")
+  .addParam("name", "Token name")
+  .addParam("symbol", "Token symbol")
+  .addParam("supply", "Token initialSupply require decimal")
+  .addParam("owner", "Token will mint to owner address")
+  .setAction(
+    async ({ name, symbol, supply, owner }, { run }) => {
+      await run("upgrade", {
+        contract: "ERC20MintablePauseableUpgradeable", params: JSON.stringify([name,
+          symbol,
+          supply,
+          owner])
+      });
+    }
+  );
+// npx hardhat deploy-system --network metermain
+task("deploy-system", "deploy system contract")
+  .setAction(
+    async ({ }, { ethers, run, network, upgrades }) => {
+      await run("upgrade", {
+        contract: "MeterERC20Upgradeable", params: '[]'
+      });
+      await run("upgrade", {
+        contract: "MeterGovERC20Upgradeable", params: '[]'
+      });
+    }
+  );
+// npx hardhat update --contract ERC20MintablePauseableUpgradeable --addresss <proxy contract address> --network metermain
+task("update", "update contract")
+  .addParam("contract", "contract name")
+  .addParam("address", "proxy contract address")
+  .setAction(
+    async ({ contract, address }, { ethers, run, upgrades }) => {
+      await run("compile");
+      const contractFactory = await ethers.getContractFactory(contract)
+      const instant = await upgrades.upgradeProxy(address, contractFactory);
+      console.log("Contract address:", instant.address);
+    }
+  );
+// npx hardhat update-mtrg --addresss <proxy contract address> --network metermain
+task("update-mtrg", "update MTRG contract")
+  .addParam("address", "proxy contract address")
+  .setAction(
+    async ({ address }, { run }) => {
+      await run("update", {
+        contract: "MeterGovERC20Upgradeable",
+        address: address
+      })
+    }
+  );
 // npx hardhat deploy --name ttt --symbol ttt --supply 1000000000000000000000000 --owner 0x319a0cfD7595b0085fF6003643C7eD685269F851 --network metermain
 task("deploy", "deploy contract")
   .addParam("name", "Token name")
@@ -424,7 +499,13 @@ export default {
       gasPrice: 500000000000,
       accounts: [process.env.MAINNET_CONTRACT_ADMIN_PRIVKEY],
     },
-
+    ganache: {
+      url: `http:127.0.0.1:7545`,
+      chainId: 1337,
+      accounts: {
+        mnemonic: process.env.MNEMONIC
+      },
+    }
 
   },
   etherscan: {
