@@ -23,7 +23,8 @@ import {
   ERC20MintablePauseable,
   ERC20MintablePauseableUpgradeable,
   PermitRouter,
-  MeterERC20
+  MeterERC20,
+  SimpleERC20,
 } from './typechain'
 
 
@@ -292,10 +293,11 @@ task("permit", "revoke minter Role")
 
       await run("compile");
       const signers = await ethers.getSigners();
+      const tokenAddr = getContract(network.name, "ERC20MintablePauseableUpgradeable");
 
       let token = (await ethers.getContractAt(
         "ERC20MintablePauseableUpgradeable",
-        getContract(network.name, "ERC20MintablePauseableUpgradeable"),
+        tokenAddr,
         signers[0]
       )) as ERC20MintablePauseableUpgradeable;
       const nonce = (await token.nonces(signers[0].address)).toNumber();
@@ -304,7 +306,7 @@ task("permit", "revoke minter Role")
 
       let signature = await getSign(
         signers[0] as Signer,
-        token.address,
+        tokenAddr,
         signers[0].address,
         spender,
         value,
@@ -412,11 +414,11 @@ task("gasLess", "gas less swap")
       //   deployer,
       //   [pair, token0, token1, token2]
       // ) as PermitRouter;
-
+      const routerAddr = getContract(network.name, "PermitRouter");
 
       const router = (await ethers.getContractAt(
         "PermitRouter",
-        getContract(network.name, "PermitRouter"),
+        routerAddr,
         deployer
       )) as PermitRouter;
 
@@ -436,7 +438,7 @@ task("gasLess", "gas less swap")
           signer: deployer.address,
           token: token0,
           owner: deployer.address,
-          spender: router.address,
+          spender: routerAddr,
           value: value.toString(),
           nonce: nonce,
           deadline: deadline,
@@ -448,7 +450,7 @@ task("gasLess", "gas less swap")
         deployer as Signer,
         token0,
         deployer.address,
-        router.address,
+        routerAddr,
         value,
         nonce,
         deadline,
@@ -458,7 +460,7 @@ task("gasLess", "gas less swap")
       console.log(
         {
           owner: deployer.address,
-          spender: router.address,
+          spender: routerAddr,
           value: value.toString(),
           deadline: deadline,
           signature: signature
@@ -481,6 +483,25 @@ task("gasLess", "gas less swap")
         signature
       )
       console.log(await receipt.wait());
+    }
+  );
+task("deploy-simple", "deploy contract")
+  .addParam("name", "Token name")
+  .addParam("symbol", "Token symbol")
+  .addParam("supply", "Token initialSupply require decimal")
+  .setAction(
+    async ({ name, symbol, supply }, { ethers, run, network }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+
+      const token = await deployContract(
+        ethers,
+        "SimpleERC20",
+        network.name,
+        signers[0],
+        [name, symbol, supply]
+      ) as SimpleERC20;
+
     }
   );
 export default {

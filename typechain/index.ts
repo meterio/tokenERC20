@@ -44,6 +44,7 @@ export type { MeterGovERC20Upgradeable } from "./MeterGovERC20Upgradeable";
 export type { IEIP712 } from "./IEIP712";
 export type { IUniswapV2Pair } from "./IUniswapV2Pair";
 export type { PermitRouter } from "./PermitRouter";
+export type { SimpleERC20 } from "./SimpleERC20";
 
 export { AccessControlEnumerableUpgradeable__factory } from "./factories/AccessControlEnumerableUpgradeable__factory";
 export { AccessControlUpgradeable__factory } from "./factories/AccessControlUpgradeable__factory";
@@ -88,3 +89,4 @@ export { MeterGovERC20Upgradeable__factory } from "./factories/MeterGovERC20Upgr
 export { IEIP712__factory } from "./factories/IEIP712__factory";
 export { IUniswapV2Pair__factory } from "./factories/IUniswapV2Pair__factory";
 export { PermitRouter__factory } from "./factories/PermitRouter__factory";
+export { SimpleERC20__factory } from "./factories/SimpleERC20__factory";

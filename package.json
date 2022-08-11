@@ -10,7 +10,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@nomiclabs/hardhat-web3": "^2.0.0",
@@ -44,6 +43,7 @@
     "npm": "^6.14.x"
   },
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts-upgradeable": "^4.3.3",
     "@openzeppelin/hardhat-upgrades": "^1.12.0",
     "eslint": "^7.32.0",
@@ -52,6 +52,8 @@
     "eslint-plugin-mocha-no-only": "^1.1.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
+    "ethers": "^5.5.4",
+    "hardhat-deploy": "^0.11.12",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18"
   }
