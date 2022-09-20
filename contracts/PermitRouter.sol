@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 interface IEIP712 {
     function permit(
@@ -15,6 +16,7 @@ interface IEIP712 {
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PermitRouter is Ownable {
+    using SafeERC20 for IERC20;
     // event
     event GaslessSwap(
         address indexed owner,
@@ -25,11 +27,8 @@ contract PermitRouter is Ownable {
     );
 
     address public immutable pair;
-    address public immutable token0;
-    address public immutable token1;
-    address public immutable token2;
     uint256 public fee;
-    uint256 public feeBalance;
+    address[] public path;
 
     modifier ensure(uint256 deadline) {
         require(deadline >= block.timestamp, "UniswapV2Router: EXPIRED");
@@ -40,13 +39,14 @@ contract PermitRouter is Ownable {
         address _pair,
         address _token0,
         address _token1,
-        address _token2,
         uint256 _fee
     ) {
+        require(address(_pair) != address(0), "pair is zero address");
+        require(address(_token0) != address(0), "token0 is zero address");
+        require(address(_token1) != address(0), "token1 is zero address");
         pair = _pair;
-        token0 = _token0;
-        token1 = _token1;
-        token2 = _token2;
+        path[0] = _token0;
+        path[1] = _token1;
         fee = _fee;
     }
 
@@ -54,21 +54,9 @@ contract PermitRouter is Ownable {
         fee = _fee;
     }
 
-    function withdrawFee() public onlyOwner {
-        IERC20(token2).transfer(
-            msg.sender,
-            IERC20(token2).balanceOf(address(this))
-        );
-        feeBalance = IERC20(token2).balanceOf(address(this));
-    }
-
     // **** SWAP ****
     // requires the initial amount to have already been sent to the first pair
-    function _swap(
-        uint256[] memory amounts,
-        address[] memory path,
-        address _to
-    ) internal virtual {
+    function _swap(uint256[] memory amounts, address _to) internal virtual {
         (address input, address output) = (path[0], path[1]);
         (address _token0, ) = UniswapV2Library.sortTokens(input, output);
         uint256 amountOut = amounts[1];
@@ -79,9 +67,10 @@ contract PermitRouter is Ownable {
     }
 
     function _handleFee(address to) internal {
-        uint256 balance = IERC20(token2).balanceOf(address(this)) - feeBalance;
-        IERC20(token2).transfer(to, (balance * (10000 - fee)) / 10000);
-        feeBalance = IERC20(token2).balanceOf(address(this));
+        uint256 balance = IERC20(path[1]).balanceOf(address(this));
+        IERC20(path[1]).safeTransfer(to, (balance * (10000 - fee)) / 10000);
+        uint256 feeBalance = IERC20(path[1]).balanceOf(address(this));
+        IERC20(path[1]).safeTransfer(msg.sender, feeBalance);
     }
 
     function swapExactTokensForTokens(
@@ -91,15 +80,12 @@ contract PermitRouter is Ownable {
         uint256 deadline,
         bytes memory signature
     ) external ensure(deadline) returns (uint256[] memory amounts) {
-        address[] memory path = new address[](2);
-        path[0] = token1;
-        path[1] = token2;
         amounts = UniswapV2Library.getAmountsOut(pair, amountIn, path);
         require(
             amounts[amounts.length - 1] >= amountOutMin,
             "UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT"
         );
-        IEIP712(token0).permit(
+        IEIP712(path[0]).permit(
             owner,
             address(this),
             amountIn,
@@ -107,8 +93,8 @@ contract PermitRouter is Ownable {
             signature
         );
 
-        TransferHelper.safeTransferFrom(token0, owner, pair, amounts[0]);
-        _swap(amounts, path, address(this));
+        TransferHelper.safeTransferFrom(path[0], owner, pair, amounts[0]);
+        _swap(amounts, address(this));
         _handleFee(owner);
         emit GaslessSwap(owner, amounts[0], amounts[1], deadline, signature);
     }
@@ -120,23 +106,20 @@ contract PermitRouter is Ownable {
         uint256 deadline,
         bytes memory signature
     ) external ensure(deadline) returns (uint256[] memory amounts) {
-        address[] memory path = new address[](2);
-        path[0] = token1;
-        path[1] = token2;
         amounts = UniswapV2Library.getAmountsIn(pair, amountOut, path);
         require(
             amounts[0] <= amountInMax,
             "UniswapV2Router: EXCESSIVE_INPUT_AMOUNT"
         );
-        IEIP712(token0).permit(
+        IEIP712(path[0]).permit(
             owner,
             address(this),
             amountInMax,
             deadline,
             signature
         );
-        TransferHelper.safeTransferFrom(token0, owner, pair, amounts[0]);
-        _swap(amounts, path, owner);
+        TransferHelper.safeTransferFrom(path[0], owner, pair, amounts[0]);
+        _swap(amounts, owner);
         _handleFee(owner);
         emit GaslessSwap(owner, amounts[0], amounts[1], deadline, signature);
     }
@@ -146,9 +129,6 @@ contract PermitRouter is Ownable {
         view
         returns (uint256[] memory amounts)
     {
-        address[] memory path = new address[](2);
-        path[0] = token1;
-        path[1] = token2;
         amounts = UniswapV2Library.getAmountsOut(pair, amountIn, path);
     }
 
@@ -158,9 +138,6 @@ contract PermitRouter is Ownable {
         view
         returns (uint256[] memory amounts)
     {
-        address[] memory path = new address[](2);
-        path[0] = token1;
-        path[1] = token2;
         amounts = UniswapV2Library.getAmountsIn(pair, amountOut, path);
     }
 }

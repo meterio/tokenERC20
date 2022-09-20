@@ -23,27 +23,19 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface PermitRouterInterface extends ethers.utils.Interface {
   functions: {
     "fee()": FunctionFragment;
-    "feeBalance()": FunctionFragment;
     "getAmountsIn(uint256)": FunctionFragment;
     "getAmountsOut(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "pair()": FunctionFragment;
+    "path(uint256)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setFee(uint256)": FunctionFragment;
     "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)": FunctionFragment;
     "swapTokensForExactTokens(address,uint256,uint256,uint256,bytes)": FunctionFragment;
-    "token0()": FunctionFragment;
-    "token1()": FunctionFragment;
-    "token2()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "withdrawFee()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "feeBalance",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "getAmountsIn",
     values: [BigNumberish]
@@ -54,6 +46,7 @@ interface PermitRouterInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pair", values?: undefined): string;
+  encodeFunctionData(functionFragment: "path", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -70,20 +63,12 @@ interface PermitRouterInterface extends ethers.utils.Interface {
     functionFragment: "swapTokensForExactTokens",
     values: [string, BigNumberish, BigNumberish, BigNumberish, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "token0", values?: undefined): string;
-  encodeFunctionData(functionFragment: "token1", values?: undefined): string;
-  encodeFunctionData(functionFragment: "token2", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawFee",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "feeBalance", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAmountsIn",
     data: BytesLike
@@ -94,6 +79,7 @@ interface PermitRouterInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pair", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "path", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -107,15 +93,8 @@ interface PermitRouterInterface extends ethers.utils.Interface {
     functionFragment: "swapTokensForExactTokens",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "token0", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token1", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawFee",
     data: BytesLike
   ): Result;
 
@@ -147,14 +126,6 @@ export class PermitRouter extends Contract {
     }>;
 
     "fee()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    feeBalance(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    "feeBalance()"(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
 
@@ -203,6 +174,20 @@ export class PermitRouter extends Contract {
     }>;
 
     "pair()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    path(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    "path(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
       0: string;
     }>;
 
@@ -256,30 +241,6 @@ export class PermitRouter extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    token0(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    "token0()"(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    token1(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    "token1()"(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    token2(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    "token2()"(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides
@@ -289,19 +250,11 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
-
-    withdrawFee(overrides?: Overrides): Promise<ContractTransaction>;
-
-    "withdrawFee()"(overrides?: Overrides): Promise<ContractTransaction>;
   };
 
   fee(overrides?: CallOverrides): Promise<BigNumber>;
 
   "fee()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   getAmountsIn(
     amountOut: BigNumberish,
@@ -330,6 +283,13 @@ export class PermitRouter extends Contract {
   pair(overrides?: CallOverrides): Promise<string>;
 
   "pair()"(overrides?: CallOverrides): Promise<string>;
+
+  path(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+  "path(uint256)"(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   renounceOwnership(overrides?: Overrides): Promise<ContractTransaction>;
 
@@ -381,18 +341,6 @@ export class PermitRouter extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  token0(overrides?: CallOverrides): Promise<string>;
-
-  "token0()"(overrides?: CallOverrides): Promise<string>;
-
-  token1(overrides?: CallOverrides): Promise<string>;
-
-  "token1()"(overrides?: CallOverrides): Promise<string>;
-
-  token2(overrides?: CallOverrides): Promise<string>;
-
-  "token2()"(overrides?: CallOverrides): Promise<string>;
-
   transferOwnership(
     newOwner: string,
     overrides?: Overrides
@@ -403,18 +351,10 @@ export class PermitRouter extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  withdrawFee(overrides?: Overrides): Promise<ContractTransaction>;
-
-  "withdrawFee()"(overrides?: Overrides): Promise<ContractTransaction>;
-
   callStatic: {
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
     "fee()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAmountsIn(
       amountOut: BigNumberish,
@@ -443,6 +383,13 @@ export class PermitRouter extends Contract {
     pair(overrides?: CallOverrides): Promise<string>;
 
     "pair()"(overrides?: CallOverrides): Promise<string>;
+
+    path(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    "path(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -491,18 +438,6 @@ export class PermitRouter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    token0(overrides?: CallOverrides): Promise<string>;
-
-    "token0()"(overrides?: CallOverrides): Promise<string>;
-
-    token1(overrides?: CallOverrides): Promise<string>;
-
-    "token1()"(overrides?: CallOverrides): Promise<string>;
-
-    token2(overrides?: CallOverrides): Promise<string>;
-
-    "token2()"(overrides?: CallOverrides): Promise<string>;
-
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides
@@ -512,10 +447,6 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    withdrawFee(overrides?: CallOverrides): Promise<void>;
-
-    "withdrawFee()"(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -537,10 +468,6 @@ export class PermitRouter extends Contract {
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
     "fee()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "feeBalance()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAmountsIn(
       amountOut: BigNumberish,
@@ -569,6 +496,13 @@ export class PermitRouter extends Contract {
     pair(overrides?: CallOverrides): Promise<BigNumber>;
 
     "pair()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    path(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "path(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: Overrides): Promise<BigNumber>;
 
@@ -617,18 +551,6 @@ export class PermitRouter extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    token0(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "token0()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token1(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "token1()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token2(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "token2()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides
@@ -638,20 +560,12 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
-
-    withdrawFee(overrides?: Overrides): Promise<BigNumber>;
-
-    "withdrawFee()"(overrides?: Overrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "fee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "feeBalance()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAmountsIn(
       amountOut: BigNumberish,
@@ -680,6 +594,16 @@ export class PermitRouter extends Contract {
     pair(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "pair()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    path(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "path(uint256)"(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     renounceOwnership(overrides?: Overrides): Promise<PopulatedTransaction>;
 
@@ -731,18 +655,6 @@ export class PermitRouter extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    token0(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "token0()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token1(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "token1()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "token2()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     transferOwnership(
       newOwner: string,
       overrides?: Overrides
@@ -752,9 +664,5 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
-
-    withdrawFee(overrides?: Overrides): Promise<PopulatedTransaction>;
-
-    "withdrawFee()"(overrides?: Overrides): Promise<PopulatedTransaction>;
   };
 }
