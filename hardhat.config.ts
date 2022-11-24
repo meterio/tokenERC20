@@ -3,7 +3,7 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import { task } from "hardhat/config";
-import { Signer, utils } from "ethers";
+import { BigNumber, Signer, utils } from "ethers";
 import { compileSetting, allowVerifyChain } from "./scripts/deployTool";
 import { RPCS } from "./scripts/network";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
@@ -23,10 +23,16 @@ import {
   ERC20MintablePauseable,
   ERC20MintablePauseableUpgradeable,
   PermitRouter,
+  PermitRouterV2,
   MeterERC20,
   SimpleERC20,
+  MeterMaker,
+  Exchange
 } from './typechain'
 
+const { setGlobalDispatcher, ProxyAgent } = require('undici')
+const proxyAgent = new ProxyAgent('http://127.0.0.1:7890')
+setGlobalDispatcher(proxyAgent)
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -381,10 +387,9 @@ task("deployRouter", "gas less swap")
       // let token1 = "0x8A419Ef4941355476cf04933E90Bf3bbF2F73814"; // MTRG
       // let token2 = "0x4cb6cef87d8cadf966b455e8bd58fff32aba49d1"; // MTR    
       // Mainnet  
-      let pair = "0x0d7365300E85fC87EF4dA53aB05f1637dD4f73CC"; // MeterSwap LP Token (MLP:MTR-MTRG)
-      let token0 = "0x5729cB3716a315d0bDE3b5e489163bf8b9659436"; // MTRG
-      let token1 = "0x228ebBeE999c6a7ad74A6130E81b12f9Fe237Ba3"; // MTRG
-      let token2 = "0x687A6294D0D6d63e751A059bf1ca68E4AE7B13E2"; // MTR
+      let pair = "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"; // VolatileV1 AMM - WMTR/MTRG (vAMM-WMTR/MTRG)
+      let token0 = "0x228ebBeE999c6a7ad74A6130E81b12f9Fe237Ba3"; // MTRG
+      let token1 = "0x160361ce13ec33C993b5cCA8f62B6864943eb083"; // WMTR
       const deployer = signers[0];
 
       const router = await deployContract(
@@ -392,8 +397,65 @@ task("deployRouter", "gas less swap")
         "PermitRouter",
         network.name,
         deployer,
-        [pair, token0, token1, token2, 300]
+        [pair, token0, token1, 300]
       ) as PermitRouter;
+
+    });
+
+// npx hardhat dr2 --network metermain
+task("dr2", "gas less swap")
+  .setAction(
+    async ({ }, { ethers, run, network }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+      // Testnet
+      // let tokenIn = "0xe8876830e7cc85dae8ce31b0802313caf856886f"; // weth
+      // let wmtr = "0xfac315d105e5a7fe2174b3eb1f95c257a9a5e271"; // wmtr
+      // let path = [
+      //   "0x97ba33a5e37de9df6d7ad24518a1a03b50b58172", // weth/mtrg
+      //   "0x425b00d2b14df1744423441b6ed2d46b1bc36c63" // mtrg/wmtr
+      // ];
+      // // Mainnet  
+      let tokenIn = "0x983147fb73a45fc7f8b4dfa1cd61bdc7b111e5b6"; // weth
+      let wmtr = "0x160361ce13ec33C993b5cCA8f62B6864943eb083"; // WMTR
+      let path = [
+        "0x1211650c69649222340672d35c6b8f9aca93564d", // weth/mtrg
+        "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d" // mtrg/wmtr
+      ];
+      const deployer = signers[0];
+
+      const router = await deployContract(
+        ethers,
+        "PermitRouterV2",
+        network.name,
+        deployer,
+        [300, tokenIn, wmtr, path]
+      ) as PermitRouterV2;
+
+      console.log("getAmountsOut:", await router.getAmountsOut('1000000000000000000'));
+    });
+
+// npx hardhat deployRouter --network metermain
+task("metermaker", "deploy MeterMaker")
+  .setAction(
+    async ({ }, { ethers, run, network }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+      // Mainnet  
+      let vault = "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef"; // Black hole
+      let pair = "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"; // VolatileV1 AMM - WMTR/MTRG (vAMM-WMTR/MTRG)
+      let token1 = "0x160361ce13ec33C993b5cCA8f62B6864943eb083"; // MTR
+      let token0 = "0x228ebBeE999c6a7ad74A6130E81b12f9Fe237Ba3"; // MTRG
+      const deployer = signers[0];
+
+      const router = await deployContract(
+        ethers,
+        "MeterMaker",
+        network.name,
+        deployer,
+        [vault, pair, token0, token1]
+      ) as MeterMaker;
+
     });
 // npx hardhat gasLess --network metermain
 task("gasLess", "gas less swap")
@@ -485,6 +547,75 @@ task("gasLess", "gas less swap")
       console.log(await receipt.wait());
     }
   );
+
+// npx hardhat gl2 --network metermain
+task("gl2", "gas less swap")
+  .setAction(
+    async ({ contract }, { ethers, run, network }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+      const deployer = signers[0];
+
+      const routerAddr = getContract(network.name, "PermitRouterV2");
+
+      const router = (await ethers.getContractAt(
+        "PermitRouterV2",
+        routerAddr,
+        deployer
+      )) as PermitRouterV2;
+      const tokenIn = await router.tokenIn();
+
+      let token = (await ethers.getContractAt(
+        "MeterGovERC20",
+        tokenIn,
+        deployer
+      )) as MeterERC20;
+
+      const nonce = (await token.nonces(deployer.address)).toNumber();
+      const deadline = Math.floor(Date.now() / 1000) + 999;
+      const chainId = network.name == "ganache" ? 1 : await signers[0].getChainId();
+      const value = BigNumber.from('500000000000000');
+
+      let signature = await getSign(
+        deployer as Signer,
+        tokenIn,
+        deployer.address,
+        routerAddr,
+        value,
+        nonce,
+        deadline,
+        chainId
+      );
+
+      console.log(
+        {
+          owner: deployer.address,
+          spender: routerAddr,
+          value: value.toString(),
+          deadline: deadline,
+          signature: signature
+        }
+      )
+
+      // let gas = await router.estimateGas.swapExactTokensForTokens(
+      //   deployer.address,
+      //   value,
+      //   0,
+      //   deadline,
+      //   signature
+      // )
+      // console.log(gas.toString());
+
+      let receipt = await router.swapExactTokensForTokens(
+        deployer.address,
+        value,
+        0,
+        deadline,
+        signature
+      )
+      console.log(await receipt.wait());
+    }
+  );
 task("deploy-simple", "deploy contract")
   .addParam("name", "Token name")
   .addParam("symbol", "Token symbol")
@@ -504,21 +635,44 @@ task("deploy-simple", "deploy contract")
 
     }
   );
+task("de", "deploy Exchange")
+  .setAction(
+    async ({ name, symbol, supply }, { ethers, run, network }) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+      const _tokenIn = "0xe6a991ffa8cfe62b0bf6bf72959a3d4f11b2e0f5";
+      const _tokenOut = "0xae6f0539e33f624ac685cce9ba57cc1d948d909d";
+      const _exchangeRate = 10300
+
+      const token = await deployContract(
+        ethers,
+        "Exchange",
+        network.name,
+        signers[0],
+        [_tokenIn, _tokenOut, _exchangeRate]
+      ) as Exchange;
+
+    }
+  );
 export default {
   networks: {
     metertest: {
       url: `https://rpctest.meter.io`,
       chainId: 83,
       gasPrice: 500000000000,
-      accounts: {
-        mnemonic: process.env.MNEMONIC
-      },
+      accounts: [process.env.TESTNET_CONTRACT_ADMIN_PRIVKEY],
     },
     metermain: {
       url: `https://rpc.meter.io`,
       chainId: 82,
       gasPrice: 500000000000,
       accounts: [process.env.MAINNET_CONTRACT_ADMIN_PRIVKEY],
+    },
+    theta: {
+      url: `https://eth-rpc-api.thetatoken.org/rpc`,
+      chainId: 361,
+      gasPrice: 4000000000000,
+      accounts: [process.env.THETA_ADMIN_PRIVKEY],
     },
     ganache: {
       url: `http:127.0.0.1:7545`,

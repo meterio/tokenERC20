@@ -33,6 +33,7 @@ interface PermitRouterInterface extends ethers.utils.Interface {
     "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)": FunctionFragment;
     "swapTokensForExactTokens(address,uint256,uint256,uint256,bytes)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "wmtr()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
@@ -67,6 +68,7 @@ interface PermitRouterInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "wmtr", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
   decodeFunctionResult(
@@ -97,6 +99,7 @@ interface PermitRouterInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "wmtr", data: BytesLike): Result;
 
   events: {
     "GaslessSwap(address,uint256,uint256,uint256,bytes)": EventFragment;
@@ -250,6 +253,14 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    wmtr(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
+
+    "wmtr()"(overrides?: CallOverrides): Promise<{
+      0: string;
+    }>;
   };
 
   fee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -351,6 +362,10 @@ export class PermitRouter extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  wmtr(overrides?: CallOverrides): Promise<string>;
+
+  "wmtr()"(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     fee(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -447,6 +462,10 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    wmtr(overrides?: CallOverrides): Promise<string>;
+
+    "wmtr()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -560,6 +579,10 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    wmtr(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "wmtr()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -664,5 +687,9 @@ export class PermitRouter extends Contract {
       newOwner: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    wmtr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "wmtr()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

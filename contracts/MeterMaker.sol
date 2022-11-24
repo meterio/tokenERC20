@@ -3,6 +3,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+interface IWMTR {
+    function deposit() external payable;
+
+    function transfer(address dst, uint256 wad) external returns (bool);
+}
+
 contract MeterMaker is Ownable {
     using SafeERC20 for IERC20;
 
@@ -15,17 +21,17 @@ contract MeterMaker is Ownable {
     constructor(
         address _vault,
         address _pair,
-        address _tokenIn,
-        address _tokenOut
+        address wmtr,
+        address mtrg
     ) {
-        require(address(_pair) != address(0), "pair is zero address");
-        require(address(_vault) != address(0), "vault is zero address");
-        require(address(_tokenIn) != address(0), "tokenIn is zero address");
-        require(address(_tokenOut) != address(0), "tokenOut is zero address");
+        require(_pair != address(0), "pair is zero address");
+        require(_vault != address(0), "vault is zero address");
+        require(wmtr != address(0), "tokenIn is zero address");
+        require(mtrg != address(0), "tokenOut is zero address");
         vault = _vault;
         pair = _pair;
-        path[0] = _tokenIn;
-        path[1] = _tokenOut;
+        path.push(wmtr);
+        path.push(mtrg);
     }
 
     modifier onlyEOA() {
@@ -34,7 +40,7 @@ contract MeterMaker is Ownable {
     }
 
     function buybackMTRG() external onlyEOA {
-        uint256 mtrAmountIn = IERC20(path[0]).balanceOf(address(this));
+        uint256 mtrAmountIn = address(this).balance;
         if (mtrAmountIn > 0) {
             uint256 mtrgAmountOut = _toMTRG(mtrAmountIn);
             emit LogMTRGBought(mtrAmountIn, mtrgAmountOut);
@@ -52,7 +58,7 @@ contract MeterMaker is Ownable {
         IUniswapV2Pair(pair).swap(amount0Out, amount1Out, _to, new bytes(0));
     }
 
-    function _swapExactTokensForTokens(uint256 amountIn, address to)
+    function _swapExactMTRForTokens(uint256 amountIn, address to)
         private
         returns (uint256 amountOut)
     {
@@ -62,18 +68,14 @@ contract MeterMaker is Ownable {
             path
         );
 
-        TransferHelper.safeTransferFrom(
-            path[0],
-            address(this),
-            pair,
-            amounts[0]
-        );
+        IWMTR(path[0]).deposit{value: amounts[0]}();
+        assert(IWMTR(path[0]).transfer(pair, amounts[0]));
         _swap(amounts, to);
         return amounts[1];
     }
 
     function _toMTRG(uint256 amountIn) internal returns (uint256 amountOut) {
-        amountOut = _swapExactTokensForTokens(amountIn, vault);
+        amountOut = _swapExactMTRForTokens(amountIn, vault);
     }
 }
 

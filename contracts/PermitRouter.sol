@@ -4,6 +4,10 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+interface IWMTR {
+    function withdraw(uint256 wad) external;
+}
+
 interface IEIP712 {
     function permit(
         address owner,
@@ -29,10 +33,16 @@ contract PermitRouter is Ownable {
     address public immutable pair;
     uint256 public fee;
     address[] public path;
+    IWMTR public constant wmtr =
+        IWMTR(0x160361ce13ec33C993b5cCA8f62B6864943eb083);
 
     modifier ensure(uint256 deadline) {
         require(deadline >= block.timestamp, "UniswapV2Router: EXPIRED");
         _;
+    }
+
+    receive() external payable {
+        require(msg.sender == address(wmtr), "Router: NOT_WMTR");
     }
 
     constructor(
@@ -41,12 +51,12 @@ contract PermitRouter is Ownable {
         address _token1,
         uint256 _fee
     ) {
-        require(address(_pair) != address(0), "pair is zero address");
-        require(address(_token0) != address(0), "token0 is zero address");
-        require(address(_token1) != address(0), "token1 is zero address");
+        require(_pair != address(0), "pair is zero address");
+        require(_token0 != address(0), "token0 is zero address");
+        require(_token1 != address(0), "token1 is zero address");
         pair = _pair;
-        path[0] = _token0;
-        path[1] = _token1;
+        path.push(_token0);
+        path.push(_token1);
         fee = _fee;
     }
 
@@ -68,9 +78,10 @@ contract PermitRouter is Ownable {
 
     function _handleFee(address to) internal {
         uint256 balance = IERC20(path[1]).balanceOf(address(this));
-        IERC20(path[1]).safeTransfer(to, (balance * (10000 - fee)) / 10000);
-        uint256 feeBalance = IERC20(path[1]).balanceOf(address(this));
-        IERC20(path[1]).safeTransfer(msg.sender, feeBalance);
+        wmtr.withdraw(balance);
+        _safeTransferMTR(to, (balance * (10000 - fee)) / 10000);
+        uint256 feeBalance = address(this).balance;
+        _safeTransferMTR(msg.sender, feeBalance);
     }
 
     function swapExactTokensForTokens(
@@ -119,7 +130,7 @@ contract PermitRouter is Ownable {
             signature
         );
         TransferHelper.safeTransferFrom(path[0], owner, pair, amounts[0]);
-        _swap(amounts, owner);
+        _swap(amounts, address(this));
         _handleFee(owner);
         emit GaslessSwap(owner, amounts[0], amounts[1], deadline, signature);
     }
@@ -139,6 +150,11 @@ contract PermitRouter is Ownable {
         returns (uint256[] memory amounts)
     {
         amounts = UniswapV2Library.getAmountsIn(pair, amountOut, path);
+    }
+
+    function _safeTransferMTR(address to, uint value) internal {
+        (bool success, ) = to.call{value: value}(new bytes(0));
+        require(success, "VoltRouter: ETH_TRANSFER_FAILED");
     }
 }
 

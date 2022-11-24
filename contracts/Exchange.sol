@@ -28,6 +28,10 @@ contract Exchange is Ownable {
         exchangeRate = _exchangeRate;
     }
 
+    function adminWithdraw(uint256 amount) public onlyOwner {
+        IERC20(tokenOut).transferFrom(address(this), msg.sender, amount);
+    }
+
     function change(uint256 amount) public {
         uint256 balanceBefore = IERC20(tokenIn).balanceOf(address(this));
         IERC20(tokenIn).transferFrom(msg.sender, address(this), amount);

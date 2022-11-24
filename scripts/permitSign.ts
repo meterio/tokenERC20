@@ -11,8 +11,8 @@ export async function getSign(
   chainId: number
 ): Promise<BytesLike> {
 
-  const name = "MeterGov";
-  const version = "v1.0";
+  const name = "PermitToken";
+  const version = "1.0";
   let signer = wallet as VoidSigner;
   let signature = await signer._signTypedData(
     { name, version, chainId, verifyingContract },

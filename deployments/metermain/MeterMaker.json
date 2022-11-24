@@ -1,0 +1,10 @@
+{
+    "address": "0x479F1F8ea1ddeAaBD5565B38438b6D2e0c60B9F3",
+    "constructorArguments": [
+        "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+        "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d",
+        "0x228ebBeE999c6a7ad74A6130E81b12f9Fe237Ba3",
+        "0x160361ce13ec33C993b5cCA8f62B6864943eb083"
+    ],
+    "libraries": {}
+}

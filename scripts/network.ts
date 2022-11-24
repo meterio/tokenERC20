@@ -72,9 +72,7 @@ export const RPCS = {
     url: `https://rpctest.meter.io`,
     chainId: 83,
     gasPrice: 500000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
+    accounts: [process.env.TESTNET_CONTRACT_ADMIN_PRIVKEY],
   },
   metermain: {
     url: `https://rpc.meter.io`,
