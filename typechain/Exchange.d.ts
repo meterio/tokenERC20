@@ -23,6 +23,7 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface ExchangeInterface extends ethers.utils.Interface {
   functions: {
     "adminSetExchangeRate(uint256)": FunctionFragment;
+    "adminWithdraw(uint256)": FunctionFragment;
     "change(uint256)": FunctionFragment;
     "exchangeRate()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -36,6 +37,10 @@ interface ExchangeInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "adminSetExchangeRate",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "adminWithdraw",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -68,6 +73,10 @@ interface ExchangeInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "adminSetExchangeRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "adminWithdraw",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "change", data: BytesLike): Result;
@@ -123,6 +132,16 @@ export class Exchange extends Contract {
 
     "adminSetExchangeRate(uint256)"(
       _exchangeRate: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    adminWithdraw(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "adminWithdraw(uint256)"(
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -209,6 +228,16 @@ export class Exchange extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  adminWithdraw(
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "adminWithdraw(uint256)"(
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   change(
     amount: BigNumberish,
     overrides?: Overrides
@@ -265,6 +294,16 @@ export class Exchange extends Contract {
 
     "adminSetExchangeRate(uint256)"(
       _exchangeRate: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    adminWithdraw(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "adminWithdraw(uint256)"(
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -332,6 +371,16 @@ export class Exchange extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    adminWithdraw(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "adminWithdraw(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     change(amount: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "change(uint256)"(
@@ -386,6 +435,16 @@ export class Exchange extends Contract {
 
     "adminSetExchangeRate(uint256)"(
       _exchangeRate: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    adminWithdraw(
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "adminWithdraw(uint256)"(
+      amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

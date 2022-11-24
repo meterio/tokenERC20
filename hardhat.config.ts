@@ -54,17 +54,16 @@ task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
 task("approve", "approve contract")
   .addParam("token", "token address")
   .addParam("spender", "spender address")
-  .addOptionalParam("amount", "amount", constants.MaxUint256, types.string)
   .addParam("rpc", "rpc connect")
   .addParam("pk", "proxy admin private key")
   .setAction(
-    async ({ token, spender, amount, rpc, pk }, { ethers, run, network }) => {
+    async ({ token, spender, rpc, pk }, { ethers, run, network }) => {
       await run("compile");
 
       let provider = new ethers.providers.JsonRpcProvider(rpc);
       const wallet = new ethers.Wallet(pk, provider);
       const t = await ethers.getContractAt("ERC20MintablePauseable", token, wallet) as ERC20MintablePauseable;
-      let receipt = await t.approve(spender, amount);
+      let receipt = await t.approve(spender, constants.MaxUint256);
       console.log("approve tx:", receipt.hash);
 
     }
