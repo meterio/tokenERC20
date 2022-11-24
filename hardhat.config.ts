@@ -2,8 +2,8 @@ import "hardhat-typechain";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
-import { task } from "hardhat/config";
-import { BigNumber, Signer, utils } from "ethers";
+import { task, types } from "hardhat/config";
+import { BigNumber, constants, Signer, utils } from "ethers";
 import { compileSetting, allowVerifyChain } from "./scripts/deployTool";
 import { RPCS } from "./scripts/network";
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
@@ -50,6 +50,25 @@ task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
     );
   }
 });
+
+task("approve", "approve contract")
+  .addParam("token", "token address")
+  .addParam("spender", "spender address")
+  .addOptionalParam("amount", "amount", constants.MaxUint256, types.string)
+  .addParam("rpc", "rpc connect")
+  .addParam("pk", "proxy admin private key")
+  .setAction(
+    async ({ token, spender, amount, rpc, pk }, { ethers, run, network }) => {
+      await run("compile");
+
+      let provider = new ethers.providers.JsonRpcProvider(rpc);
+      const wallet = new ethers.Wallet(pk, provider);
+      const t = await ethers.getContractAt("ERC20MintablePauseable", token, wallet) as ERC20MintablePauseable;
+      let receipt = await t.approve(spender, amount);
+      console.log("approve tx:", receipt.hash);
+
+    }
+  );
 
 // npx hardhat upgrade --params ["USDT","USDT","1000000000000000000000000000","0xa5F1e2596DC1e878a6a039f41330d9A97c771bE9"] --network metermain
 task("upgrade", "deploy upgrade contract")
