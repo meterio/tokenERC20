@@ -29,7 +29,7 @@ contract Exchange is Ownable {
     }
 
     function adminWithdraw(uint256 amount) public onlyOwner {
-        IERC20(tokenOut).transferFrom(address(this), msg.sender, amount);
+        IERC20(tokenOut).transfer(msg.sender, amount);
     }
 
     function change(uint256 amount) public {
@@ -45,6 +45,6 @@ contract Exchange is Ownable {
             IERC20(tokenOut).balanceOf(address(this)) >= amountOut,
             "Insufficient balance"
         );
-        IERC20(tokenOut).transferFrom(address(this), msg.sender, amountOut);
+        IERC20(tokenOut).transfer(msg.sender, amountOut);
     }
 }

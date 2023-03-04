@@ -6,8 +6,8 @@ import { constants } from "ethers";
 
 
 /**
-npx hardhat aa \
---json "config json file" \
+npx hardhat approve \
+--token <token address> \
 --rpc http://127.0.0.1:7545 \
 --pk <admin private key> \
 --gasprice 1000000000
