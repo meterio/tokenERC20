@@ -52,7 +52,7 @@ interface Pair {
 
 interface IEIP712 {
     function permit(
-        address owner,
+        address _owner,
         address spender,
         uint256 value,
         uint256 deadline,
@@ -102,21 +102,21 @@ contract PermitRouterV2 is Ownable {
     }
 
     function swapExactTokensForTokens(
-        address owner,
+        address _owner,
         uint256 amountIn,
         uint256 amountOutMin,
         uint256 deadline,
         bytes memory signature
     ) external ensure(deadline) returns (uint256[] memory amounts) {
         IEIP712(tokenIn).permit(
-            owner,
+            _owner,
             address(this),
             amountIn,
             deadline,
             signature
         );
 
-        TransferHelper.safeTransferFrom(tokenIn, owner, path[0], amountIn);
+        TransferHelper.safeTransferFrom(tokenIn, _owner, path[0], amountIn);
 
         amounts = new uint256[](path.length + 1);
         amounts[0] = amountIn;
@@ -142,7 +142,7 @@ contract PermitRouterV2 is Ownable {
             balance >= amountOutMin,
             "UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT"
         );
-        _handleFee(balance, owner);
+        _handleFee(balance, _owner);
     }
 
     function getAmountsOut(uint256 amountIn)

@@ -1,1 +1,13 @@
-{"address":"0x30Ce2904dBcc49A940BcA362C06f17062C04cb38","constructorArguments":[300,"0xf0e86246519be0810c9fafc8430c49799985aaa8","0x160361ce13ec33C993b5cCA8f62B6864943eb083",["0xa10b1935c3c1f4e74a0c6f0b94fbed8b6562c096","0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"]],"libraries":{}}
+{
+  "address": "0x30Ce2904dBcc49A940BcA362C06f17062C04cb38",
+  "constructorArguments": [
+    300,
+    "0xf0e86246519be0810c9fafc8430c49799985aaa8",
+    "0x160361ce13ec33C993b5cCA8f62B6864943eb083",
+    [
+      "0xa10b1935c3c1f4e74a0c6f0b94fbed8b6562c096",
+      "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"
+    ]
+  ],
+  "libraries": {}
+}

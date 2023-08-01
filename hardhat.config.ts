@@ -412,14 +412,16 @@ task("dr2", "gas less swap").setAction(async ({}, { ethers, run, network }) => {
   //   "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d" // mtrg/wmtr
   // ];
 
-  let tokenIn = "0xf0e86246519be0810c9fafc8430c49799985aaa8"; // BNB
+  let tokenIn = "0x8c0b5d2b6f128944695c03a53ed899e6035f6d75"; // DMT
   let wmtr = "0x160361ce13ec33C993b5cCA8f62B6864943eb083"; // WMTR
   let path = [
-    "0xa10b1935c3c1f4e74a0c6f0b94fbed8b6562c096", // bnb/mtrg
+    "0xdcdbea009a95f205a6e716a54f169b3cb93371f5", // DMT/mtrg
     "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d", // mtrg/wmtr
   ];
-
+// ["0x6b9c13cef27deb251d7490b9534170eee688146e","0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"]
   const deployer = signers[0];
+  console.log("deployer:",deployer.address);
+  console.log("balance:",(await deployer.getBalance()).toString());
 
   const router = (await deployContract(
     ethers,
@@ -656,9 +658,7 @@ export default {
       url: `https://rpc.meter.io`,
       chainId: 82,
       gasPrice: 500000000000,
-      accounts: {
-        mnemonic: process.env.MNEMONIC,
-      },
+      accounts: [process.env.MAINNET_CONTRACT_ADMIN_PRIVKEY],
     },
     theta: {
       url: `https://eth-rpc-api.thetatoken.org/rpc`,

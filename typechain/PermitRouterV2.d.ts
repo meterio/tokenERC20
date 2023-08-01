@@ -163,7 +163,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<ContractTransaction>;
 
     swapExactTokensForTokens(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
@@ -172,7 +172,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<ContractTransaction>;
 
     "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)"(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
@@ -247,7 +247,7 @@ export class PermitRouterV2 extends Contract {
   ): Promise<ContractTransaction>;
 
   swapExactTokensForTokens(
-    owner: string,
+    _owner: string,
     amountIn: BigNumberish,
     amountOutMin: BigNumberish,
     deadline: BigNumberish,
@@ -256,7 +256,7 @@ export class PermitRouterV2 extends Contract {
   ): Promise<ContractTransaction>;
 
   "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)"(
-    owner: string,
+    _owner: string,
     amountIn: BigNumberish,
     amountOutMin: BigNumberish,
     deadline: BigNumberish,
@@ -320,7 +320,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<void>;
 
     swapExactTokensForTokens(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
@@ -329,7 +329,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<BigNumber[]>;
 
     "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)"(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
@@ -401,7 +401,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<BigNumber>;
 
     swapExactTokensForTokens(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
@@ -410,7 +410,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<BigNumber>;
 
     "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)"(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
@@ -481,7 +481,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<PopulatedTransaction>;
 
     swapExactTokensForTokens(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
@@ -490,7 +490,7 @@ export class PermitRouterV2 extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "swapExactTokensForTokens(address,uint256,uint256,uint256,bytes)"(
-      owner: string,
+      _owner: string,
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
