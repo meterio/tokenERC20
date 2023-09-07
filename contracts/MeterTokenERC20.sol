@@ -12,13 +12,9 @@ contract ERC20MintablePauseable is
     ERC20Pausable,
     AccessControlEnumerable
 {
-    string public constant symbol = "MT";
+    string private constant _symbol = "MT";
 
-    string public constant name = "Meter Token ERC20";
-
-    uint8 public constant decimals = 18;
-
-    uint public totalSupply;
+    string private constant _name = "Meter Token ERC20";
 
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -30,7 +26,7 @@ contract ERC20MintablePauseable is
 
     mapping(address => uint256) public nonces;
 
-    constructor() ERC20(name, symbol) EIP712("PermitToken", "1.0") {
+    constructor() ERC20(_name, _symbol) EIP712("PermitToken", "1.0") {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(MINTER_ROLE, _msgSender());
     }
@@ -53,12 +49,9 @@ contract ERC20MintablePauseable is
         blackList[account] = !blackList[account];
     }
 
-    function getBlackList(address account)
-        public
-        view
-        onlyAdmin
-        returns (bool)
-    {
+    function getBlackList(
+        address account
+    ) public view onlyAdmin returns (bool) {
         return blackList[account];
     }
 
