@@ -67,20 +67,47 @@ export async function deployContract(
 ): Promise<Contract> {
   let address = getContract(network, name);
   // if (address == constants.AddressZero || network == "hardhat") {
-    const factory = await ethers.getContractFactory(name, {
-      signer: signer,
-      libraries: libraries,
-    });
-    const contract = await factory.deploy(...args, overrides);
-    console.log("Deploying:", name);
-    console.log("  to", contract.address);
-    console.log("  in", contract.deployTransaction.hash);
-    await saveFile(network, name, contract, args, libraries);
-    return contract.deployed();
+  const factory = await ethers.getContractFactory(name, {
+    signer: signer,
+    libraries: libraries,
+  });
+  const contract = await factory.deploy(...args, overrides);
+  console.log("Deploying:", name);
+  console.log("  to", contract.address);
+  console.log("  in", contract.deployTransaction.hash);
+  await saveFile(network, name, contract, args, libraries);
+  return contract.deployed();
   // } else {
-    // console.log("Contract:", name);
-    // console.log("  on", address.white);
-    // return await ethers.getContractAt(name, address, signer);
+  // console.log("Contract:", name);
+  // console.log("  on", address.white);
+  // return await ethers.getContractAt(name, address, signer);
+  // }
+}
+
+export async function deployContractOverrides(
+  ethers: HardhatEthersHelpers,
+  name: string,
+  network: string,
+  signer: Signer,
+  args: Array<any> = [],
+  overrides: Overrides = {}
+): Promise<Contract> {
+  let address = getContract(network, name);
+  // if (address == constants.AddressZero || network == "hardhat") {
+  const factory = await ethers.getContractFactory(name, {
+    signer: signer,
+  });
+  console.log(overrides);
+  const contract = await factory.deploy(...args, overrides);
+  console.log("Deploying:", name);
+  console.log("  to", contract.address);
+  console.log("  in", contract.deployTransaction.hash);
+  await saveFile(network, name, contract, args);
+  return contract.deployed();
+  // } else {
+  // console.log("Contract:", name);
+  // console.log("  on", address.white);
+  // return await ethers.getContractAt(name, address, signer);
   // }
 }
 

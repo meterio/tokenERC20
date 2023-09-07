@@ -16,6 +16,7 @@ import {
   MINTER_ROLE,
   expandTo18Decimals,
   saveFile,
+  deployContractOverrides,
 } from "./scripts/helper";
 import { getSign } from "./scripts/permitSign";
 
@@ -28,6 +29,7 @@ import {
   SimpleERC20,
   MeterMaker,
   Exchange,
+  SumerOFTUpgradeable,
 } from "./typechain";
 
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
@@ -418,10 +420,10 @@ task("dr2", "gas less swap").setAction(async ({}, { ethers, run, network }) => {
     "0xdcdbea009a95f205a6e716a54f169b3cb93371f5", // DMT/mtrg
     "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d", // mtrg/wmtr
   ];
-// ["0x6b9c13cef27deb251d7490b9534170eee688146e","0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"]
+  // ["0x6b9c13cef27deb251d7490b9534170eee688146e","0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"]
   const deployer = signers[0];
-  console.log("deployer:",deployer.address);
-  console.log("balance:",(await deployer.getBalance()).toString());
+  console.log("deployer:", deployer.address);
+  console.log("balance:", (await deployer.getBalance()).toString());
 
   const router = (await deployContract(
     ethers,
@@ -644,15 +646,87 @@ task("de", "deploy Exchange").setAction(
     )) as Exchange;
   }
 );
+
+/* 
+npx hardhat oft-impl --nonce 0 --network metermain
+*/
+task("oft-impl", "deploy oft impl contract")
+  .addParam("nonce", "nonce")
+  .setAction(async ({ nonce }, { ethers, run, network }) => {
+    await run("compile");
+    const signers = await ethers.getSigners();
+
+    const impl = (await deployContractOverrides(
+      ethers,
+      "SumerOFTUpgradeable",
+      network.name,
+      signers[0],
+      [],
+      {
+        gasLimit: 8000000,
+        nonce: nonce,
+      }
+    )) as SumerOFTUpgradeable;
+  });
+/* 
+npx hardhat oft-proxy \
+--impl 0x99926d145D79567d2F07007e2095A3c1570e6D5e \
+--name ttt \
+--symbol ttt \
+--supply 1000000000000000000000000 \
+--admin 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+--ep 0x3De2f3D1Ac59F18159ebCB422322Cb209BA96aAD \
+--nonce 1 \
+--network metermain
+*/
+task("oft-proxy", "deploy oft contract")
+  .addParam("impl", "impl contract address")
+  .addParam("name", "Token name")
+  .addParam("symbol", "Token symbol")
+  .addParam("supply", "Token initialSupply require decimal")
+  .addParam("admin", "proxy admin")
+  .addParam("ep", "end point")
+  .addParam("nonce", "nonce")
+  .setAction(
+    async (
+      { impl, name, symbol, supply, admin, ep, nonce },
+      { ethers, run, network }
+    ) => {
+      await run("compile");
+      const signers = await ethers.getSigners();
+
+      const implcontract = (await ethers.getContractAt(
+        "SumerOFTUpgradeable",
+        impl
+      )) as SumerOFTUpgradeable;
+
+      const data = implcontract.interface.encodeFunctionData("initialize", [
+        name,
+        symbol,
+        supply,
+        ep,
+      ]);
+
+      const proxy = await deployContractOverrides(
+        ethers,
+        "SumerProxy",
+        network.name,
+        signers[0],
+        [impl, admin, data],
+        {
+          gasLimit: 8000000,
+          nonce: nonce,
+        }
+      );
+    }
+  );
 export default {
   networks: {
     metertest: {
       url: `https://rpctest.meter.io`,
       chainId: 83,
       gasPrice: 500000000000,
-      accounts: {
-        mnemonic: process.env.MNEMONIC,
-      },
+      accounts: [process.env.METER_TEST_PRIVKEY],
     },
     metermain: {
       url: `https://rpc.meter.io`,
@@ -680,7 +754,7 @@ export default {
     apiKey: process.env.ETHERSCAN_APIKEY,
   },
   solidity: {
-    compilers: [compileSetting("0.8.11", 200)],
+    compilers: [compileSetting("0.8.19", 200)],
   },
   mocha: {
     timeout: 200000,

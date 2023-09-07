@@ -29,10 +29,12 @@ interface PausableUpgradeableInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
 
   events: {
+    "Initialized(uint8)": EventFragment;
     "Paused(address)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
@@ -71,6 +73,8 @@ export class PausableUpgradeable extends Contract {
   };
 
   filters: {
+    Initialized(version: null): EventFilter;
+
     Paused(account: null): EventFilter;
 
     Unpaused(account: null): EventFilter;

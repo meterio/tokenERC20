@@ -32,6 +32,7 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
     "burnFrom(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "eip712Domain()": FunctionFragment;
     "getBlackList(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
@@ -86,6 +87,10 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "eip712Domain",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getBlackList",
@@ -181,6 +186,10 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getBlackList",
     data: BytesLike
   ): Result;
@@ -235,6 +244,7 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "EIP712DomainChanged()": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -244,6 +254,7 @@ interface ERC20MintablePauseableInterface extends ethers.utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EIP712DomainChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -373,6 +384,40 @@ export class ERC20MintablePauseable extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
 
     getBlackList(
       account: string,
@@ -712,6 +757,40 @@ export class ERC20MintablePauseable extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  eip712Domain(overrides?: CallOverrides): Promise<{
+    fields: string;
+    name: string;
+    version: string;
+    chainId: BigNumber;
+    verifyingContract: string;
+    salt: string;
+    extensions: BigNumber[];
+    0: string;
+    1: string;
+    2: string;
+    3: BigNumber;
+    4: string;
+    5: string;
+    6: BigNumber[];
+  }>;
+
+  "eip712Domain()"(overrides?: CallOverrides): Promise<{
+    fields: string;
+    name: string;
+    version: string;
+    chainId: BigNumber;
+    verifyingContract: string;
+    salt: string;
+    extensions: BigNumber[];
+    0: string;
+    1: string;
+    2: string;
+    3: BigNumber;
+    4: string;
+    5: string;
+    6: BigNumber[];
+  }>;
+
   getBlackList(account: string, overrides?: CallOverrides): Promise<boolean>;
 
   "getBlackList(address)"(
@@ -994,6 +1073,40 @@ export class ERC20MintablePauseable extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    eip712Domain(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
     getBlackList(account: string, overrides?: CallOverrides): Promise<boolean>;
 
     "getBlackList(address)"(
@@ -1202,6 +1315,8 @@ export class ERC20MintablePauseable extends Contract {
       value: null
     ): EventFilter;
 
+    EIP712DomainChanged(): EventFilter;
+
     Paused(account: null): EventFilter;
 
     RoleAdminChanged(
@@ -1305,6 +1420,10 @@ export class ERC20MintablePauseable extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBlackList(
       account: string,
@@ -1603,6 +1722,10 @@ export class ERC20MintablePauseable extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBlackList(
       account: string,

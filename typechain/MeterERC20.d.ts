@@ -28,6 +28,7 @@ interface MeterERC20Interface extends ethers.utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "decimals()": FunctionFragment;
+    "eip712Domain()": FunctionFragment;
     "getBlackList(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
@@ -66,6 +67,10 @@ interface MeterERC20Interface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "eip712Domain",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getBlackList",
     values: [string]
@@ -143,6 +148,10 @@ interface MeterERC20Interface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getBlackList",
     data: BytesLike
   ): Result;
@@ -193,6 +202,7 @@ interface MeterERC20Interface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "EIP712DomainChanged()": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -200,6 +210,7 @@ interface MeterERC20Interface extends ethers.utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EIP712DomainChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -288,6 +299,40 @@ export class MeterERC20 extends Contract {
 
     "decimals()"(overrides?: CallOverrides): Promise<{
       0: number;
+    }>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
     }>;
 
     getBlackList(
@@ -558,6 +603,40 @@ export class MeterERC20 extends Contract {
 
   "decimals()"(overrides?: CallOverrides): Promise<number>;
 
+  eip712Domain(overrides?: CallOverrides): Promise<{
+    fields: string;
+    name: string;
+    version: string;
+    chainId: BigNumber;
+    verifyingContract: string;
+    salt: string;
+    extensions: BigNumber[];
+    0: string;
+    1: string;
+    2: string;
+    3: BigNumber;
+    4: string;
+    5: string;
+    6: BigNumber[];
+  }>;
+
+  "eip712Domain()"(overrides?: CallOverrides): Promise<{
+    fields: string;
+    name: string;
+    version: string;
+    chainId: BigNumber;
+    verifyingContract: string;
+    salt: string;
+    extensions: BigNumber[];
+    0: string;
+    1: string;
+    2: string;
+    3: BigNumber;
+    4: string;
+    5: string;
+    6: BigNumber[];
+  }>;
+
   getBlackList(account: string, overrides?: CallOverrides): Promise<boolean>;
 
   "getBlackList(address)"(
@@ -773,6 +852,40 @@ export class MeterERC20 extends Contract {
 
     "decimals()"(overrides?: CallOverrides): Promise<number>;
 
+    eip712Domain(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
     getBlackList(account: string, overrides?: CallOverrides): Promise<boolean>;
 
     "getBlackList(address)"(
@@ -949,6 +1062,8 @@ export class MeterERC20 extends Contract {
       value: null
     ): EventFilter;
 
+    EIP712DomainChanged(): EventFilter;
+
     RoleAdminChanged(
       role: BytesLike | null,
       previousAdminRole: BytesLike | null,
@@ -1013,6 +1128,10 @@ export class MeterERC20 extends Contract {
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBlackList(
       account: string,
@@ -1241,6 +1360,10 @@ export class MeterERC20 extends Contract {
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBlackList(
       account: string,

@@ -33,6 +33,7 @@ interface ERC20MintablePauseableUpgradeableInterface
     "burnFrom(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "eip712Domain()": FunctionFragment;
     "getBlackList(address)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
@@ -89,6 +90,10 @@ interface ERC20MintablePauseableUpgradeableInterface
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "eip712Domain",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getBlackList",
@@ -192,6 +197,10 @@ interface ERC20MintablePauseableUpgradeableInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getBlackList",
     data: BytesLike
   ): Result;
@@ -251,6 +260,8 @@ interface ERC20MintablePauseableUpgradeableInterface
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "EIP712DomainChanged()": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -260,6 +271,8 @@ interface ERC20MintablePauseableUpgradeableInterface
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EIP712DomainChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -389,6 +402,40 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
 
     getBlackList(
       account: string,
@@ -641,27 +688,27 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     }>;
 
     transfer(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "transfer(address,uint256)"(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "transferFrom(address,address,uint256)"(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -751,6 +798,40 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     subtractedValue: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  eip712Domain(overrides?: CallOverrides): Promise<{
+    fields: string;
+    name: string;
+    version: string;
+    chainId: BigNumber;
+    verifyingContract: string;
+    salt: string;
+    extensions: BigNumber[];
+    0: string;
+    1: string;
+    2: string;
+    3: BigNumber;
+    4: string;
+    5: string;
+    6: BigNumber[];
+  }>;
+
+  "eip712Domain()"(overrides?: CallOverrides): Promise<{
+    fields: string;
+    name: string;
+    version: string;
+    chainId: BigNumber;
+    verifyingContract: string;
+    salt: string;
+    extensions: BigNumber[];
+    0: string;
+    1: string;
+    2: string;
+    3: BigNumber;
+    4: string;
+    5: string;
+    6: BigNumber[];
+  }>;
 
   getBlackList(account: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -946,27 +1027,27 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
   "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
-    recipient: string,
+    to: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "transfer(address,uint256)"(
-    recipient: string,
+    to: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   transferFrom(
-    sender: string,
-    recipient: string,
+    from: string,
+    to: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "transferFrom(address,address,uint256)"(
-    sender: string,
-    recipient: string,
+    from: string,
+    to: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -1053,6 +1134,40 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       subtractedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<{
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+      0: string;
+      1: string;
+      2: string;
+      3: BigNumber;
+      4: string;
+      5: string;
+      6: BigNumber[];
+    }>;
 
     getBlackList(account: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -1245,27 +1360,27 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "transfer(address,uint256)"(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "transferFrom(address,address,uint256)"(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1281,6 +1396,10 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       spender: string | null,
       value: null
     ): EventFilter;
+
+    EIP712DomainChanged(): EventFilter;
+
+    Initialized(version: null): EventFilter;
 
     Paused(account: null): EventFilter;
 
@@ -1385,6 +1504,10 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBlackList(
       account: string,
@@ -1583,27 +1706,27 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "transfer(address,uint256)"(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "transferFrom(address,address,uint256)"(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1703,6 +1826,10 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "eip712Domain()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBlackList(
       account: string,
@@ -1909,27 +2036,27 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transfer(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "transfer(address,uint256)"(
-      recipient: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "transferFrom(address,address,uint256)"(
-      sender: string,
-      recipient: string,
+      from: string,
+      to: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
