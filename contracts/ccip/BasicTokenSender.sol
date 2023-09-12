@@ -53,12 +53,47 @@ contract BasicTokenSender is Withdraw {
             amount: amount
         });
         PayFeesIn payFeesIn = PayFeesIn.Native;
-        send(
+        (, uint256 fee) = send(
             destinationChainSelector,
             receiver,
             tokensToSendDetails,
             payFeesIn
         );
+        if (msg.value > fee) {
+            uint256 feeReturn = msg.value - fee;
+            (bool success, ) = payable(msg.sender).call{value: feeReturn}("");
+            require(
+                success,
+                "Address: unable to send value, recipient may have reverted"
+            );
+        }
+    }
+
+    function getNativeFee(
+        uint64 destinationChainSelector,
+        address receiver,
+        address token,
+        uint256 amount
+    ) external view returns (uint256) {
+        Client.EVMTokenAmount[]
+            memory tokensToSendDetails = new Client.EVMTokenAmount[](1);
+        tokensToSendDetails[0] = Client.EVMTokenAmount({
+            token: token,
+            amount: amount
+        });
+        Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
+            receiver: abi.encode(receiver),
+            data: "",
+            tokenAmounts: tokensToSendDetails,
+            extraArgs: "",
+            feeToken: address(0)
+        });
+
+        uint256 fee = IRouterClient(i_router).getFee(
+            destinationChainSelector,
+            message
+        );
+        return fee;
     }
 
     function send(
@@ -66,7 +101,7 @@ contract BasicTokenSender is Withdraw {
         address receiver,
         Client.EVMTokenAmount[] memory tokensToSendDetails,
         PayFeesIn payFeesIn
-    ) public {
+    ) public returns (bytes32, uint256) {
         uint256 length = tokensToSendDetails.length;
         require(
             length <= i_maxTokensLength,
@@ -118,5 +153,6 @@ contract BasicTokenSender is Withdraw {
         }
 
         emit MessageSent(messageId);
+        return (messageId, fee);
     }
 }
