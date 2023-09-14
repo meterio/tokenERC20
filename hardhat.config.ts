@@ -674,6 +674,7 @@ npx hardhat oft-proxy \
 --name ttt \
 --symbol ttt \
 --supply 1000000000000000000000000 \
+--pa 0x1381c573b97bf393a81fa42760dd21e109d8092b \
 --admin 0x1381c573b97bf393a81fa42760dd21e109d8092b \
 --ep 0x3De2f3D1Ac59F18159ebCB422322Cb209BA96aAD \
 --nonce 1 \
@@ -684,12 +685,13 @@ task("oft-proxy", "deploy oft contract")
   .addParam("name", "Token name")
   .addParam("symbol", "Token symbol")
   .addParam("supply", "Token initialSupply require decimal")
-  .addParam("admin", "proxy admin")
+  .addParam("pa", "proxy admin")
+  .addParam("admin", "contract admin")
   .addParam("ep", "end point")
   .addParam("nonce", "nonce")
   .setAction(
     async (
-      { impl, name, symbol, supply, admin, ep, nonce },
+      { impl, name, symbol, supply, pa, admin, ep, nonce },
       { ethers, run, network }
     ) => {
       await run("compile");
@@ -705,6 +707,7 @@ task("oft-proxy", "deploy oft contract")
         symbol,
         supply,
         ep,
+        admin,
       ]);
 
       const proxy = await deployContractOverrides(
@@ -712,7 +715,7 @@ task("oft-proxy", "deploy oft contract")
         "SumerProxy",
         network.name,
         signers[0],
-        [impl, admin, data],
+        [impl, pa, data],
         {
           gasLimit: 8000000,
           nonce: nonce,

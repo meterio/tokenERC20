@@ -24,9 +24,10 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 interface BasicTokenSenderInterface extends ethers.utils.Interface {
   functions: {
     "acceptOwnership()": FunctionFragment;
+    "getNativeFee(uint64,address,address,uint256)": FunctionFragment;
     "getSupportedTokens(uint64)": FunctionFragment;
     "owner()": FunctionFragment;
-    "send(uint64,address,tuple[],uint8)": FunctionFragment;
+    "send(uint64,address,tuple[])": FunctionFragment;
     "sendToken(uint64,address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "withdraw(address)": FunctionFragment;
@@ -38,18 +39,17 @@ interface BasicTokenSenderInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getNativeFee",
+    values: [BigNumberish, string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSupportedTokens",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "send",
-    values: [
-      BigNumberish,
-      string,
-      { token: string; amount: BigNumberish }[],
-      BigNumberish
-    ]
+    values: [BigNumberish, string, { token: string; amount: BigNumberish }[]]
   ): string;
   encodeFunctionData(
     functionFragment: "sendToken",
@@ -67,6 +67,10 @@ interface BasicTokenSenderInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "acceptOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNativeFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -115,6 +119,26 @@ export class BasicTokenSender extends Contract {
 
     "acceptOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+    getNativeFee(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "getNativeFee(uint64,address,address,uint256)"(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
     getSupportedTokens(
       chainSelector: BigNumberish,
       overrides?: CallOverrides
@@ -143,15 +167,13 @@ export class BasicTokenSender extends Contract {
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "send(uint64,address,tuple[],uint8)"(
+    "send(uint64,address,tuple[])"(
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -208,6 +230,22 @@ export class BasicTokenSender extends Contract {
 
   "acceptOwnership()"(overrides?: Overrides): Promise<ContractTransaction>;
 
+  getNativeFee(
+    destinationChainSelector: BigNumberish,
+    receiver: string,
+    token: string,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getNativeFee(uint64,address,address,uint256)"(
+    destinationChainSelector: BigNumberish,
+    receiver: string,
+    token: string,
+    amount: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getSupportedTokens(
     chainSelector: BigNumberish,
     overrides?: CallOverrides
@@ -226,15 +264,13 @@ export class BasicTokenSender extends Contract {
     destinationChainSelector: BigNumberish,
     receiver: string,
     tokensToSendDetails: { token: string; amount: BigNumberish }[],
-    payFeesIn: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "send(uint64,address,tuple[],uint8)"(
+  "send(uint64,address,tuple[])"(
     destinationChainSelector: BigNumberish,
     receiver: string,
     tokensToSendDetails: { token: string; amount: BigNumberish }[],
-    payFeesIn: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -291,6 +327,22 @@ export class BasicTokenSender extends Contract {
 
     "acceptOwnership()"(overrides?: CallOverrides): Promise<void>;
 
+    getNativeFee(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getNativeFee(uint64,address,address,uint256)"(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getSupportedTokens(
       chainSelector: BigNumberish,
       overrides?: CallOverrides
@@ -309,17 +361,21 @@ export class BasicTokenSender extends Contract {
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<{
+      0: string;
+      1: BigNumber;
+    }>;
 
-    "send(uint64,address,tuple[],uint8)"(
+    "send(uint64,address,tuple[])"(
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<{
+      0: string;
+      1: BigNumber;
+    }>;
 
     sendToken(
       destinationChainSelector: BigNumberish,
@@ -380,6 +436,22 @@ export class BasicTokenSender extends Contract {
 
     "acceptOwnership()"(overrides?: Overrides): Promise<BigNumber>;
 
+    getNativeFee(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getNativeFee(uint64,address,address,uint256)"(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getSupportedTokens(
       chainSelector: BigNumberish,
       overrides?: CallOverrides
@@ -398,15 +470,13 @@ export class BasicTokenSender extends Contract {
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "send(uint64,address,tuple[],uint8)"(
+    "send(uint64,address,tuple[])"(
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -458,6 +528,22 @@ export class BasicTokenSender extends Contract {
 
     "acceptOwnership()"(overrides?: Overrides): Promise<PopulatedTransaction>;
 
+    getNativeFee(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getNativeFee(uint64,address,address,uint256)"(
+      destinationChainSelector: BigNumberish,
+      receiver: string,
+      token: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getSupportedTokens(
       chainSelector: BigNumberish,
       overrides?: CallOverrides
@@ -476,15 +562,13 @@ export class BasicTokenSender extends Contract {
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "send(uint64,address,tuple[],uint8)"(
+    "send(uint64,address,tuple[])"(
       destinationChainSelector: BigNumberish,
       receiver: string,
       tokensToSendDetails: { token: string; amount: BigNumberish }[],
-      payFeesIn: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

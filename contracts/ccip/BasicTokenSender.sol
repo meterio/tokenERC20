@@ -13,22 +13,14 @@ import {Withdraw} from "./utils/Withdraw.sol";
  * DO NOT USE THIS CODE IN PRODUCTION.
  */
 contract BasicTokenSender is Withdraw {
-    enum PayFeesIn {
-        Native,
-        LINK
-    }
-
     address immutable i_router;
-    address immutable i_link;
     uint16 immutable i_maxTokensLength;
 
     event MessageSent(bytes32 messageId);
 
-    constructor(address router, address link) {
+    constructor(address router) {
         i_router = router;
-        i_link = link;
         i_maxTokensLength = 5;
-        LinkTokenInterface(i_link).approve(i_router, type(uint256).max);
     }
 
     receive() external payable {}
@@ -45,19 +37,16 @@ contract BasicTokenSender is Withdraw {
         address token,
         uint256 amount
     ) external payable {
-        IERC20(token).transferFrom(msg.sender, address(this), amount);
         Client.EVMTokenAmount[]
             memory tokensToSendDetails = new Client.EVMTokenAmount[](1);
         tokensToSendDetails[0] = Client.EVMTokenAmount({
             token: token,
             amount: amount
         });
-        PayFeesIn payFeesIn = PayFeesIn.Native;
         (, uint256 fee) = send(
             destinationChainSelector,
             receiver,
-            tokensToSendDetails,
-            payFeesIn
+            tokensToSendDetails
         );
         if (msg.value > fee) {
             uint256 feeReturn = msg.value - fee;
@@ -99,8 +88,7 @@ contract BasicTokenSender is Withdraw {
     function send(
         uint64 destinationChainSelector,
         address receiver,
-        Client.EVMTokenAmount[] memory tokensToSendDetails,
-        PayFeesIn payFeesIn
+        Client.EVMTokenAmount[] memory tokensToSendDetails
     ) public returns (bytes32, uint256) {
         uint256 length = tokensToSendDetails.length;
         require(
@@ -129,7 +117,7 @@ contract BasicTokenSender is Withdraw {
             data: "",
             tokenAmounts: tokensToSendDetails,
             extraArgs: "",
-            feeToken: payFeesIn == PayFeesIn.LINK ? i_link : address(0)
+            feeToken: address(0)
         });
 
         uint256 fee = IRouterClient(i_router).getFee(
@@ -139,18 +127,10 @@ contract BasicTokenSender is Withdraw {
 
         bytes32 messageId;
 
-        if (payFeesIn == PayFeesIn.LINK) {
-            // LinkTokenInterface(i_link).approve(i_router, fee);
-            messageId = IRouterClient(i_router).ccipSend(
-                destinationChainSelector,
-                message
-            );
-        } else {
-            messageId = IRouterClient(i_router).ccipSend{value: fee}(
-                destinationChainSelector,
-                message
-            );
-        }
+        messageId = IRouterClient(i_router).ccipSend{value: fee}(
+            destinationChainSelector,
+            message
+        );
 
         emit MessageSent(messageId);
         return (messageId, fee);

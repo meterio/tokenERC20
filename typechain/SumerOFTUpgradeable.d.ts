@@ -51,7 +51,7 @@ interface SumerOFTUpgradeableInterface extends ethers.utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(string,string,uint256,address)": FunctionFragment;
+    "initialize(string,string,uint256,address,address)": FunctionFragment;
     "isTrustedRemote(uint16,bytes)": FunctionFragment;
     "lzEndpoint()": FunctionFragment;
     "lzReceive(uint16,bytes,uint64,bytes)": FunctionFragment;
@@ -191,7 +191,7 @@ interface SumerOFTUpgradeableInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, BigNumberish, string]
+    values: [string, string, BigNumberish, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "isTrustedRemote",
@@ -914,14 +914,16 @@ export class SumerOFTUpgradeable extends Contract {
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "initialize(string,string,uint256,address)"(
+    "initialize(string,string,uint256,address,address)"(
       _name: string,
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -1625,14 +1627,16 @@ export class SumerOFTUpgradeable extends Contract {
     _symbol: string,
     _initialSupply: BigNumberish,
     _lzEndpoint: string,
+    admin: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "initialize(string,string,uint256,address)"(
+  "initialize(string,string,uint256,address,address)"(
     _name: string,
     _symbol: string,
     _initialSupply: BigNumberish,
     _lzEndpoint: string,
+    admin: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -2280,14 +2284,16 @@ export class SumerOFTUpgradeable extends Contract {
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(string,string,uint256,address)"(
+    "initialize(string,string,uint256,address,address)"(
       _name: string,
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2965,14 +2971,16 @@ export class SumerOFTUpgradeable extends Contract {
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "initialize(string,string,uint256,address)"(
+    "initialize(string,string,uint256,address,address)"(
       _name: string,
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -3595,14 +3603,16 @@ export class SumerOFTUpgradeable extends Contract {
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "initialize(string,string,uint256,address)"(
+    "initialize(string,string,uint256,address,address)"(
       _name: string,
       _symbol: string,
       _initialSupply: BigNumberish,
       _lzEndpoint: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

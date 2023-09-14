@@ -22,13 +22,15 @@ contract SumerOFTUpgradeable is
         string memory _name,
         string memory _symbol,
         uint256 _initialSupply,
-        address _lzEndpoint
+        address _lzEndpoint,
+        address admin
     ) public initializer {
         __ExampleOFTUpgradeable_init(
             _name,
             _symbol,
             _initialSupply,
-            _lzEndpoint
+            _lzEndpoint,
+            admin
         );
     }
 
@@ -36,9 +38,10 @@ contract SumerOFTUpgradeable is
         string memory _name,
         string memory _symbol,
         uint256 _initialSupply,
-        address _lzEndpoint
+        address _lzEndpoint,
+        address admin
     ) internal onlyInitializing {
-        __OFTUpgradeable_init(_name, _symbol, _lzEndpoint);
+        __OFTUpgradeable_init(_name, _symbol, _lzEndpoint, admin);
         __EIP712_init(_name, "v1.0");
         __ExampleOFTUpgradeable_init_unchained(
             _name,
