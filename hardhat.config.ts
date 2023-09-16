@@ -32,6 +32,7 @@ import {
   SumerOFTUpgradeable,
   SumerProxy,
   SumerProxyAdmin,
+  ITransparentUpgradeableProxy,
 } from "./typechain";
 
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
@@ -724,9 +725,9 @@ task("token-proxy", "deploy token proxy contract")
   );
 
 /* 
-npx hardhat deploy-pa --nonce 0 --network metermain
+npx hardhat deploy-pa --network metermain
 */
-task("deploy-pa", "deploy Exchange").setAction(
+task("deploy-pa", "deploy proxy admin").setAction(
   async ({}, { ethers, run, network }) => {
     await run("compile");
     const signers = await ethers.getSigners();
@@ -739,6 +740,26 @@ task("deploy-pa", "deploy Exchange").setAction(
     )) as SumerProxyAdmin;
   }
 );
+
+/* 
+npx hardhat change-pa --proxy 0x11111 --pa 0x222222 --network metermain
+*/
+task("change-pa", "change proxy admin")
+  .addParam("proxy", "proxy address")
+  .addParam("pa", "proxy admin")
+  .setAction(async ({ proxy, pa }, { ethers, run, network }) => {
+    await run("compile");
+    const signers = await ethers.getSigners();
+    const proxyContract = (await ethers.getContractAt(
+      "ITransparentUpgradeableProxy",
+      proxy,
+      signers[0]
+    )) as ITransparentUpgradeableProxy;
+
+    let receipt = await proxyContract.changeAdmin(pa);
+    await receipt.wait();
+    console.log("tx:", receipt.hash);
+  });
 
 export default {
   networks: {
