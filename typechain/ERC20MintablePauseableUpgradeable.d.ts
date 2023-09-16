@@ -547,7 +547,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -555,7 +555,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -913,7 +913,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     name: string,
     symbol: string,
     initialSupply: BigNumberish,
-    owner: string,
+    admin: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -921,7 +921,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     name: string,
     symbol: string,
     initialSupply: BigNumberish,
-    owner: string,
+    admin: string,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -1249,7 +1249,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1257,7 +1257,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1595,7 +1595,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1603,7 +1603,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -1919,7 +1919,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
@@ -1927,7 +1927,7 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       name: string,
       symbol: string,
       initialSupply: BigNumberish,
-      owner: string,
+      admin: string,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

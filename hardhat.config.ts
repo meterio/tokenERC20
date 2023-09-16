@@ -30,6 +30,7 @@ import {
   MeterMaker,
   Exchange,
   SumerOFTUpgradeable,
+  SumerProxy,
 } from "./typechain";
 
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
@@ -648,9 +649,9 @@ task("de", "deploy Exchange").setAction(
 );
 
 /* 
-npx hardhat oft-impl --nonce 0 --network metermain
+npx hardhat token-impl --nonce 0 --network metermain
 */
-task("oft-impl", "deploy oft impl contract")
+task("token-impl", "deploy token impl contract")
   .addParam("nonce", "nonce")
   .setAction(async ({ nonce }, { ethers, run, network }) => {
     await run("compile");
@@ -658,7 +659,7 @@ task("oft-impl", "deploy oft impl contract")
 
     const impl = (await deployContractOverrides(
       ethers,
-      "SumerOFTUpgradeable",
+      "ERC20MintablePauseableUpgradeable",
       network.name,
       signers[0],
       [],
@@ -669,44 +670,41 @@ task("oft-impl", "deploy oft impl contract")
     )) as SumerOFTUpgradeable;
   });
 /* 
-npx hardhat oft-proxy \
+npx hardhat token-proxy \
 --impl 0x99926d145D79567d2F07007e2095A3c1570e6D5e \
 --name ttt \
 --symbol ttt \
---supply 1000000000000000000000000 \
+--supply 0 \
 --pa 0x1381c573b97bf393a81fa42760dd21e109d8092b \
 --admin 0x1381c573b97bf393a81fa42760dd21e109d8092b \
---ep 0x3De2f3D1Ac59F18159ebCB422322Cb209BA96aAD \
 --nonce 1 \
 --network metermain
 */
-task("oft-proxy", "deploy oft contract")
+task("token-proxy", "deploy oft contract")
   .addParam("impl", "impl contract address")
   .addParam("name", "Token name")
   .addParam("symbol", "Token symbol")
   .addParam("supply", "Token initialSupply require decimal")
   .addParam("pa", "proxy admin")
   .addParam("admin", "contract admin")
-  .addParam("ep", "end point")
   .addParam("nonce", "nonce")
   .setAction(
     async (
-      { impl, name, symbol, supply, pa, admin, ep, nonce },
+      { impl, name, symbol, supply, pa, admin, nonce },
       { ethers, run, network }
     ) => {
       await run("compile");
       const signers = await ethers.getSigners();
 
       const implcontract = (await ethers.getContractAt(
-        "SumerOFTUpgradeable",
+        "ERC20MintablePauseableUpgradeable",
         impl
-      )) as SumerOFTUpgradeable;
+      )) as ERC20MintablePauseableUpgradeable;
 
       const data = implcontract.interface.encodeFunctionData("initialize", [
         name,
         symbol,
         supply,
-        ep,
         admin,
       ]);
 

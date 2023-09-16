@@ -24,13 +24,13 @@ contract ERC20MintablePauseableUpgradeable is
         string memory name,
         string memory symbol,
         uint256 initialSupply,
-        address owner
+        address admin
     ) public initializer {
         __ERC20_init(name, symbol);
         __EIP712_init("PermitToken", "1.0");
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        _setupRole(MINTER_ROLE, _msgSender());
-        _mint(owner, initialSupply);
+        _setupRole(DEFAULT_ADMIN_ROLE, admin);
+        _setupRole(MINTER_ROLE, admin);
+        _mint(admin, initialSupply);
     }
 
     modifier onlyAdmin() {
@@ -51,12 +51,9 @@ contract ERC20MintablePauseableUpgradeable is
         blackList[account] = !blackList[account];
     }
 
-    function getBlackList(address account)
-        public
-        view
-        onlyAdmin
-        returns (bool)
-    {
+    function getBlackList(
+        address account
+    ) public view onlyAdmin returns (bool) {
         return blackList[account];
     }
 
