@@ -31,6 +31,7 @@ import {
   Exchange,
   SumerOFTUpgradeable,
   SumerProxy,
+  SumerProxyAdmin,
 } from "./typechain";
 
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
@@ -680,7 +681,7 @@ npx hardhat token-proxy \
 --nonce 1 \
 --network metermain
 */
-task("token-proxy", "deploy oft contract")
+task("token-proxy", "deploy token proxy contract")
   .addParam("impl", "impl contract address")
   .addParam("name", "Token name")
   .addParam("symbol", "Token symbol")
@@ -721,6 +722,24 @@ task("token-proxy", "deploy oft contract")
       );
     }
   );
+
+/* 
+npx hardhat deploy-pa --nonce 0 --network metermain
+*/
+task("deploy-pa", "deploy Exchange").setAction(
+  async ({}, { ethers, run, network }) => {
+    await run("compile");
+    const signers = await ethers.getSigners();
+    const pa = (await deployContract(
+      ethers,
+      "SumerProxyAdmin",
+      network.name,
+      signers[0],
+      []
+    )) as SumerProxyAdmin;
+  }
+);
+
 export default {
   networks: {
     metertest: {
