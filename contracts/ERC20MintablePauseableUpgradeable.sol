@@ -12,6 +12,7 @@ contract ERC20MintablePauseableUpgradeable is
     EIP712Upgradeable,
     AccessControlEnumerableUpgradeable
 {
+    uint256 private _cap;
     address public implementation;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     mapping(address => bool) private blackList;
@@ -62,6 +63,12 @@ contract ERC20MintablePauseableUpgradeable is
             hasRole(MINTER_ROLE, _msgSender()),
             "ERC20PresetMinterPauser: must have minter role to mint"
         );
+        if (_cap > 0) {
+            require(
+                totalSupply() + amount <= _cap,
+                "ERC20Capped: cap exceeded"
+            );
+        }
         _mint(to, amount);
     }
 
@@ -97,5 +104,16 @@ contract ERC20MintablePauseableUpgradeable is
         address signer = ECDSAUpgradeable.recover(hash, signature);
         require(owner == signer, "Permit: invalid signature");
         _approve(owner, spender, value);
+    }
+
+    /**
+     * @dev Returns the cap on the token's total supply.
+     */
+    function cap() public view virtual returns (uint256) {
+        return _cap;
+    }
+
+    function setCap(uint256 cap_) external onlyAdmin {
+        _cap = cap_;
     }
 }

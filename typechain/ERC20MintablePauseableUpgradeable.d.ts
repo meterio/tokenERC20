@@ -31,6 +31,7 @@ interface ERC20MintablePauseableUpgradeableInterface
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
+    "cap()": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "eip712Domain()": FunctionFragment;
@@ -52,6 +53,7 @@ interface ERC20MintablePauseableUpgradeableInterface
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setBlackList(address)": FunctionFragment;
+    "setCap(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -86,6 +88,7 @@ interface ERC20MintablePauseableUpgradeableInterface
     functionFragment: "burnFrom",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "cap", values?: undefined): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
@@ -156,6 +159,10 @@ interface ERC20MintablePauseableUpgradeableInterface
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "setCap",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
@@ -191,6 +198,7 @@ interface ERC20MintablePauseableUpgradeableInterface
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "cap", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
@@ -242,6 +250,7 @@ interface ERC20MintablePauseableUpgradeableInterface
     functionFragment: "setBlackList",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setCap", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -382,6 +391,14 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    cap(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
+
+    "cap()"(overrides?: CallOverrides): Promise<{
+      0: BigNumber;
+    }>;
 
     decimals(overrides?: CallOverrides): Promise<{
       0: number;
@@ -657,6 +674,16 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    setCap(
+      cap_: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "setCap(uint256)"(
+      cap_: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
@@ -782,6 +809,10 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  cap(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "cap()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1008,6 +1039,16 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  setCap(
+    cap_: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "setCap(uint256)"(
+    cap_: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
@@ -1118,6 +1159,10 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    cap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "cap()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1341,6 +1386,13 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setCap(cap_: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    "setCap(uint256)"(
+      cap_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
@@ -1488,6 +1540,10 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    cap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "cap()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1687,6 +1743,13 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    setCap(cap_: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
+
+    "setCap(uint256)"(
+      cap_: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
@@ -1810,6 +1873,10 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    cap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "cap()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2014,6 +2081,16 @@ export class ERC20MintablePauseableUpgradeable extends Contract {
 
     "setBlackList(address)"(
       account: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    setCap(
+      cap_: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "setCap(uint256)"(
+      cap_: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
