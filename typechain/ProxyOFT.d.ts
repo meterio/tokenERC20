@@ -21,7 +21,7 @@ import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface OFTCoreUpgradeableInterface extends ethers.utils.Interface {
+interface ProxyOFTInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_PAYLOAD_SIZE_LIMIT()": FunctionFragment;
@@ -379,7 +379,7 @@ interface OFTCoreUpgradeableInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SetUseCustomAdapterParams"): EventFragment;
 }
 
-export class OFTCoreUpgradeable extends Contract {
+export class ProxyOFT extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -390,7 +390,7 @@ export class OFTCoreUpgradeable extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: OFTCoreUpgradeableInterface;
+  interface: ProxyOFTInterface;
 
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<{

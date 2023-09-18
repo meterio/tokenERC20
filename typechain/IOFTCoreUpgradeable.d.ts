@@ -24,7 +24,7 @@ interface IOFTCoreUpgradeableInterface extends ethers.utils.Interface {
   functions: {
     "circulatingSupply()": FunctionFragment;
     "estimateSendFee(uint16,bytes,uint256,bool,bytes)": FunctionFragment;
-    "sendFrom(address,uint16,bytes,uint256,address,address,bytes)": FunctionFragment;
+    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "token()": FunctionFragment;
   };
@@ -40,6 +40,7 @@ interface IOFTCoreUpgradeableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "sendFrom",
     values: [
+      string,
       string,
       BigNumberish,
       BytesLike,
@@ -72,7 +73,7 @@ interface IOFTCoreUpgradeableInterface extends ethers.utils.Interface {
 
   events: {
     "ReceiveFromChain(uint16,address,uint256)": EventFragment;
-    "SendToChain(uint16,address,bytes,uint256)": EventFragment;
+    "SendToChain(uint16,address,address,bytes,uint256)": EventFragment;
     "SetUseCustomAdapterParams(bool)": EventFragment;
   };
 
@@ -132,6 +133,7 @@ export class IOFTCoreUpgradeable extends Contract {
     }>;
 
     sendFrom(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,
@@ -142,7 +144,8 @@ export class IOFTCoreUpgradeable extends Contract {
       overrides?: PayableOverrides
     ): Promise<ContractTransaction>;
 
-    "sendFrom(address,uint16,bytes,uint256,address,address,bytes)"(
+    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,
@@ -209,6 +212,7 @@ export class IOFTCoreUpgradeable extends Contract {
   }>;
 
   sendFrom(
+    _token: string,
     _from: string,
     _dstChainId: BigNumberish,
     _toAddress: BytesLike,
@@ -219,7 +223,8 @@ export class IOFTCoreUpgradeable extends Contract {
     overrides?: PayableOverrides
   ): Promise<ContractTransaction>;
 
-  "sendFrom(address,uint16,bytes,uint256,address,address,bytes)"(
+  "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
+    _token: string,
     _from: string,
     _dstChainId: BigNumberish,
     _toAddress: BytesLike,
@@ -278,6 +283,7 @@ export class IOFTCoreUpgradeable extends Contract {
     }>;
 
     sendFrom(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,
@@ -288,7 +294,8 @@ export class IOFTCoreUpgradeable extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "sendFrom(address,uint16,bytes,uint256,address,address,bytes)"(
+    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,
@@ -323,6 +330,7 @@ export class IOFTCoreUpgradeable extends Contract {
 
     SendToChain(
       _dstChainId: BigNumberish | null,
+      _token: string | null,
       _from: string | null,
       _toAddress: null,
       _amount: null
@@ -355,6 +363,7 @@ export class IOFTCoreUpgradeable extends Contract {
     ): Promise<BigNumber>;
 
     sendFrom(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,
@@ -365,7 +374,8 @@ export class IOFTCoreUpgradeable extends Contract {
       overrides?: PayableOverrides
     ): Promise<BigNumber>;
 
-    "sendFrom(address,uint16,bytes,uint256,address,address,bytes)"(
+    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,
@@ -417,6 +427,7 @@ export class IOFTCoreUpgradeable extends Contract {
     ): Promise<PopulatedTransaction>;
 
     sendFrom(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,
@@ -427,7 +438,8 @@ export class IOFTCoreUpgradeable extends Contract {
       overrides?: PayableOverrides
     ): Promise<PopulatedTransaction>;
 
-    "sendFrom(address,uint16,bytes,uint256,address,address,bytes)"(
+    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
+      _token: string,
       _from: string,
       _dstChainId: BigNumberish,
       _toAddress: BytesLike,

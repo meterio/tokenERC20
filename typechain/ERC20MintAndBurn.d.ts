@@ -14,23 +14,19 @@ import {
   Contract,
   ContractTransaction,
   Overrides,
-  PayableOverrides,
   CallOverrides,
 } from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
-interface IOFTUpgradeableInterface extends ethers.utils.Interface {
+interface ERC20MintAndBurnInterface extends ethers.utils.Interface {
   functions: {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "circulatingSupply()": FunctionFragment;
-    "estimateSendFee(uint16,bytes,uint256,bool,bytes)": FunctionFragment;
-    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "token()": FunctionFragment;
+    "burnFrom(address,uint256)": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
@@ -46,31 +42,13 @@ interface IOFTUpgradeableInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "circulatingSupply",
-    values?: undefined
+    functionFragment: "burnFrom",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "estimateSendFee",
-    values: [BigNumberish, BytesLike, BigNumberish, boolean, BytesLike]
+    functionFragment: "mint",
+    values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "sendFrom",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BytesLike,
-      BigNumberish,
-      string,
-      string,
-      BytesLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
@@ -87,20 +65,8 @@ interface IOFTUpgradeableInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "circulatingSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "estimateSendFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "sendFrom", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -113,20 +79,14 @@ interface IOFTUpgradeableInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
-    "ReceiveFromChain(uint16,address,uint256)": EventFragment;
-    "SendToChain(uint16,address,address,bytes,uint256)": EventFragment;
-    "SetUseCustomAdapterParams(bool)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ReceiveFromChain"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SendToChain"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SetUseCustomAdapterParams"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
-export class IOFTUpgradeable extends Contract {
+export class ERC20MintAndBurn extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -137,7 +97,7 @@ export class IOFTUpgradeable extends Contract {
   removeAllListeners(eventName: EventFilter | string): this;
   removeListener(eventName: any, listener: Listener): this;
 
-  interface: IOFTUpgradeableInterface;
+  interface: ERC20MintAndBurnInterface;
 
   functions: {
     allowance(
@@ -182,87 +142,29 @@ export class IOFTUpgradeable extends Contract {
       0: BigNumber;
     }>;
 
-    circulatingSupply(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    "circulatingSupply()"(overrides?: CallOverrides): Promise<{
-      0: BigNumber;
-    }>;
-
-    estimateSendFee(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      nativeFee: BigNumber;
-      zroFee: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
-
-    "estimateSendFee(uint16,bytes,uint256,bool,bytes)"(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      nativeFee: BigNumber;
-      zroFee: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
-
-    sendFrom(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
-      overrides?: PayableOverrides
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
-      overrides?: PayableOverrides
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
+    mint(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
-    token(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
-
-    "token()"(overrides?: CallOverrides): Promise<{
-      0: string;
-    }>;
+    "mint(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<{
       0: BigNumber;
@@ -330,75 +232,29 @@ export class IOFTUpgradeable extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  circulatingSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "circulatingSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  estimateSendFee(
-    _dstChainId: BigNumberish,
-    _toAddress: BytesLike,
-    _amount: BigNumberish,
-    _useZro: boolean,
-    _adapterParams: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<{
-    nativeFee: BigNumber;
-    zroFee: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
-
-  "estimateSendFee(uint16,bytes,uint256,bool,bytes)"(
-    _dstChainId: BigNumberish,
-    _toAddress: BytesLike,
-    _amount: BigNumberish,
-    _useZro: boolean,
-    _adapterParams: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<{
-    nativeFee: BigNumber;
-    zroFee: BigNumber;
-    0: BigNumber;
-    1: BigNumber;
-  }>;
-
-  sendFrom(
-    _token: string,
-    _from: string,
-    _dstChainId: BigNumberish,
-    _toAddress: BytesLike,
-    _amount: BigNumberish,
-    _refundAddress: string,
-    _zroPaymentAddress: string,
-    _adapterParams: BytesLike,
-    overrides?: PayableOverrides
+  burnFrom(
+    account: string,
+    amount: BigNumberish,
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
-    _token: string,
-    _from: string,
-    _dstChainId: BigNumberish,
-    _toAddress: BytesLike,
-    _amount: BigNumberish,
-    _refundAddress: string,
-    _zroPaymentAddress: string,
-    _adapterParams: BytesLike,
-    overrides?: PayableOverrides
+  "burnFrom(address,uint256)"(
+    account: string,
+    amount: BigNumberish,
+    overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  mint(
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
-  "supportsInterface(bytes4)"(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  token(overrides?: CallOverrides): Promise<string>;
-
-  "token()"(overrides?: CallOverrides): Promise<string>;
+  "mint(address,uint256)"(
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -462,75 +318,29 @@ export class IOFTUpgradeable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    circulatingSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "circulatingSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    estimateSendFee(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      nativeFee: BigNumber;
-      zroFee: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
-
-    "estimateSendFee(uint16,bytes,uint256,bool,bytes)"(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      nativeFee: BigNumber;
-      zroFee: BigNumber;
-      0: BigNumber;
-      1: BigNumber;
-    }>;
-
-    sendFrom(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
+    mint(
+      to: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
+    "mint(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    token(overrides?: CallOverrides): Promise<string>;
-
-    "token()"(overrides?: CallOverrides): Promise<string>;
+    ): Promise<void>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -570,22 +380,6 @@ export class IOFTUpgradeable extends Contract {
       value: null
     ): EventFilter;
 
-    ReceiveFromChain(
-      _srcChainId: BigNumberish | null,
-      _to: string | null,
-      _amount: null
-    ): EventFilter;
-
-    SendToChain(
-      _dstChainId: BigNumberish | null,
-      _token: string | null,
-      _from: string | null,
-      _toAddress: null,
-      _amount: null
-    ): EventFilter;
-
-    SetUseCustomAdapterParams(_useCustomAdapterParams: null): EventFilter;
-
     Transfer(from: string | null, to: string | null, value: null): EventFilter;
   };
 
@@ -621,65 +415,29 @@ export class IOFTUpgradeable extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    circulatingSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "circulatingSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    estimateSendFee(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "estimateSendFee(uint16,bytes,uint256,bool,bytes)"(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    sendFrom(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
-      overrides?: PayableOverrides
+    mint(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
-      overrides?: PayableOverrides
+    "mint(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "token()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -747,67 +505,29 @@ export class IOFTUpgradeable extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    circulatingSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "circulatingSupply()"(
-      overrides?: CallOverrides
+    burnFrom(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    estimateSendFee(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
+    "burnFrom(address,uint256)"(
+      account: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "estimateSendFee(uint16,bytes,uint256,bool,bytes)"(
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _useZro: boolean,
-      _adapterParams: BytesLike,
-      overrides?: CallOverrides
+    mint(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    sendFrom(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
-      overrides?: PayableOverrides
+    "mint(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides
     ): Promise<PopulatedTransaction>;
-
-    "sendFrom(address,address,uint16,bytes,uint256,address,address,bytes)"(
-      _token: string,
-      _from: string,
-      _dstChainId: BigNumberish,
-      _toAddress: BytesLike,
-      _amount: BigNumberish,
-      _refundAddress: string,
-      _zroPaymentAddress: string,
-      _adapterParams: BytesLike,
-      overrides?: PayableOverrides
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "token()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

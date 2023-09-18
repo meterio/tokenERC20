@@ -50,6 +50,7 @@ abstract contract OFTCoreUpgradeable is
     }
 
     function sendFrom(
+        address _token,
         address _from,
         uint16 _dstChainId,
         bytes calldata _toAddress,
@@ -59,6 +60,7 @@ abstract contract OFTCoreUpgradeable is
         bytes calldata _adapterParams
     ) public payable virtual override {
         _send(
+            _token,
             _from,
             _dstChainId,
             _toAddress,
@@ -95,6 +97,7 @@ abstract contract OFTCoreUpgradeable is
     }
 
     function _send(
+        address _token,
         address _from,
         uint16 _dstChainId,
         bytes memory _toAddress,
@@ -105,9 +108,15 @@ abstract contract OFTCoreUpgradeable is
     ) internal virtual {
         _checkAdapterParams(_dstChainId, 0, _adapterParams, NO_EXTRA_GAS);
 
-        uint256 amount = _debitFrom(_from, _dstChainId, _toAddress, _amount);
+        uint256 amount = _debitFrom(
+            _token,
+            _from,
+            _dstChainId,
+            _toAddress,
+            _amount
+        );
 
-        bytes memory lzPayload = abi.encode(0, _toAddress, amount);
+        bytes memory lzPayload = abi.encode(0, _token, _toAddress, amount);
         _lzSend(
             _dstChainId,
             lzPayload,
@@ -117,7 +126,7 @@ abstract contract OFTCoreUpgradeable is
             msg.value
         );
 
-        emit SendToChain(_dstChainId, _from, _toAddress, amount);
+        emit SendToChain(_dstChainId, _token, _from, _toAddress, amount);
     }
 
     function _sendAck(
@@ -126,14 +135,12 @@ abstract contract OFTCoreUpgradeable is
         uint64,
         bytes memory _payload
     ) internal virtual {
-        (, bytes memory toAddressBytes, uint256 amount) = abi.decode(
-            _payload,
-            (uint16, bytes, uint256)
-        );
+        (, address token, bytes memory toAddressBytes, uint256 amount) = abi
+            .decode(_payload, (uint16, address, bytes, uint256));
 
         address to = toAddressBytes.toAddress(0);
 
-        amount = _creditTo(_srcChainId, to, amount);
+        amount = _creditTo(token, _srcChainId, to, amount);
         emit ReceiveFromChain(_srcChainId, to, amount);
     }
 
@@ -154,6 +161,7 @@ abstract contract OFTCoreUpgradeable is
     }
 
     function _debitFrom(
+        address _token,
         address _from,
         uint16 _dstChainId,
         bytes memory _toAddress,
@@ -161,6 +169,7 @@ abstract contract OFTCoreUpgradeable is
     ) internal virtual returns (uint256);
 
     function _creditTo(
+        address _token,
         uint16 _srcChainId,
         address _toAddress,
         uint256 _amount
