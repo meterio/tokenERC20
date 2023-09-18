@@ -17,7 +17,7 @@ contract ProxyOFT is OFTCoreUpgradeable {
     address public override token;
     uint256 public override circulatingSupply;
 
-    constructor(address _lzEndpoint, address admin) {
+    function initialize(address _lzEndpoint, address admin) public initializer {
         __OFTCoreUpgradeable_init(_lzEndpoint, admin);
     }
 
