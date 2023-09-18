@@ -97,7 +97,6 @@ export async function deployContractOverrides(
   const factory = await ethers.getContractFactory(name, {
     signer: signer,
   });
-  console.log(overrides);
   const contract = await factory.deploy(...args, overrides);
   console.log("Deploying:", name);
   console.log("  to", contract.address);

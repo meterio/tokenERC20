@@ -2,12 +2,8 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
-interface IWMTR {
-    function deposit() external payable;
-
-    function transfer(address dst, uint256 wad) external returns (bool);
-}
+import "./interfaces/IUniswapV2Pair.sol";
+import "./interfaces/IWMTR.sol";
 
 contract MeterMaker is Ownable {
     using SafeERC20 for IERC20;
@@ -18,12 +14,7 @@ contract MeterMaker is Ownable {
 
     event LogMTRGBought(uint256 mtrAmountIn, uint256 mtrgAmountOut);
 
-    constructor(
-        address _vault,
-        address _pair,
-        address wmtr,
-        address mtrg
-    ) {
+    constructor(address _vault, address _pair, address wmtr, address mtrg) {
         require(_pair != address(0), "pair is zero address");
         require(_vault != address(0), "vault is zero address");
         require(wmtr != address(0), "tokenIn is zero address");
@@ -58,10 +49,10 @@ contract MeterMaker is Ownable {
         IUniswapV2Pair(pair).swap(amount0Out, amount1Out, _to, new bytes(0));
     }
 
-    function _swapExactMTRForTokens(uint256 amountIn, address to)
-        private
-        returns (uint256 amountOut)
-    {
+    function _swapExactMTRForTokens(
+        uint256 amountIn,
+        address to
+    ) private returns (uint256 amountOut) {
         uint256[] memory amounts = UniswapV2Library.getAmountsOut(
             pair,
             amountIn,
@@ -79,30 +70,11 @@ contract MeterMaker is Ownable {
     }
 }
 
-interface IUniswapV2Pair {
-    function getReserves()
-        external
-        view
-        returns (
-            uint112 reserve0,
-            uint112 reserve1,
-            uint32 blockTimestampLast
-        );
-
-    function swap(
-        uint256 amount0Out,
-        uint256 amount1Out,
-        address to,
-        bytes calldata data
-    ) external;
-}
-
 library UniswapV2Library {
-    function sortTokens(address tokenA, address tokenB)
-        internal
-        pure
-        returns (address token0, address token1)
-    {
+    function sortTokens(
+        address tokenA,
+        address tokenB
+    ) internal pure returns (address token0, address token1) {
         require(tokenA != tokenB, "UniswapV2Library: IDENTICAL_ADDRESSES");
         (token0, token1) = tokenA < tokenB
             ? (tokenA, tokenB)

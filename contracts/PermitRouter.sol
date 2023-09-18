@@ -1,22 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "./interfaces/IUniswapV2Pair.sol";
+import "./interfaces/IWMTR.sol";
+import "./interfaces/IEIP712.sol";
 
-interface IWMTR {
-    function withdraw(uint256 wad) external;
-}
-
-interface IEIP712 {
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        bytes memory signature
-    ) external;
-}
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PermitRouter is Ownable {
@@ -45,12 +35,7 @@ contract PermitRouter is Ownable {
         require(msg.sender == address(wmtr), "Router: NOT_WMTR");
     }
 
-    constructor(
-        address _pair,
-        address _token0,
-        address _token1,
-        uint256 _fee
-    ) {
+    constructor(address _pair, address _token0, address _token1, uint256 _fee) {
         require(_pair != address(0), "pair is zero address");
         require(_token0 != address(0), "token0 is zero address");
         require(_token1 != address(0), "token1 is zero address");
@@ -135,20 +120,16 @@ contract PermitRouter is Ownable {
         emit GaslessSwap(owner, amounts[0], amounts[1], deadline, signature);
     }
 
-    function getAmountsOut(uint256 amountIn)
-        external
-        view
-        returns (uint256[] memory amounts)
-    {
+    function getAmountsOut(
+        uint256 amountIn
+    ) external view returns (uint256[] memory amounts) {
         amounts = UniswapV2Library.getAmountsOut(pair, amountIn, path);
     }
 
     // performs chained getAmountIn calculations on any number of pairs
-    function getAmountsIn(uint256 amountOut)
-        external
-        view
-        returns (uint256[] memory amounts)
-    {
+    function getAmountsIn(
+        uint256 amountOut
+    ) external view returns (uint256[] memory amounts) {
         amounts = UniswapV2Library.getAmountsIn(pair, amountOut, path);
     }
 
@@ -158,30 +139,11 @@ contract PermitRouter is Ownable {
     }
 }
 
-interface IUniswapV2Pair {
-    function getReserves()
-        external
-        view
-        returns (
-            uint112 reserve0,
-            uint112 reserve1,
-            uint32 blockTimestampLast
-        );
-
-    function swap(
-        uint256 amount0Out,
-        uint256 amount1Out,
-        address to,
-        bytes calldata data
-    ) external;
-}
-
 library UniswapV2Library {
-    function sortTokens(address tokenA, address tokenB)
-        internal
-        pure
-        returns (address token0, address token1)
-    {
+    function sortTokens(
+        address tokenA,
+        address tokenB
+    ) internal pure returns (address token0, address token1) {
         require(tokenA != tokenB, "UniswapV2Library: IDENTICAL_ADDRESSES");
         (token0, token1) = tokenA < tokenB
             ? (tokenA, tokenB)

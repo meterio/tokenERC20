@@ -18,6 +18,30 @@ export class IUniswapV2Pair__factory {
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amountIn",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "tokenIn",
+        type: "address",
+      },
+    ],
+    name: "getAmountOut",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getReserves",
     outputs: [
@@ -38,6 +62,62 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "metadata",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "dec0",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "dec1",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "r0",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "r1",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "st",
+        type: "bool",
+      },
+      {
+        internalType: "address",
+        name: "t0",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "t1",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+    ],
+    name: "skim",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -66,6 +146,32 @@ const _abi = [
     name: "swap",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "token0",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "token1",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

@@ -466,7 +466,7 @@ interface IRouter {
     ) external returns (uint256[] memory amounts);
 }
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 
 interface IToken is IERC20, IERC20Permit {}

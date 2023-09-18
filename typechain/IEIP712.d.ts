@@ -50,7 +50,7 @@ export class IEIP712 extends Contract {
 
   functions: {
     permit(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
@@ -59,7 +59,7 @@ export class IEIP712 extends Contract {
     ): Promise<ContractTransaction>;
 
     "permit(address,address,uint256,uint256,bytes)"(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
@@ -69,7 +69,7 @@ export class IEIP712 extends Contract {
   };
 
   permit(
-    _owner: string,
+    owner: string,
     spender: string,
     value: BigNumberish,
     deadline: BigNumberish,
@@ -78,7 +78,7 @@ export class IEIP712 extends Contract {
   ): Promise<ContractTransaction>;
 
   "permit(address,address,uint256,uint256,bytes)"(
-    _owner: string,
+    owner: string,
     spender: string,
     value: BigNumberish,
     deadline: BigNumberish,
@@ -88,7 +88,7 @@ export class IEIP712 extends Contract {
 
   callStatic: {
     permit(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
@@ -97,7 +97,7 @@ export class IEIP712 extends Contract {
     ): Promise<void>;
 
     "permit(address,address,uint256,uint256,bytes)"(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
@@ -110,7 +110,7 @@ export class IEIP712 extends Contract {
 
   estimateGas: {
     permit(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
@@ -119,7 +119,7 @@ export class IEIP712 extends Contract {
     ): Promise<BigNumber>;
 
     "permit(address,address,uint256,uint256,bytes)"(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
@@ -130,7 +130,7 @@ export class IEIP712 extends Contract {
 
   populateTransaction: {
     permit(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
@@ -139,7 +139,7 @@ export class IEIP712 extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "permit(address,address,uint256,uint256,bytes)"(
-      _owner: string,
+      owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,

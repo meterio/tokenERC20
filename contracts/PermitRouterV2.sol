@@ -1,64 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
-interface IWMTR {
-    function withdraw(uint256 wad) external;
-}
-
-interface Pair {
-    function swap(
-        uint256 amount0Out,
-        uint256 amount1Out,
-        address to,
-        bytes calldata data
-    ) external;
-
-    function token0() external view returns (address);
-
-    function token1() external view returns (address);
-
-    function getAmountOut(uint256 amountIn, address tokenIn)
-        external
-        view
-        returns (uint256);
-
-    function skim(address to) external;
-
-    function metadata()
-        external
-        view
-        returns (
-            uint256 dec0,
-            uint256 dec1,
-            uint256 r0,
-            uint256 r1,
-            bool st,
-            address t0,
-            address t1
-        );
-
-    function getReserves()
-        external
-        view
-        returns (
-            uint112 reserve0,
-            uint112 reserve1,
-            uint32 blockTimestampLast
-        );
-}
-
-interface IEIP712 {
-    function permit(
-        address _owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        bytes memory signature
-    ) external;
-}
+import "./interfaces/IEIP712.sol";
+import "./interfaces/IWMTR.sol";
+import "./interfaces/IUniswapV2Pair.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PermitRouterV2 is Ownable {
@@ -123,9 +70,9 @@ contract PermitRouterV2 is Ownable {
         address currentToken = tokenIn;
         for (uint256 i = 0; i < path.length; ++i) {
             address _pair = path[i];
-            address token0 = Pair(_pair).token0();
-            address token1 = Pair(_pair).token1();
-            uint256 amountOut = Pair(_pair).getAmountOut(
+            address token0 = IUniswapV2Pair(_pair).token0();
+            address token1 = IUniswapV2Pair(_pair).token1();
+            uint256 amountOut = IUniswapV2Pair(_pair).getAmountOut(
                 amounts[i],
                 currentToken
             );
@@ -133,7 +80,7 @@ contract PermitRouterV2 is Ownable {
                 ? (uint256(0), amountOut)
                 : (amountOut, uint256(0));
             address to = i == path.length - 1 ? address(this) : path[i + 1];
-            Pair(_pair).swap(amountOut0, amountOut1, to, new bytes(0));
+            IUniswapV2Pair(_pair).swap(amountOut0, amountOut1, to, new bytes(0));
             amounts[i + 1] = amountOut;
             currentToken = currentToken == token0 ? token1 : token0;
         }
@@ -145,19 +92,17 @@ contract PermitRouterV2 is Ownable {
         _handleFee(balance, _owner);
     }
 
-    function getAmountsOut(uint256 amountIn)
-        external
-        view
-        returns (uint256[] memory)
-    {
+    function getAmountsOut(
+        uint256 amountIn
+    ) external view returns (uint256[] memory) {
         uint256[] memory amounts = new uint256[](path.length + 1);
         amounts[0] = amountIn;
         address currentToken = tokenIn;
         for (uint256 i = 0; i < path.length; ++i) {
             address _pair = path[i];
-            address token0 = Pair(_pair).token0();
-            address token1 = Pair(_pair).token1();
-            uint256 amountOut = Pair(_pair).getAmountOut(
+            address token0 = IUniswapV2Pair(_pair).token0();
+            address token1 = IUniswapV2Pair(_pair).token1();
+            uint256 amountOut = IUniswapV2Pair(_pair).getAmountOut(
                 amounts[i],
                 currentToken
             );

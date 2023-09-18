@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 
-contract ERC20MintablePauseable is
+contract MeterERC20MintablePauseable is
     EIP712,
     ERC20Burnable,
     ERC20Pausable,

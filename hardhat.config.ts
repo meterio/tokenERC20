@@ -29,10 +29,9 @@ import {
   SimpleERC20,
   MeterMaker,
   Exchange,
-  SumerOFTUpgradeable,
   SumerProxy,
   SumerProxyAdmin,
-  ITransparentUpgradeableProxy,
+  ITransparentUpgradeableProxy
 } from "./typechain";
 
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
@@ -669,7 +668,7 @@ task("token-impl", "deploy token impl contract")
         gasLimit: 8000000,
         nonce: nonce,
       }
-    )) as SumerOFTUpgradeable;
+    )) ;
   });
 /* 
 npx hardhat token-proxy \
@@ -761,6 +760,68 @@ task("change-pa", "change proxy admin")
     console.log("tx:", receipt.hash);
   });
 
+// /* 
+// npx hardhat oft-proxy \
+// --lz 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+// --pa 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+// --admin 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+// --network metermain
+// */
+// task("oft-proxy", "deploy token proxy contract")
+//   .addParam("lz", "lz endpoint")
+//   .addParam("pa", "proxy admin")
+//   .addParam("admin", "contract admin")
+//   .setAction(async ({ lz, pa, admin }, { ethers, run, network }) => {
+//     await run("compile");
+//     const signers = await ethers.getSigners();
+
+//     const impl = (await deployContractOverrides(
+//       ethers,
+//       "ProxyOFT",
+//       network.name,
+//       signers[0],
+//       [],
+//       {
+//         gasLimit: 3000000,
+//       }
+//     )) as ProxyOFT;
+
+//     const data = impl.interface.encodeFunctionData("initialize", [lz, admin]);
+
+//     console.log("data:", data);
+//     const proxy = await deployContractOverrides(
+//       ethers,
+//       "SumerProxy",
+//       network.name,
+//       signers[0],
+//       [impl.address, pa, data],
+//       {
+//         gasLimit: 8000000,
+//       }
+//     );
+//   });
+
+// /* 
+// npx hardhat oft-proxy-data \
+// --lz 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+// --pa 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+// --admin 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+// --network metermain
+// */
+// task("oft-proxy-data", "deploy token proxy contract")
+//   .addParam("lz", "lz endpoint")
+//   .addParam("pa", "proxy admin")
+//   .addParam("admin", "contract admin")
+//   .setAction(async ({ lz, pa, admin }, { ethers, run, network }) => {
+//     await run("compile");
+//     const signers = await ethers.getSigners();
+
+//     const impl = new ProxyOFT__factory();
+
+//     const data = impl.interface.encodeFunctionData("initialize", [lz, admin]);
+
+//     console.log("data:", data);
+//   });
 export default {
   networks: {
     metertest: {
@@ -782,6 +843,11 @@ export default {
       accounts: {
         mnemonic: process.env.MNEMONIC,
       },
+    },
+    basetest: {
+      url: `https://goerli.base.org`,
+      chainId: 84531,
+      accounts: [process.env.METER_TEST_PRIVKEY],
     },
     ganache: {
       url: `http:127.0.0.1:7545`,

@@ -14,6 +14,7 @@ import {
   Contract,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   CallOverrides,
 } from "@ethersproject/contracts";
 import { BytesLike } from "@ethersproject/bytes";
@@ -22,14 +23,23 @@ import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 
 interface IWMTRInterface extends ethers.utils.Interface {
   functions: {
+    "deposit()": FunctionFragment;
+    "transfer(address,uint256)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "deposit", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transfer",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {};
@@ -49,6 +59,22 @@ export class IWMTR extends Contract {
   interface: IWMTRInterface;
 
   functions: {
+    deposit(overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+    "deposit()"(overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+    transfer(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "transfer(address,uint256)"(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     withdraw(
       wad: BigNumberish,
       overrides?: Overrides
@@ -59,6 +85,22 @@ export class IWMTR extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
+
+  deposit(overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+  "deposit()"(overrides?: PayableOverrides): Promise<ContractTransaction>;
+
+  transfer(
+    dst: string,
+    wad: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "transfer(address,uint256)"(
+    dst: string,
+    wad: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   withdraw(
     wad: BigNumberish,
@@ -71,6 +113,22 @@ export class IWMTR extends Contract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    deposit(overrides?: CallOverrides): Promise<void>;
+
+    "deposit()"(overrides?: CallOverrides): Promise<void>;
+
+    transfer(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "transfer(address,uint256)"(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     withdraw(wad: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     "withdraw(uint256)"(
@@ -82,6 +140,22 @@ export class IWMTR extends Contract {
   filters: {};
 
   estimateGas: {
+    deposit(overrides?: PayableOverrides): Promise<BigNumber>;
+
+    "deposit()"(overrides?: PayableOverrides): Promise<BigNumber>;
+
+    transfer(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "transfer(address,uint256)"(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     withdraw(wad: BigNumberish, overrides?: Overrides): Promise<BigNumber>;
 
     "withdraw(uint256)"(
@@ -91,6 +165,22 @@ export class IWMTR extends Contract {
   };
 
   populateTransaction: {
+    deposit(overrides?: PayableOverrides): Promise<PopulatedTransaction>;
+
+    "deposit()"(overrides?: PayableOverrides): Promise<PopulatedTransaction>;
+
+    transfer(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "transfer(address,uint256)"(
+      dst: string,
+      wad: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
     withdraw(
       wad: BigNumberish,
       overrides?: Overrides
