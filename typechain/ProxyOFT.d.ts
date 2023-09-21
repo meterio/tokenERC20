@@ -27,10 +27,12 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     "DEFAULT_PAYLOAD_SIZE_LIMIT()": FunctionFragment;
     "FUNCTION_TYPE_SEND()": FunctionFragment;
     "NO_EXTRA_GAS()": FunctionFragment;
+    "addTokenMapping(uint16,address,address)": FunctionFragment;
     "circulatingSupply()": FunctionFragment;
     "estimateSendFee(address,uint16,bytes,uint256)": FunctionFragment;
     "failedMessages(uint16,bytes,uint64)": FunctionFragment;
     "forceResumeReceive(uint16,bytes)": FunctionFragment;
+    "getAllLane()": FunctionFragment;
     "getConfig(uint16,uint16,address,uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
@@ -40,6 +42,7 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     "hasRole(bytes32,address)": FunctionFragment;
     "initialize(address,address)": FunctionFragment;
     "isTrustedRemote(uint16,bytes)": FunctionFragment;
+    "laneExist(uint16,address)": FunctionFragment;
     "lzEndpoint()": FunctionFragment;
     "lzReceive(uint16,bytes,uint64,bytes)": FunctionFragment;
     "minDstGasLookup(uint16,uint256)": FunctionFragment;
@@ -47,6 +50,7 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "precrime()": FunctionFragment;
+    "removeTokenMapping(uint16,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "retryMessage(uint16,bytes,uint64,bytes)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -56,7 +60,6 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     "setPrecrime(address)": FunctionFragment;
     "setReceiveVersion(uint16)": FunctionFragment;
     "setSendVersion(uint16)": FunctionFragment;
-    "setTokenMapping(uint16,address,address)": FunctionFragment;
     "setTrustedRemote(uint16,bytes)": FunctionFragment;
     "setTrustedRemoteAddress(uint16,bytes)": FunctionFragment;
     "setUseCustomAdapterParams(bool)": FunctionFragment;
@@ -65,6 +68,7 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     "tokenMapping(uint16,address)": FunctionFragment;
     "trustedRemoteLookup(uint16)": FunctionFragment;
     "unPause()": FunctionFragment;
+    "updateTokenMapping(uint16,address,address)": FunctionFragment;
     "useCustomAdapterParams()": FunctionFragment;
   };
 
@@ -85,6 +89,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "addTokenMapping",
+    values: [BigNumberish, string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "circulatingSupply",
     values?: undefined
   ): string;
@@ -99,6 +107,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "forceResumeReceive",
     values: [BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllLane",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getConfig",
@@ -137,6 +149,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     values: [BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "laneExist",
+    values: [BigNumberish, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "lzEndpoint",
     values?: undefined
   ): string;
@@ -155,6 +171,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "precrime", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "removeTokenMapping",
+    values: [BigNumberish, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
@@ -189,10 +209,6 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setTokenMapping",
-    values: [BigNumberish, string, string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setTrustedRemote",
     values: [BigNumberish, BytesLike]
   ): string;
@@ -219,6 +235,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "unPause", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "updateTokenMapping",
+    values: [BigNumberish, string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "useCustomAdapterParams",
     values?: undefined
   ): string;
@@ -240,6 +260,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "addTokenMapping",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "circulatingSupply",
     data: BytesLike
   ): Result;
@@ -255,6 +279,7 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     functionFragment: "forceResumeReceive",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getAllLane", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getConfig", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
@@ -279,6 +304,7 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     functionFragment: "isTrustedRemote",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "laneExist", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lzEndpoint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "lzReceive", data: BytesLike): Result;
   decodeFunctionResult(
@@ -292,6 +318,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "precrime", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeTokenMapping",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -320,10 +350,6 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setTokenMapping",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setTrustedRemote",
     data: BytesLike
   ): Result;
@@ -349,6 +375,10 @@ interface ProxyOFTInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unPause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateTokenMapping",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "useCustomAdapterParams",
     data: BytesLike
@@ -431,6 +461,20 @@ export class ProxyOFT extends Contract {
       0: BigNumber;
     }>;
 
+    addTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "addTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     circulatingSupply(overrides?: CallOverrides): Promise<{
       0: BigNumber;
     }>;
@@ -494,6 +538,28 @@ export class ProxyOFT extends Contract {
       _srcAddress: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    getAllLane(overrides?: CallOverrides): Promise<{
+      0: {
+        srcChainId: number;
+        srcToken: string;
+        dstToken: string;
+        0: number;
+        1: string;
+        2: string;
+      }[];
+    }>;
+
+    "getAllLane()"(overrides?: CallOverrides): Promise<{
+      0: {
+        srcChainId: number;
+        srcToken: string;
+        dstToken: string;
+        0: number;
+        1: string;
+        2: string;
+      }[];
+    }>;
 
     getConfig(
       _version: BigNumberish,
@@ -629,6 +695,22 @@ export class ProxyOFT extends Contract {
       0: boolean;
     }>;
 
+    laneExist(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
+
+    "laneExist(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: boolean;
+    }>;
+
     lzEndpoint(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
@@ -704,6 +786,18 @@ export class ProxyOFT extends Contract {
     "precrime()"(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
+
+    removeTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "removeTokenMapping(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     renounceRole(
       role: BytesLike,
@@ -821,20 +915,6 @@ export class ProxyOFT extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    setTokenMapping(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "setTokenMapping(uint16,address,address)"(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
     setTrustedRemote(
       _srcChainId: BigNumberish,
       _path: BytesLike,
@@ -892,19 +972,33 @@ export class ProxyOFT extends Contract {
     }>;
 
     tokenMapping(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: string;
+      0: {
+        srcChainId: number;
+        srcToken: string;
+        dstToken: string;
+        0: number;
+        1: string;
+        2: string;
+      };
     }>;
 
     "tokenMapping(uint16,address)"(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
     ): Promise<{
-      0: string;
+      0: {
+        srcChainId: number;
+        srcToken: string;
+        dstToken: string;
+        0: number;
+        1: string;
+        2: string;
+      };
     }>;
 
     trustedRemoteLookup(
@@ -924,6 +1018,20 @@ export class ProxyOFT extends Contract {
     unPause(overrides?: Overrides): Promise<ContractTransaction>;
 
     "unPause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+    updateTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "updateTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
 
     useCustomAdapterParams(overrides?: CallOverrides): Promise<{
       0: boolean;
@@ -949,6 +1057,20 @@ export class ProxyOFT extends Contract {
   NO_EXTRA_GAS(overrides?: CallOverrides): Promise<BigNumber>;
 
   "NO_EXTRA_GAS()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  addTokenMapping(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    dstToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "addTokenMapping(uint16,address,address)"(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    dstToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   circulatingSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1005,6 +1127,32 @@ export class ProxyOFT extends Contract {
     _srcAddress: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  getAllLane(
+    overrides?: CallOverrides
+  ): Promise<
+    {
+      srcChainId: number;
+      srcToken: string;
+      dstToken: string;
+      0: number;
+      1: string;
+      2: string;
+    }[]
+  >;
+
+  "getAllLane()"(
+    overrides?: CallOverrides
+  ): Promise<
+    {
+      srcChainId: number;
+      srcToken: string;
+      dstToken: string;
+      0: number;
+      1: string;
+      2: string;
+    }[]
+  >;
 
   getConfig(
     _version: BigNumberish,
@@ -1109,6 +1257,18 @@ export class ProxyOFT extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  laneExist(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "laneExist(uint16,address)"(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   lzEndpoint(overrides?: CallOverrides): Promise<string>;
 
   "lzEndpoint()"(overrides?: CallOverrides): Promise<string>;
@@ -1168,6 +1328,18 @@ export class ProxyOFT extends Contract {
   precrime(overrides?: CallOverrides): Promise<string>;
 
   "precrime()"(overrides?: CallOverrides): Promise<string>;
+
+  removeTokenMapping(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "removeTokenMapping(uint16,address)"(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   renounceRole(
     role: BytesLike,
@@ -1285,20 +1457,6 @@ export class ProxyOFT extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  setTokenMapping(
-    srcChainId: BigNumberish,
-    srcToken: string,
-    dstToken: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "setTokenMapping(uint16,address,address)"(
-    srcChainId: BigNumberish,
-    srcToken: string,
-    dstToken: string,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   setTrustedRemote(
     _srcChainId: BigNumberish,
     _path: BytesLike,
@@ -1348,16 +1506,30 @@ export class ProxyOFT extends Contract {
   "token()"(overrides?: CallOverrides): Promise<string>;
 
   tokenMapping(
-    arg0: BigNumberish,
-    arg1: string,
+    srcChainId: BigNumberish,
+    srcToken: string,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<{
+    srcChainId: number;
+    srcToken: string;
+    dstToken: string;
+    0: number;
+    1: string;
+    2: string;
+  }>;
 
   "tokenMapping(uint16,address)"(
-    arg0: BigNumberish,
-    arg1: string,
+    srcChainId: BigNumberish,
+    srcToken: string,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<{
+    srcChainId: number;
+    srcToken: string;
+    dstToken: string;
+    0: number;
+    1: string;
+    2: string;
+  }>;
 
   trustedRemoteLookup(
     arg0: BigNumberish,
@@ -1372,6 +1544,20 @@ export class ProxyOFT extends Contract {
   unPause(overrides?: Overrides): Promise<ContractTransaction>;
 
   "unPause()"(overrides?: Overrides): Promise<ContractTransaction>;
+
+  updateTokenMapping(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    dstToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "updateTokenMapping(uint16,address,address)"(
+    srcChainId: BigNumberish,
+    srcToken: string,
+    dstToken: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   useCustomAdapterParams(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1395,6 +1581,20 @@ export class ProxyOFT extends Contract {
     NO_EXTRA_GAS(overrides?: CallOverrides): Promise<BigNumber>;
 
     "NO_EXTRA_GAS()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "addTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     circulatingSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1451,6 +1651,32 @@ export class ProxyOFT extends Contract {
       _srcAddress: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getAllLane(
+      overrides?: CallOverrides
+    ): Promise<
+      {
+        srcChainId: number;
+        srcToken: string;
+        dstToken: string;
+        0: number;
+        1: string;
+        2: string;
+      }[]
+    >;
+
+    "getAllLane()"(
+      overrides?: CallOverrides
+    ): Promise<
+      {
+        srcChainId: number;
+        srcToken: string;
+        dstToken: string;
+        0: number;
+        1: string;
+        2: string;
+      }[]
+    >;
 
     getConfig(
       _version: BigNumberish,
@@ -1555,6 +1781,18 @@ export class ProxyOFT extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    laneExist(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "laneExist(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     lzEndpoint(overrides?: CallOverrides): Promise<string>;
 
     "lzEndpoint()"(overrides?: CallOverrides): Promise<string>;
@@ -1614,6 +1852,18 @@ export class ProxyOFT extends Contract {
     precrime(overrides?: CallOverrides): Promise<string>;
 
     "precrime()"(overrides?: CallOverrides): Promise<string>;
+
+    removeTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "removeTokenMapping(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceRole(
       role: BytesLike,
@@ -1728,20 +1978,6 @@ export class ProxyOFT extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setTokenMapping(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setTokenMapping(uint16,address,address)"(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setTrustedRemote(
       _srcChainId: BigNumberish,
       _path: BytesLike,
@@ -1791,16 +2027,30 @@ export class ProxyOFT extends Contract {
     "token()"(overrides?: CallOverrides): Promise<string>;
 
     tokenMapping(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<{
+      srcChainId: number;
+      srcToken: string;
+      dstToken: string;
+      0: number;
+      1: string;
+      2: string;
+    }>;
 
     "tokenMapping(uint16,address)"(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<{
+      srcChainId: number;
+      srcToken: string;
+      dstToken: string;
+      0: number;
+      1: string;
+      2: string;
+    }>;
 
     trustedRemoteLookup(
       arg0: BigNumberish,
@@ -1815,6 +2065,20 @@ export class ProxyOFT extends Contract {
     unPause(overrides?: CallOverrides): Promise<void>;
 
     "unPause()"(overrides?: CallOverrides): Promise<void>;
+
+    updateTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "updateTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     useCustomAdapterParams(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1903,6 +2167,20 @@ export class ProxyOFT extends Contract {
 
     "NO_EXTRA_GAS()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    addTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "addTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
     circulatingSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     "circulatingSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1948,6 +2226,10 @@ export class ProxyOFT extends Contract {
       _srcAddress: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    getAllLane(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getAllLane()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getConfig(
       _version: BigNumberish,
@@ -2055,6 +2337,18 @@ export class ProxyOFT extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    laneExist(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "laneExist(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     lzEndpoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     "lzEndpoint()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2114,6 +2408,18 @@ export class ProxyOFT extends Contract {
     precrime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "precrime()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    removeTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "removeTokenMapping(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     renounceRole(
       role: BytesLike,
@@ -2228,20 +2534,6 @@ export class ProxyOFT extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    setTokenMapping(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "setTokenMapping(uint16,address,address)"(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     setTrustedRemote(
       _srcChainId: BigNumberish,
       _path: BytesLike,
@@ -2291,14 +2583,14 @@ export class ProxyOFT extends Contract {
     "token()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokenMapping(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "tokenMapping(uint16,address)"(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2315,6 +2607,20 @@ export class ProxyOFT extends Contract {
     unPause(overrides?: Overrides): Promise<BigNumber>;
 
     "unPause()"(overrides?: Overrides): Promise<BigNumber>;
+
+    updateTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "updateTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     useCustomAdapterParams(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2349,6 +2655,20 @@ export class ProxyOFT extends Contract {
     NO_EXTRA_GAS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "NO_EXTRA_GAS()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    addTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "addTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     circulatingSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2397,6 +2717,10 @@ export class ProxyOFT extends Contract {
       _srcAddress: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    getAllLane(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getAllLane()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getConfig(
       _version: BigNumberish,
@@ -2504,6 +2828,18 @@ export class ProxyOFT extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    laneExist(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "laneExist(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     lzEndpoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "lzEndpoint()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2563,6 +2899,18 @@ export class ProxyOFT extends Contract {
     precrime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "precrime()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    removeTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "removeTokenMapping(uint16,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     renounceRole(
       role: BytesLike,
@@ -2680,20 +3028,6 @@ export class ProxyOFT extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    setTokenMapping(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "setTokenMapping(uint16,address,address)"(
-      srcChainId: BigNumberish,
-      srcToken: string,
-      dstToken: string,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     setTrustedRemote(
       _srcChainId: BigNumberish,
       _path: BytesLike,
@@ -2743,14 +3077,14 @@ export class ProxyOFT extends Contract {
     "token()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokenMapping(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "tokenMapping(uint16,address)"(
-      arg0: BigNumberish,
-      arg1: string,
+      srcChainId: BigNumberish,
+      srcToken: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2767,6 +3101,20 @@ export class ProxyOFT extends Contract {
     unPause(overrides?: Overrides): Promise<PopulatedTransaction>;
 
     "unPause()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    updateTokenMapping(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "updateTokenMapping(uint16,address,address)"(
+      srcChainId: BigNumberish,
+      srcToken: string,
+      dstToken: string,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     useCustomAdapterParams(
       overrides?: CallOverrides

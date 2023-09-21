@@ -105,9 +105,17 @@ export default {
       gasPrice: 500000000000,
       accounts: [process.env.MAINNET_CONTRACT_ADMIN_PRIVKEY],
     },
-    theta: {
-      url: `https://eth-rpc-api.thetatoken.org/rpc`,
-      chainId: 361,
+    sepolia: {
+      url: "https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      chainId: 11155111,
+      gasPrice: 4000000000000,
+      accounts: {
+        mnemonic: process.env.MNEMONIC,
+      },
+    },
+    ethereum: {
+      url: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // public infura endpoint
+      chainId: 1,
       gasPrice: 4000000000000,
       accounts: {
         mnemonic: process.env.MNEMONIC,
@@ -118,9 +126,14 @@ export default {
       chainId: 84531,
       accounts: [process.env.METER_TEST_PRIVKEY],
     },
-    ganache: {
-      url: `http:127.0.0.1:7545`,
-      chainId: 1337,
+    basemain: {
+      url: `https://base.publicnode.com`,
+      chainId: 8453,
+      accounts: [process.env.METER_TEST_PRIVKEY],
+    },
+    abitrum: {
+      url: `https://arb1.arbitrum.io/rpc`,
+      chainId: 42161,
       accounts: {
         mnemonic: process.env.MNEMONIC,
       },

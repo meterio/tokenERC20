@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 
 import "./OFTCoreUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
 
 interface ERC20MintAndBurn is IERC20 {
     function burnFrom(address account, uint256 amount) external;
@@ -13,25 +14,95 @@ interface ERC20MintAndBurn is IERC20 {
 
 contract ProxyOFT is OFTCoreUpgradeable {
     using SafeERC20 for ERC20MintAndBurn;
+    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.Bytes32Set;
+
+    struct LaneDetail {
+        uint16 srcChainId;
+        address srcToken;
+        address dstToken;
+    }
 
     address public override token;
     uint256 public override circulatingSupply;
     bool public paused;
 
-    mapping(uint16 => mapping(address => address)) public tokenMapping;
+    EnumerableSetUpgradeable.Bytes32Set private _laneHash;
+    mapping(bytes32 => LaneDetail) private _laneDetail;
 
     function initialize(address _lzEndpoint, address admin) public initializer {
         __OFTCoreUpgradeable_init(_lzEndpoint, admin);
     }
 
-    function setTokenMapping(
+    function addTokenMapping(
         uint16 srcChainId,
         address srcToken,
         address dstToken
     ) public onlyAdmin {
         require(srcChainId > 0, "srcChainId!");
         require(srcToken != address(0), "srcToken!");
-        tokenMapping[srcChainId][srcToken] = dstToken;
+        require(dstToken != address(0), "dstToken!");
+        bytes32 laneHash = keccak256(abi.encode(srcChainId, srcToken));
+        require(!_laneHash.contains(laneHash), "lane exist!");
+        _laneHash.add(laneHash);
+        _laneDetail[laneHash] = LaneDetail({
+            srcChainId: srcChainId,
+            srcToken: srcToken,
+            dstToken: dstToken
+        });
+    }
+
+    function updateTokenMapping(
+        uint16 srcChainId,
+        address srcToken,
+        address dstToken
+    ) public onlyAdmin {
+        require(srcChainId > 0, "srcChainId!");
+        require(srcToken != address(0), "srcToken!");
+        require(dstToken != address(0), "dstToken!");
+        bytes32 laneHash = keccak256(abi.encode(srcChainId, srcToken));
+        require(_laneHash.contains(laneHash), "lane not exist!");
+        _laneDetail[laneHash] = LaneDetail({
+            srcChainId: srcChainId,
+            srcToken: srcToken,
+            dstToken: dstToken
+        });
+    }
+
+    function removeTokenMapping(
+        uint16 srcChainId,
+        address srcToken
+    ) public onlyAdmin {
+        require(srcChainId > 0, "srcChainId!");
+        require(srcToken != address(0), "srcToken!");
+        bytes32 laneHash = keccak256(abi.encode(srcChainId, srcToken));
+        require(_laneHash.contains(laneHash), "lane not exist!");
+        _laneHash.remove(laneHash);
+        delete _laneDetail[laneHash];
+    }
+
+    function getAllLane() public view returns (LaneDetail[] memory) {
+        uint256 length = _laneHash.length();
+        LaneDetail[] memory laneDetails = new LaneDetail[](length);
+        for (uint256 i; i < length; ++i) {
+            laneDetails[i] = _laneDetail[_laneHash.at(i)];
+        }
+        return laneDetails;
+    }
+
+    function laneExist(
+        uint16 srcChainId,
+        address srcToken
+    ) public view returns (bool) {
+        return _laneHash.contains(keccak256(abi.encode(srcChainId, srcToken)));
+    }
+
+    function tokenMapping(
+        uint16 srcChainId,
+        address srcToken
+    ) public view returns (LaneDetail memory) {
+        bytes32 laneHash = keccak256(abi.encode(srcChainId, srcToken));
+        require(_laneHash.contains(laneHash), "lane not exist!");
+        return _laneDetail[laneHash];
     }
 
     function pause() external onlyAdmin {
@@ -62,7 +133,8 @@ contract ProxyOFT is OFTCoreUpgradeable {
         address _toAddress,
         uint _amount
     ) internal virtual override returns (uint) {
-        address dstToken = tokenMapping[_srcChainId][_srcToken];
+        LaneDetail memory detail = tokenMapping(_srcChainId, _srcToken);
+        address dstToken = detail.dstToken;
         require(dstToken != address(0), "dstToken!");
         uint before = ERC20MintAndBurn(dstToken).balanceOf(_toAddress);
         ERC20MintAndBurn(dstToken).mint(_toAddress, _amount);

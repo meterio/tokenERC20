@@ -1,0 +1,49 @@
+[
+  {
+    "name": "ganache1",
+    "rpc": "http://127.0.0.1:7545",
+    "lzEndpoint": "0x4EA3a0AfD2e6a782D43Bee9f6CcBA54144D1B8BD",
+    "proxyAdmin": "0xcD1B3Cb405a2965492533d4d54c11de7A0f4f598",
+    "admin": "0x4EA3a0AfD2e6a782D43Bee9f6CcBA54144D1B8BD",
+    "oft_impl": "0x77e341186a9FdCDD01fB76c9e81436267bB060B0",
+    "oft_init_data": "0x485cc9550000000000000000000000004ea3a0afd2e6a782d43bee9f6ccba54144d1b8bd0000000000000000000000004ea3a0afd2e6a782d43bee9f6ccba54144d1b8bd",
+    "proxy": "0x716149526A92168D825Eac4982c4D4E5C4026AB5",
+    "lzChainId": "10000"
+  },
+  {
+    "name": "ganache2",
+    "rpc": "http://127.0.0.1:8545",
+    "lzEndpoint": "0x75Cb76a2d9fDdA39FB1d96F17f80fF4CD3badDC5",
+    "proxyAdmin": "0xb824ba423930696F5a8e7dd93aaEacD215a96B28",
+    "admin": "0x75Cb76a2d9fDdA39FB1d96F17f80fF4CD3badDC5",
+    "oft_impl": "0x4240Fba65762AFf5BE53E8598Aff5da6ccE04179",
+    "oft_init_data": "0x485cc95500000000000000000000000075cb76a2d9fdda39fb1d96f17f80ff4cd3baddc500000000000000000000000075cb76a2d9fdda39fb1d96f17f80ff4cd3baddc5",
+    "proxy": "0x9D1aaAE4377C61Ecb6c5E1C420FE42a5D6FE4346",
+    "lzChainId": "10001"
+  },
+  {
+    "name": "goerli",
+    "rpc": "https://goerli.infura.io/v3/e1bb25c2b20b4b5383517028056c89a3"
+  },
+  {
+    "name": "sepolia",
+    "rpc": "https://sepolia.infura.io/v3/e1bb25c2b20b4b5383517028056c89a3"
+  },
+  {
+    "name": "Bsc test",
+    "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545"
+  },
+  { "name": "Bsc main", "rpc": "https://bsc-dataseed.binance.org" },
+  {
+    "name": "Meter test",
+    "rpc": "https://rpctest.meter.io",
+    "lzChainId": "10156",
+    "proxy": "0x730141EAC7Ef403e1F1c9D2C16ACf795A2923c16"
+  },
+  { "name": "Meter main", "rpc": "https://rpc.meter.io" },
+  { "name": "Polygon", "rpc": "https://rpc-mainnet.maticvigil.com" },
+  { "name": "Polygon mumbai", "rpc": "https://rpc-mumbai.maticvigil.com" },
+  { "name": "Abitrum", "rpc": "https://arb1.arbitrum.io/rpc" },
+  { "name": "Base test", "rpc": "https://goerli.base.org" },
+  { "name": "Base main", "rpc": "https://base.publicnode.com" }
+]
