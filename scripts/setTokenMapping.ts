@@ -1,7 +1,7 @@
 import { input, select, password, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { readFileSync, writeFileSync } from "fs";
-import { Overrides } from "ethers";
+import { Contract, Overrides, Wallet, providers } from "ethers";
 import { ERC20MinterBurnerPauser, ProxyOFT } from "../typechain";
 import { MINTER_ROLE } from "./helper";
 const json = "./scripts/oft.config.json";
@@ -18,292 +18,176 @@ function getChoices() {
   return result;
 }
 
-const main = async () => {
-  // 环境
-  let override: Overrides = {};
-  const networkIndexA = await select({
-    message: "选择网络A:",
+type Network = {
+  name: string;
+  provider: providers.JsonRpcProvider;
+  wallet: Wallet;
+  netConfig: any;
+  networkIndex: number;
+};
+
+async function setNetwork(name: string): Promise<Network> {
+  const networkIndex = await select({
+    message: `选择网络${name}:`,
     choices: getChoices(),
   });
-  const privateKeyA = await password({
-    message: "输入网络A的Private Key:",
+  const privateKey = await password({
+    message: `输入网络${name}的Private Key:`,
   });
 
+  const provider = new ethers.providers.JsonRpcProvider(
+    config[networkIndex].rpc
+  );
+  const wallet = new ethers.Wallet(privateKey, provider);
+  const netConfig = config[networkIndex];
+  return { name, provider, wallet, netConfig, networkIndex };
+}
+
+async function sendTransaction(
+  network: Network,
+  contract: Contract,
+  func: string,
+  args: any[],
+  override: Overrides = {}
+) {
+  override.nonce = await input({
+    message: "输入nonce:",
+    default: (
+      await network.provider.getTransactionCount(network.wallet.address)
+    ).toString(),
+  });
+  override.gasLimit = await contract.estimateGas[func](...args);
+  console.log("gasLimit:", override.gasLimit.toString());
+  let receipt = await contract[func](...args, override);
+  await receipt.wait();
+  console.log(`${func} tx:`, receipt.hash);
+}
+
+async function checkRole(network: Network, tokenAddress: string) {
+  console.log(`查询网络${network.name}的Token权限设置:`);
+  const tokenContract = (await ethers.getContractAt(
+    "ERC20MinterBurnerPauser",
+    tokenAddress,
+    network.wallet
+  )) as ERC20MinterBurnerPauser;
+
+  const hasRoleA = await tokenContract.hasRole(
+    MINTER_ROLE,
+    network.netConfig.proxy
+  );
+
+  if (hasRoleA) {
+    console.log(
+      `网络${network.name}:\n ProxyOFT合约:${network.netConfig.proxy}\n 拥有Token${network.name}合约${tokenAddress}的MINTER_ROLE`
+    );
+  } else {
+    console.log(
+      `网络${network.name}:\n ProxyOFT合约:${network.netConfig.proxy}\n 不拥有Token${network.name}合约${tokenAddress}的MINTER_ROLE`
+    );
+    const grantRole = await confirm({
+      message: `是否配置?`,
+    });
+    if (grantRole) {
+      sendTransaction(network, tokenContract, "grantRole(bytes32,address)", [
+        MINTER_ROLE,
+        network.netConfig.proxy,
+      ]);
+    }
+  }
+}
+
+async function laneExist(
+  network: Network,
+  srcChainId: string,
+  srcToken: string,
+  dstToken: string
+) {
+  console.log(`查询网络${network.name}的OFT设置:`);
+  const proxyOFT = (await ethers.getContractAt(
+    "ProxyOFT",
+    network.netConfig.proxy,
+    network.wallet
+  )) as ProxyOFT;
+  if (!config[network.networkIndex].tokenMapping) {
+    config[network.networkIndex].tokenMapping = {};
+    writeFileSync(json, JSON.stringify(config));
+  }
+  if (!config[network.networkIndex].tokenMapping[srcChainId]) {
+    config[network.networkIndex].tokenMapping[srcChainId] = {};
+    writeFileSync(json, JSON.stringify(config));
+  }
+
+  const laneExist = await proxyOFT.laneExist(srcChainId, srcToken);
+  if (laneExist) {
+    console.log(
+      `网络${network.name}:\n ProxyOFT合约:${network.netConfig.proxy}\n 存在srcChainId${srcChainId}的srcToken: ${srcToken}的链路`
+    );
+    const LaneDetail = await proxyOFT.tokenMapping(srcChainId, srcToken);
+    console.log(`dstToken地址:${LaneDetail.dstToken}`);
+    config[network.networkIndex].tokenMapping[srcChainId][srcToken] =
+      LaneDetail.dstToken;
+    if (
+      dstToken.toLocaleLowerCase() != LaneDetail.dstToken.toLocaleLowerCase()
+    ) {
+      console.log(
+        `合约记录的dstToken地址:${LaneDetail.dstToken},与网络${network.name}的Token地址${dstToken}不一致!`
+      );
+      const update = await confirm({
+        message: `是否配置?`,
+      });
+      if (update) {
+        sendTransaction(
+          network,
+          proxyOFT,
+          "updateTokenMapping(uint16,address,address)",
+          [srcChainId, srcToken, dstToken]
+        );
+        config[network.networkIndex].tokenMapping[srcChainId][srcToken] =
+          dstToken;
+      }
+    }
+  } else {
+    console.log(
+      `网络${network.name}:\n ProxyOFT合约:${network.netConfig.proxy}\n 不存在srcChainId${srcChainId}的srcToken: ${srcToken}的链路`
+    );
+    const add = await confirm({
+      message: `是否配置?`,
+    });
+    if (add) {
+      sendTransaction(
+        network,
+        proxyOFT,
+        "addTokenMapping(uint16,address,address)",
+        [srcChainId, srcToken, dstToken]
+      );
+      config[network.networkIndex].tokenMapping[srcChainId][srcToken] =
+        dstToken;
+    }
+  }
+  writeFileSync(json, JSON.stringify(config));
+}
+
+const main = async () => {
+  // 环境
+  const networkA = await setNetwork("A");
   const tokenA = await input({
     message: "输入网络A的Token地址:",
   });
 
-  const networkIndexB = await select({
-    message: "选择网络B:",
-    choices: getChoices(),
-  });
-  const privateKeyB = await password({
-    message: "输入网络B的Private Key:",
-  });
+  const networkB = await setNetwork("B");
   const tokenB = await input({
     message: "输入网络B的Token地址:",
   });
-  // 网络A
-  const providerA = new ethers.providers.JsonRpcProvider(
-    config[networkIndexA].rpc
-  );
-  const walletA = new ethers.Wallet(privateKeyA, providerA);
-  // TokenA
-  console.log("查询网络A的Token权限设置:");
-  const tokenAContract = (await ethers.getContractAt(
-    "ERC20MinterBurnerPauser",
-    tokenA,
-    walletA
-  )) as ERC20MinterBurnerPauser;
 
-  const hasRoleA = await tokenAContract.hasRole(
-    MINTER_ROLE,
-    config[networkIndexA].proxy
-  );
-  if (hasRoleA) {
-    console.log(
-      `网络A:${config[networkIndexA].name}\n ProxyOFT合约:${config[networkIndexA].proxy}\n 拥有TokenA合约${tokenA}的MINTER_ROLE`
-    );
-  } else {
-    console.log(
-      `网络A:${config[networkIndexA].name}\n ProxyOFT合约:${config[networkIndexA].proxy}\n 不拥有TokenA合约${tokenA}的MINTER_ROLE`
-    );
-    const grantRole = await confirm({
-      message: `是否配置?`,
-    });
-    if (grantRole) {
-      override.nonce = await input({
-        message: "输入nonce:",
-        default: (
-          await providerA.getTransactionCount(walletA.address)
-        ).toString(),
-      });
-      override.gasLimit = await tokenAContract.estimateGas.grantRole(
-        MINTER_ROLE,
-        config[networkIndexA].proxy
-      );
-      console.log("gasLimit:", override.gasLimit.toString());
-      let receipt = await tokenAContract.grantRole(
-        MINTER_ROLE,
-        config[networkIndexA].proxy,
-        override
-      );
-      await receipt.wait();
-      console.log("grantRole tx:", receipt.hash);
-    }
-  }
+  await checkRole(networkA, tokenA);
 
-  // 网络B
-  const providerB = new ethers.providers.JsonRpcProvider(
-    config[networkIndexB].rpc
-  );
-  const walletB = new ethers.Wallet(privateKeyB, providerB);
-  // TokenB
-  console.log("查询网络B的Token权限设置:");
-  const tokenBContract = (await ethers.getContractAt(
-    "ERC20MinterBurnerPauser",
-    tokenB,
-    walletB
-  )) as ERC20MinterBurnerPauser;
+  await checkRole(networkB, tokenB);
 
-  const hasRoleB = await tokenBContract.hasRole(
-    MINTER_ROLE,
-    config[networkIndexB].proxy
-  );
-  if (hasRoleB) {
-    console.log(
-      `网络B:${config[networkIndexB].name}\n ProxyOFT合约:${config[networkIndexB].proxy}\n 拥有TokenB合约${tokenB}的MINTER_ROLE`
-    );
-  } else {
-    console.log(
-      `网络B:${config[networkIndexB].name}\n ProxyOFT合约:${config[networkIndexB].proxy}\n 不拥有TokenB合约${tokenB}的MINTER_ROLE`
-    );
-    const grantRole = await confirm({
-      message: `是否配置?`,
-    });
-    if (grantRole) {
-      override.nonce = await input({
-        message: "输入nonce:",
-        default: (
-          await providerB.getTransactionCount(walletB.address)
-        ).toString(),
-      });
-      override.gasLimit = await tokenBContract.estimateGas.grantRole(
-        MINTER_ROLE,
-        config[networkIndexB].proxy
-      );
-      console.log("gasLimit:", override.gasLimit.toString());
-      let receipt = await tokenBContract.grantRole(
-        MINTER_ROLE,
-        config[networkIndexB].proxy,
-        override
-      );
-      await receipt.wait();
-      console.log("grantRole tx:", receipt.hash);
-    }
-  }
-  /////////
-  console.log("查询网络A的OFT设置:");
-  const proxyOFTA = (await ethers.getContractAt(
-    "ProxyOFT",
-    config[networkIndexA].proxy,
-    walletA
-  )) as ProxyOFT;
+  await laneExist(networkA, networkB.netConfig.lzChainId, tokenB, tokenA);
 
-  const laneExistA = await proxyOFTA.laneExist(
-    config[networkIndexB].lzChainId,
-    tokenB
-  );
-  if (laneExistA) {
-    const dstTokenA = await proxyOFTA.tokenMapping(
-      config[networkIndexB].lzChainId,
-      tokenB
-    );
-
-    console.log(
-      `网络A:${config[networkIndexA].name}\n ProxyOFT合约:${config[networkIndexA].proxy}\n 存在来自于网络B${config[networkIndexB].name}\n 
-      的Token: ${tokenB}的目标合约地址:${dstTokenA.dstToken}`
-    );
-    if (dstTokenA.dstToken != tokenA) {
-      console.log(`目标合约地址:${dstTokenA.dstToken},与TokenA不一致!`);
-      const update = await confirm({
-        message: `是否配置?`,
-      });
-      if (update) {
-        override.nonce = await input({
-          message: "输入nonce:",
-          default: (
-            await providerA.getTransactionCount(walletA.address)
-          ).toString(),
-        });
-        override.gasLimit = await proxyOFTA.estimateGas.updateTokenMapping(
-          config[networkIndexB].lzChainId,
-          tokenB,
-          tokenA
-        );
-        console.log("gasLimit:", override.gasLimit.toString());
-        let receipt = await proxyOFTA.updateTokenMapping(
-          config[networkIndexB].lzChainId,
-          tokenB,
-          tokenA,
-          override
-        );
-        await receipt.wait();
-        console.log("updateTokenMapping tx:", receipt.hash);
-      }
-    }
-  } else {
-    console.log(
-      `网络A:${config[networkIndexA].name}\n ProxyOFT合约:${config[networkIndexA].proxy}\n 不存在来自于网络B${config[networkIndexB].name}\n 
-      的Token: ${tokenB}的目标合约地址`
-    );
-    const add = await confirm({
-      message: `是否配置?`,
-    });
-    if (add) {
-      override.nonce = await input({
-        message: "输入nonce:",
-        default: (
-          await providerA.getTransactionCount(walletA.address)
-        ).toString(),
-      });
-      override.gasLimit = await proxyOFTA.estimateGas.addTokenMapping(
-        config[networkIndexB].lzChainId,
-        tokenB,
-        tokenA
-      );
-      console.log("gasLimit:", override.gasLimit.toString());
-      let receipt = await proxyOFTA.addTokenMapping(
-        config[networkIndexB].lzChainId,
-        tokenB,
-        tokenA,
-        override
-      );
-      await receipt.wait();
-      console.log("addTokenMapping tx:", receipt.hash);
-    }
-  }
-  /////////
-  console.log("查询网络B的OFT设置:");
-  const proxyOFTB = (await ethers.getContractAt(
-    "ProxyOFT",
-    config[networkIndexB].proxy,
-    walletB
-  )) as ProxyOFT;
-
-  const laneExistB = await proxyOFTB.laneExist(
-    config[networkIndexA].lzChainId,
-    tokenA
-  );
-  if (laneExistA) {
-    const dstTokenB = await proxyOFTB.tokenMapping(
-      config[networkIndexA].lzChainId,
-      tokenA
-    );
-
-    console.log(
-      `网络B:${config[networkIndexB].name}\n ProxyOFT合约:${config[networkIndexB].proxy}\n 存在来自于网络A${config[networkIndexA].name}\n 
-      的Token: ${tokenA}的目标合约地址:${dstTokenB.dstToken}`
-    );
-    if (dstTokenB.dstToken != tokenB) {
-      console.log(`目标合约地址:${dstTokenB.dstToken},与TokenB不一致!`);
-      const update = await confirm({
-        message: `是否配置?`,
-      });
-      if (update) {
-        override.nonce = await input({
-          message: "输入nonce:",
-          default: (
-            await providerB.getTransactionCount(walletB.address)
-          ).toString(),
-        });
-        override.gasLimit = await proxyOFTB.estimateGas.updateTokenMapping(
-          config[networkIndexA].lzChainId,
-          tokenA,
-          tokenB
-        );
-        console.log("gasLimit:", override.gasLimit.toString());
-        let receipt = await proxyOFTB.updateTokenMapping(
-          config[networkIndexA].lzChainId,
-          tokenA,
-          tokenB,
-          override
-        );
-        await receipt.wait();
-        console.log("updateTokenMapping tx:", receipt.hash);
-      }
-    }
-  } else {
-    console.log(
-      `网络B:${config[networkIndexB].name}\n ProxyOFT合约:${config[networkIndexB].proxy}\n 不存在来自于网络A${config[networkIndexA].name}\n 
-      的Token: ${tokenA}的目标合约地址`
-    );
-    const add = await confirm({
-      message: `是否配置?`,
-    });
-    if (add) {
-      override.nonce = await input({
-        message: "输入nonce:",
-        default: (
-          await providerB.getTransactionCount(walletB.address)
-        ).toString(),
-      });
-      override.gasLimit = await proxyOFTB.estimateGas.addTokenMapping(
-        config[networkIndexA].lzChainId,
-        tokenA,
-        tokenB
-      );
-      console.log("gasLimit:", override.gasLimit.toString());
-      let receipt = await proxyOFTB.addTokenMapping(
-        config[networkIndexA].lzChainId,
-        tokenA,
-        tokenB,
-        override
-      );
-      await receipt.wait();
-      console.log("addTokenMapping tx:", receipt.hash);
-    }
-  }
+  await laneExist(networkB, networkA.netConfig.lzChainId, tokenA, tokenB);
 };
 
 main();
+// 0x12F7661fa804BcdBdc4C517765A0E8D71Db0c0e7
+// 0xDD78FB0852091C073d05d9Ac3Ad9afdC9850147a

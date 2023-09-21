@@ -3,23 +3,33 @@
     "name": "ganache1",
     "rpc": "http://127.0.0.1:7545",
     "lzEndpoint": "0x4EA3a0AfD2e6a782D43Bee9f6CcBA54144D1B8BD",
-    "proxyAdmin": "0xcD1B3Cb405a2965492533d4d54c11de7A0f4f598",
-    "admin": "0x4EA3a0AfD2e6a782D43Bee9f6CcBA54144D1B8BD",
-    "oft_impl": "0x77e341186a9FdCDD01fB76c9e81436267bB060B0",
-    "oft_init_data": "0x485cc9550000000000000000000000004ea3a0afd2e6a782d43bee9f6ccba54144d1b8bd0000000000000000000000004ea3a0afd2e6a782d43bee9f6ccba54144d1b8bd",
-    "proxy": "0x716149526A92168D825Eac4982c4D4E5C4026AB5",
-    "lzChainId": "10000"
+    "proxyAdmin": "0xDD93cf89b8ed1b80a87c8a5fE96b0c0B36b61F70",
+    "admin": "0x523ACe40BF57406B6bc0ac2CF03E7c80fDa519e4",
+    "oft_impl": "0xe5C334b3248Bd18D1ED8A75DD93bFd8bc7d59e75",
+    "oft_init_data": "0x485cc9550000000000000000000000004ea3a0afd2e6a782d43bee9f6ccba54144d1b8bd000000000000000000000000523ace40bf57406b6bc0ac2cf03e7c80fda519e4",
+    "proxy": "0x7C83a00e8345D57C26a4D2cA7bb7e820F8182376",
+    "lzChainId": "10000",
+    "tokenMapping": {
+      "10001": {
+        "0xDD78FB0852091C073d05d9Ac3Ad9afdC9850147a": "0x12F7661fa804BcdBdc4C517765A0E8D71Db0c0e7"
+      }
+    }
   },
   {
     "name": "ganache2",
     "rpc": "http://127.0.0.1:8545",
     "lzEndpoint": "0x75Cb76a2d9fDdA39FB1d96F17f80fF4CD3badDC5",
-    "proxyAdmin": "0xb824ba423930696F5a8e7dd93aaEacD215a96B28",
-    "admin": "0x75Cb76a2d9fDdA39FB1d96F17f80fF4CD3badDC5",
-    "oft_impl": "0x4240Fba65762AFf5BE53E8598Aff5da6ccE04179",
-    "oft_init_data": "0x485cc95500000000000000000000000075cb76a2d9fdda39fb1d96f17f80ff4cd3baddc500000000000000000000000075cb76a2d9fdda39fb1d96f17f80ff4cd3baddc5",
-    "proxy": "0x9D1aaAE4377C61Ecb6c5E1C420FE42a5D6FE4346",
-    "lzChainId": "10001"
+    "proxyAdmin": "0x80E496c32B09cd39A9E33d05191bb7694CcB5D6B",
+    "admin": "0xBF3242B795A3d5038b49CB51AAF9b1451dD78e6e",
+    "oft_impl": "0xa6b319B085a7Ba252001e547B64f1cCDF9A42a6D",
+    "oft_init_data": "0x485cc95500000000000000000000000075cb76a2d9fdda39fb1d96f17f80ff4cd3baddc5000000000000000000000000bf3242b795a3d5038b49cb51aaf9b1451dd78e6e",
+    "proxy": "0xc36AB10D8c4BB805efB066e129310Cd436608433",
+    "lzChainId": "10001",
+    "tokenMapping": {
+      "10000": {
+        "0x12F7661fa804BcdBdc4C517765A0E8D71Db0c0e7": "0xDD78FB0852091C073d05d9Ac3Ad9afdC9850147a"
+      }
+    }
   },
   {
     "name": "goerli",
