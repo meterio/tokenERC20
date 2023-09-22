@@ -3,16 +3,17 @@ import {
   Contract,
   Signer,
   BigNumber,
-  ContractTransaction,
   BytesLike,
-  BigNumberish,
-  utils,
   constants,
   Overrides,
+  Wallet,
+  providers,
 } from "ethers";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
 import { Libraries } from "hardhat/types";
+import { input, select, password } from "@inquirer/prompts";
+var colors = require("colors");
+colors.enable();
 
 export function expandTo18Decimals(n: number): BigNumber {
   return BigNumber.from(n).mul(BigNumber.from(10).pow(18));
@@ -144,4 +145,71 @@ export async function saveFile(
       })
     );
   }
+}
+
+export function getChoices(config: any[]) {
+  let result = [];
+  for (let i = 0; i < config.length; i++) {
+    result.push({
+      name: config[i].name,
+      value: i,
+    });
+  }
+  return result;
+}
+
+export type Network = {
+  name: string;
+  provider: providers.JsonRpcProvider;
+  wallet: Wallet;
+  override: Overrides;
+  netConfig: any;
+  networkIndex: number;
+};
+
+export async function setNetwork(
+  config: any[],
+  name: string
+): Promise<Network> {
+  let override: Overrides = {};
+  const networkIndex = await select({
+    message: `选择网络${colors.green(name)}:`,
+    choices: getChoices(config),
+  });
+  const privateKey = await password({
+    message: `输入网络${colors.green(name)}的Private Key:`,
+  });
+
+  const provider = new providers.JsonRpcProvider(config[networkIndex].rpc);
+  const wallet = new Wallet(privateKey, provider);
+  console.log("Signer:", colors.yellow(wallet.address));
+
+  const defaultGasPrice = await wallet.provider.getGasPrice();
+  override.gasPrice = await input({
+    message: "输入Gas price:",
+    default: defaultGasPrice.toString(),
+  });
+
+  const netConfig = config[networkIndex];
+  return { name, provider, wallet, override, netConfig, networkIndex };
+}
+
+export async function sendTransaction(
+  network: Network,
+  contract: Contract,
+  func: string,
+  args: any[],
+  override: Overrides = {}
+) {
+  override.nonce = await input({
+    message: "输入nonce:",
+    default: (
+      await network.provider.getTransactionCount(network.wallet.address)
+    ).toString(),
+  });
+  override.gasLimit = await contract.estimateGas[func](...args);
+  console.log("gasLimit:", override.gasLimit.toString());
+  let receipt = await contract[func](...args, override);
+  await receipt.wait();
+  console.log(`${colors.blue(func)} tx:`, colors.brightWhite(receipt.hash));
 }

@@ -21,6 +21,7 @@
     "@types/chai": "^4.2.6",
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
+    "colors": "^1.4.0",
     "colors.ts": "^1.0.20",
     "decimal.js": "^10.2.1",
     "dotenv": "^10.0.0",
