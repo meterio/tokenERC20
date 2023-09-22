@@ -1,18 +1,22 @@
-import { input, select, password, confirm } from "@inquirer/prompts";
-import { ethers, network } from "hardhat";
-import { readFileSync, writeFileSync } from "fs";
-import { setNetwork, sendTransaction } from "./helper";
+import { select, confirm } from "@inquirer/prompts";
+import { ethers } from "hardhat";
+import { writeFileSync } from "fs";
+import {
+  json,
+  config,
+  setNetwork,
+  sendTransaction,
+  green,
+  yellow,
+  red,
+  DEFAULT_ADMIN_ROLE,
+} from "./helper";
 import { ProxyOFT } from "../typechain";
-const json = "./scripts/oft.config.json";
-let config = JSON.parse(readFileSync(json).toString());
-var colors = require("colors");
-colors.enable();
 
 const main = async () => {
-  const network = await setNetwork(config, "");
+  const network = await setNetwork(config);
   const { netConfig, wallet, networkIndex, override } = network;
 
-  console.log("当前Trust Remote Address配置:");
   const proxyContract = (await ethers.getContractAt(
     "ProxyOFT",
     netConfig.proxy,
@@ -20,16 +24,18 @@ const main = async () => {
   )) as ProxyOFT;
   for (let i = 0; i < config.length; i++) {
     if (i != networkIndex) {
-      if (config[i].lzChainId) {
-        console.log("chain name", colors.green(config[i].name));
-        console.log("chain id", colors.green(config[i].lzChainId));
-        console.log("chain proxy", colors.green(config[i].proxy));
+      if (config[i].lzChainId && config[i].proxy) {
+        console.log(
+          `当前链: ${green(config[i].name)} Trust Remote Address配置:`
+        );
+        console.log("chain id", green(config[i].lzChainId));
+        console.log("chain proxy", green(config[i].proxy));
         let trustedRemoteLookup = await proxyContract.trustedRemoteLookup(
           config[i].lzChainId
         );
         if (trustedRemoteLookup == "0x") {
           const isSetRemote = await confirm({
-            message: `${colors.green(
+            message: `${green(
               config[i].lzChainId
             )}未配置TrustRemoteAddress,是否配置?`,
           });
@@ -40,17 +46,25 @@ const main = async () => {
               proxyContract,
               "setTrustedRemoteAddress(uint16,bytes)",
               [config[i].lzChainId, config[i].proxy],
-              override
+              override,
+              DEFAULT_ADMIN_ROLE
             );
           }
         } else {
           let remoteAddress = await proxyContract.getTrustedRemoteAddress(
             config[i].lzChainId
           );
-          console.log("trust remote address", colors.yellow(remoteAddress));
-          if (remoteAddress != config[i].proxy) {
+          console.log("Trust remote address", yellow(remoteAddress));
+          if (
+            remoteAddress.toLocaleLowerCase() !=
+            config[i].proxy.toLocaleLowerCase()
+          ) {
             const configOrContract = await select({
-              message: colors.red("合约读取的地址与配置文件不一致!"),
+              message: red(
+                `合约读取的地址与配置文件不一致!(config:${yellow(
+                  config[i].proxy
+                )})`
+              ),
               choices: [
                 {
                   name: "按照Config文件设置合约的TrustRemoteAddress",
@@ -68,17 +82,22 @@ const main = async () => {
                 proxyContract,
                 "setTrustedRemoteAddress(uint16,bytes)",
                 [config[i].lzChainId, config[i].proxy],
-                override
+                override,
+                DEFAULT_ADMIN_ROLE
               );
             } else {
               config[i].proxy = remoteAddress;
               console.log(
-                `chainId: ${colors.green(
+                `chainId: ${green(
                   config[i].lzChainId
-                )}, trust remote address: ${colors.yellow(remoteAddress)}`
+                )}, trust remote address: ${yellow(remoteAddress)}`
               );
               writeFileSync(json, JSON.stringify(config));
             }
+          } else {
+            console.log(
+              green(config[i].name) + " Trust Remote Address配置正确✅"
+            );
           }
         }
       }

@@ -1,14 +1,10 @@
 import { input } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { readFileSync } from "fs";
-import { setNetwork } from "./helper";
-const json = "./scripts/oft.config.json";
-let config = JSON.parse(readFileSync(json).toString());
-var colors = require("colors");
-colors.enable();
+import { config, setNetwork, deployContractV2 } from "./helper";
 
 const main = async () => {
-  let { provider, wallet, override } = await setNetwork(config, "");
+  const network = await setNetwork(config);
+  let { override } = network;
 
   const name = await input({
     message: "输入Token name:",
@@ -22,28 +18,13 @@ const main = async () => {
     message: "输入初始供应量(单位:wei):",
   });
 
-  override.nonce = await input({
-    message: "输入nonce:",
-    default: (await provider.getTransactionCount(wallet.address)).toString(),
-  });
-
-  const token_factory = await ethers.getContractFactory(
+  await deployContractV2(
+    ethers,
+    network,
     "ERC20MinterBurnerPauser",
-    wallet
-  );
-  override.gasLimit = await wallet.estimateGas(
-    token_factory.getDeployTransaction(name, symbol, supply)
-  );
-  console.log("gasLimit:", colors.yellow(override.gasLimit.toString()));
-  const token_deploy = await token_factory.deploy(
-    name,
-    symbol,
-    supply,
+    [name, symbol, supply],
     override
   );
-  const token = await token_deploy.deployed();
-
-  console.log("token:", colors.yellow(token.address));
 };
 
 main();
