@@ -5,7 +5,7 @@ import {
   BigNumber,
   BytesLike,
   constants,
-  Overrides,
+  PayableOverrides,
   Wallet,
   providers,
   utils,
@@ -25,7 +25,7 @@ export const bgYellow = colors.bgYellow;
 export const defaultPrivateKey =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // mnemonic:test test test test test test test test test test test junk
 
-export const json = "./scripts/oft.config.local.json";
+export const json = "./scripts/oft.config.testnet.json";
 export const config = JSON.parse(readFileSync(json).toString());
 
 export function expandTo18Decimals(n: number): BigNumber {
@@ -106,7 +106,7 @@ export async function deployContractOverrides(
   network: string,
   signer: Signer,
   args: Array<any> = [],
-  overrides: Overrides = {}
+  overrides: PayableOverrides = {}
 ): Promise<Contract> {
   let address = getContract(network, name);
   // if (address == constants.AddressZero || network == "hardhat") {
@@ -177,7 +177,7 @@ export type Network = {
   name: string;
   provider: providers.JsonRpcProvider;
   wallet: Wallet;
-  override: Overrides;
+  override: PayableOverrides;
   netConfig: any;
   networkIndex: number;
 };
@@ -186,7 +186,7 @@ export async function setNetwork(
   config: any[],
   name: string = ""
 ): Promise<Network> {
-  let override: Overrides = {};
+  let override: PayableOverrides = {};
   const networkIndex = await select({
     message: `选择网络${green(name)}:`,
     choices: getChoices(config),
@@ -205,6 +205,7 @@ export async function setNetwork(
   override.gasPrice = await input({
     message: "输入Gas price:",
     default: defaultGasPrice.toString(),
+    validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
   const netConfig = config[networkIndex];
@@ -216,7 +217,7 @@ export async function sendTransaction(
   contract: Contract,
   func: string,
   args: any[],
-  override: Overrides = {},
+  override: PayableOverrides = {},
   checkRole: BytesLike = "0x"
 ) {
   if (checkRole != "0x") {
@@ -230,9 +231,10 @@ export async function sendTransaction(
     default: (
       await network.provider.getTransactionCount(network.wallet.address)
     ).toString(),
+    validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  override.gasLimit = await contract.estimateGas[func](...args);
+  override.gasLimit = await contract.estimateGas[func](...args, override);
   console.log("gasLimit:", green(override.gasLimit.toString()));
   let receipt = await contract[func](...args, override);
   await receipt.wait();
@@ -244,13 +246,14 @@ export async function deployContractV2(
   network: Network,
   contract: string,
   args: any[],
-  override: Overrides = {}
+  override: PayableOverrides = {}
 ): Promise<Contract> {
   override.nonce = await input({
     message: "输入nonce:",
     default: (
       await network.provider.getTransactionCount(network.wallet.address)
     ).toString(),
+    validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
   const factory = await ethers.getContractFactory(contract, network.wallet);

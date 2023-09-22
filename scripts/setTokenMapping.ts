@@ -150,11 +150,15 @@ const main = async () => {
   const networkA = await setNetwork(config, "A");
   const tokenA = await input({
     message: "输入网络" + green("A") + "的Token地址:",
+    validate: (value = "") =>
+      ethers.utils.isAddress(value) || "Pass a valid address value",
   });
 
   const networkB = await setNetwork(config, "B");
   const tokenB = await input({
     message: "输入网络" + green("B") + "的Token地址:",
+    validate: (value = "") =>
+      ethers.utils.isAddress(value) || "Pass a valid address value",
   });
   if (networkA.networkIndex == networkB.networkIndex) {
     throw new Error(red("网络A和网络B不能相同!"));
