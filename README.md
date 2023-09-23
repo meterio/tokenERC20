@@ -29,3 +29,13 @@ npx hardhat run scripts/setTrustRemote.ts
 ```
 npx hardhat run scripts/setTokenMapping.ts
 ```
+
+## Check Token mapping
+```
+npx hardhat run scripts/checkTokenMapping.ts
+```
+
+## Send OFT Token
+```
+npx hardhat run scripts/sendToken.ts
+```
