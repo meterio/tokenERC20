@@ -92,7 +92,7 @@ const main = async () => {
                   config[i].lzChainId
                 )}, trust remote address: ${yellow(remoteAddress)}`
               );
-              writeFileSync(json, JSON.stringify(config));
+              writeFileSync(json, JSON.stringify(config, null, 2));
             }
           } else {
             console.log(

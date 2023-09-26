@@ -16,7 +16,7 @@ const main = async () => {
   );
 
   config[networkIndex].proxyAdmin = proxyAdmin.address;
-  writeFileSync(json, JSON.stringify(config));
+  writeFileSync(json, JSON.stringify(config, null, 2));
 };
 
 main();

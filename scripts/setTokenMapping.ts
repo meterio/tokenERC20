@@ -74,11 +74,11 @@ async function laneExist(
   )) as ProxyOFT;
   if (!config[network.networkIndex].tokenMapping) {
     config[network.networkIndex].tokenMapping = {};
-    writeFileSync(json, JSON.stringify(config));
+    writeFileSync(json, JSON.stringify(config, null, 2));
   }
   if (!config[network.networkIndex].tokenMapping[srcChainId]) {
     config[network.networkIndex].tokenMapping[srcChainId] = {};
-    writeFileSync(json, JSON.stringify(config));
+    writeFileSync(json, JSON.stringify(config, null, 2));
   }
 
   const laneExist = await proxyOFT.laneExist(srcChainId, srcToken);
@@ -142,7 +142,7 @@ async function laneExist(
         dstToken;
     }
   }
-  writeFileSync(json, JSON.stringify(config));
+  writeFileSync(json, JSON.stringify(config, null, 2));
 }
 
 const main = async () => {

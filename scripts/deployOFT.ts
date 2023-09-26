@@ -29,7 +29,7 @@ const main = async () => {
     );
 
     config[networkIndex].oft_impl = oft_impl.address;
-    writeFileSync(json, JSON.stringify(config));
+    writeFileSync(json, JSON.stringify(config, null, 2));
   } else {
     config[networkIndex].oft_impl = await input({
       message: "输入Implementation合约地址",
@@ -37,7 +37,7 @@ const main = async () => {
       validate: (value = "") =>
         ethers.utils.isAddress(value) || "Pass a valid address value",
     });
-    writeFileSync(json, JSON.stringify(config));
+    writeFileSync(json, JSON.stringify(config, null, 2));
   }
 
   // deployProxyOrUpgrade
@@ -61,7 +61,7 @@ const main = async () => {
       ethers.utils.isAddress(value) || "Pass a valid address value",
   });
   config[networkIndex].proxyAdmin = proxyAdmin;
-  writeFileSync(json, JSON.stringify(config));
+  writeFileSync(json, JSON.stringify(config, null, 2));
 
   // upgrade
   if (deployProxyOrUpgrade == "upgrade") {
@@ -114,7 +114,7 @@ const main = async () => {
     config[networkIndex].lzEndpoint = lzEndpoint;
     config[networkIndex].lzChainId = lzChainId;
     config[networkIndex].admin = admin;
-    writeFileSync(json, JSON.stringify(config));
+    writeFileSync(json, JSON.stringify(config, null, 2));
 
     const proxy = await deployContractV2(
       ethers,
@@ -125,7 +125,7 @@ const main = async () => {
     );
 
     config[networkIndex].proxy = proxy.address;
-    writeFileSync(json, JSON.stringify(config));
+    writeFileSync(json, JSON.stringify(config, null, 2));
   }
 };
 

@@ -234,7 +234,15 @@ export async function sendTransaction(
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  override.gasLimit = await contract.estimateGas[func](...args, override);
+  try {
+    override.gasLimit = await contract.estimateGas[func](...args);
+  } catch (e) {
+    override.gasLimit = await input({
+      message: "输入Gas limit:",
+      default: "10000000",
+      validate: (value = "") => value.length > 0 || "Pass a valid value",
+    });
+  }
   console.log("gasLimit:", green(override.gasLimit.toString()));
   let receipt = await contract[func](...args, override);
   await receipt.wait();
@@ -257,9 +265,18 @@ export async function deployContractV2(
   });
 
   const factory = await ethers.getContractFactory(contract, network.wallet);
-  override.gasLimit = await network.wallet.estimateGas(
-    factory.getDeployTransaction(...args)
-  );
+
+  try {
+    override.gasLimit = await network.wallet.estimateGas(
+      factory.getDeployTransaction(...args)
+    );
+  } catch (e) {
+    override.gasLimit = await input({
+      message: "输入Gas limit:",
+      default: "10000000",
+      validate: (value = "") => value.length > 0 || "Pass a valid value",
+    });
+  }
   console.log("gasLimit:", green(override.gasLimit.toString()));
   const deploy = await factory.deploy(...args, override);
   const deployed = await deploy.deployed();
