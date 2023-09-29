@@ -25,7 +25,7 @@ export const bgYellow = colors.bgYellow;
 export const defaultPrivateKey =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // mnemonic:test test test test test test test test test test test junk
 
-export const json = "./scripts/oft.config.testnet.json";
+export const json = "./scripts/oft.config.local.json";
 export const config = JSON.parse(readFileSync(json).toString());
 
 export function expandTo18Decimals(n: number): BigNumber {

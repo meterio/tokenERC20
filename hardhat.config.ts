@@ -2,23 +2,12 @@ import "hardhat-typechain";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
-import { task, types } from "hardhat/config";
-import { BigNumber, constants, Signer, utils } from "ethers";
-import { compileSetting, allowVerifyChain } from "./scripts/deployTool";
-import { RPCS } from "./scripts/network";
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
+import { task } from "hardhat/config";
+import { compileSetting } from "./scripts/deployTool";
 
 import {
   deployContract,
-  BN,
-  getContract,
-  getContractJson,
-  MINTER_ROLE,
-  expandTo18Decimals,
-  saveFile,
-  deployContractOverrides,
 } from "./scripts/helper";
-import { getSign } from "./scripts/permitSign";
 import { ProxyOFT, ProxyOFT__factory } from "./typechain";
 
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
@@ -124,7 +113,7 @@ export default {
     basetest: {
       url: `https://goerli.base.org`,
       chainId: 84531,
-      accounts: [process.env.METER_TEST_PRIVKEY],
+      accounts: [process.env.BASE_TEST_PRIVKEY],
     },
     basemain: {
       url: `https://base.publicnode.com`,

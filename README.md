@@ -39,3 +39,8 @@ npx hardhat run scripts/checkTokenMapping.ts
 ```
 npx hardhat run scripts/sendToken.ts
 ```
+
+## Deploy Upgradeable token
+```
+npx hardhat run scripts/deployTokenUpgradeable.ts
+```
