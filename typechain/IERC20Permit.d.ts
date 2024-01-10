@@ -24,7 +24,7 @@ interface IERC20PermitInterface extends ethers.utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "nonces(address)": FunctionFragment;
-    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "permit(address,address,uint256,uint256,bytes)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -34,15 +34,7 @@ interface IERC20PermitInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "nonces", values: [string]): string;
   encodeFunctionData(
     functionFragment: "permit",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BytesLike,
-      BytesLike
-    ]
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
   ): string;
 
   decodeFunctionResult(
@@ -96,20 +88,16 @@ export class IERC20Permit extends Contract {
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
+    "permit(address,address,uint256,uint256,bytes)"(
       owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
   };
@@ -130,20 +118,16 @@ export class IERC20Permit extends Contract {
     spender: string,
     value: BigNumberish,
     deadline: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
+    signature: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
+  "permit(address,address,uint256,uint256,bytes)"(
     owner: string,
     spender: string,
     value: BigNumberish,
     deadline: BigNumberish,
-    v: BigNumberish,
-    r: BytesLike,
-    s: BytesLike,
+    signature: BytesLike,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -164,20 +148,16 @@ export class IERC20Permit extends Contract {
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
+    "permit(address,address,uint256,uint256,bytes)"(
       owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -201,20 +181,16 @@ export class IERC20Permit extends Contract {
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
+    "permit(address,address,uint256,uint256,bytes)"(
       owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: Overrides
     ): Promise<BigNumber>;
   };
@@ -241,20 +217,16 @@ export class IERC20Permit extends Contract {
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"(
+    "permit(address,address,uint256,uint256,bytes)"(
       owner: string,
       spender: string,
       value: BigNumberish,
       deadline: BigNumberish,
-      v: BigNumberish,
-      r: BytesLike,
-      s: BytesLike,
+      signature: BytesLike,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
   };
