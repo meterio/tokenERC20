@@ -55,7 +55,6 @@ interface ERC20MinterBurnerPauserPermitInterface
     "permit(address,address,uint256,uint256,bytes)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
@@ -170,10 +169,6 @@ interface ERC20MinterBurnerPauserPermitInterface
     functionFragment: "revokeRole",
     values: [BytesLike, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
-  ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -269,10 +264,6 @@ interface ERC20MinterBurnerPauserPermitInterface
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -662,20 +653,6 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<{
-      0: boolean;
-    }>;
-
     symbol(overrides?: CallOverrides): Promise<{
       0: string;
     }>;
@@ -693,27 +670,27 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
     }>;
 
     transfer(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "transfer(address,uint256)"(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     transferFrom(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "transferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -974,16 +951,6 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "supportsInterface(bytes4)"(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   symbol(overrides?: CallOverrides): Promise<string>;
 
   "symbol()"(overrides?: CallOverrides): Promise<string>;
@@ -993,27 +960,27 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
   "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   transfer(
-    to: string,
+    recipient: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "transfer(address,uint256)"(
-    to: string,
+    recipient: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   transferFrom(
-    from: string,
-    to: string,
+    sender: string,
+    recipient: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "transferFrom(address,address,uint256)"(
-    from: string,
-    to: string,
+    sender: string,
+    recipient: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -1271,16 +1238,6 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     symbol(overrides?: CallOverrides): Promise<string>;
 
     "symbol()"(overrides?: CallOverrides): Promise<string>;
@@ -1290,27 +1247,27 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
     "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "transfer(address,uint256)"(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     transferFrom(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     "transferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1604,16 +1561,6 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1623,27 +1570,27 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
     "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transfer(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "transfer(address,uint256)"(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     transferFrom(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "transferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -1932,16 +1879,6 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "supportsInterface(bytes4)"(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1951,27 +1888,27 @@ export class ERC20MinterBurnerPauserPermit extends Contract {
     "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transfer(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "transfer(address,uint256)"(
-      to: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     transferFrom(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "transferFrom(address,address,uint256)"(
-      from: string,
-      to: string,
+      sender: string,
+      recipient: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;

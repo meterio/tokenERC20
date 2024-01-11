@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.7.0;
 
-import "@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
+import "@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser.sol";
+import "@openzeppelin/contracts-v0.7/utils/Counters.sol";
 import "./draft-IERC20Permit.sol";
 import "./draft-EIP712.sol";
-import "./Counters.sol";
+import "./ECDSA.sol";
 
 /**
  * @dev {ERC20} token, including:
@@ -28,9 +29,9 @@ contract ERC20MinterBurnerPauserPermit is
     constructor(
         string memory _name,
         string memory _symbol,
-        uint256 initialSupply
+        uint8 decimals_
     ) ERC20PresetMinterPauser(_name, _symbol) {
-        _mint(_msgSender(), initialSupply);
+        _setupDecimals(decimals_);
     }
 
     using Counters for Counters.Counter;

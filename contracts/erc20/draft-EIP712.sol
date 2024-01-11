@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts v4.4.1 (utils/cryptography/draft-EIP712.sol)
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "./ECDSA.sol";
 
 /**
  * @dev https://eips.ethereum.org/EIPS/eip-712[EIP 712] is a standard for hashing and signing of typed structured data.
@@ -79,7 +79,7 @@ abstract contract EIP712 {
      */
     function _domainSeparatorV4() internal view returns (bytes32) {
         if (
-            address(this) == _CACHED_THIS && block.chainid == _CACHED_CHAIN_ID
+            address(this) == _CACHED_THIS && _getChainId() == _CACHED_CHAIN_ID
         ) {
             return _CACHED_DOMAIN_SEPARATOR;
         } else {
@@ -103,7 +103,7 @@ abstract contract EIP712 {
                     typeHash,
                     nameHash,
                     versionHash,
-                    block.chainid,
+                    _getChainId(),
                     address(this)
                 )
             );
@@ -128,5 +128,13 @@ abstract contract EIP712 {
         bytes32 structHash
     ) internal view virtual returns (bytes32) {
         return ECDSA.toTypedDataHash(_domainSeparatorV4(), structHash);
+    }
+
+    function _getChainId() private view returns (uint256 chainId) {
+        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            chainId := chainid()
+        }
     }
 }

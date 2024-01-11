@@ -1,18 +1,17 @@
 import "hardhat-typechain";
 import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-etherscan";
+// import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import { task } from "hardhat/config";
 import { compileSetting } from "./scripts/deployTool";
 
-import {
-  deployContract,
-} from "./scripts/helper";
+import { deployContract } from "./scripts/helper";
 import { ProxyOFT, ProxyOFT__factory } from "./typechain";
+import "@nomicfoundation/hardhat-verify";
 
-const { setGlobalDispatcher, ProxyAgent } = require("undici");
-const proxyAgent = new ProxyAgent("http://127.0.0.1:7890");
-setGlobalDispatcher(proxyAgent);
+// const { setGlobalDispatcher, ProxyAgent } = require("undici");
+// const proxyAgent = new ProxyAgent("http://127.0.0.1:7890");
+// setGlobalDispatcher(proxyAgent);
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -113,7 +112,7 @@ export default {
     basetest: {
       url: `https://goerli.base.org`,
       chainId: 84531,
-      accounts: [process.env.BASE_TEST_PRIVKEY],
+      accounts: [process.env.METER_TEST_PRIVKEY],
     },
     basemain: {
       url: `https://base.publicnode.com`,
@@ -129,10 +128,36 @@ export default {
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_APIKEY,
+    apiKey: process.env.BASESCAN_API_KEY,
+    customChains: [
+      {
+        network: "arbitrum",
+        chainId: 42161,
+        urls: {
+          apiURL: `https://api.arbiscan.io/api`,
+          browserURL: "https://arbiscan.io/",
+        },
+      },
+      {
+        network: "goerli",
+        chainId: 5,
+        urls: {
+          apiURL: `https://api-goerli.etherscan.io/api`,
+          browserURL: "https://goerli.etherscan.io",
+        },
+      },
+      {
+        network: "basemain",
+        chainId: 8453,
+        urls: {
+          apiURL: "https://api.basescan.org/api",
+          browserURL: "https://basescan.org",
+        },
+      },
+    ],
   },
   solidity: {
-    compilers: [compileSetting("0.8.19", 200)],
+    compilers: [compileSetting("0.7.0", 200), compileSetting("0.8.19", 200)],
   },
   mocha: {
     timeout: 200000,
