@@ -11,17 +11,16 @@ import {
   red,
   DEFAULT_ADMIN_ROLE,
 } from "./helper";
-import { ProxyOFT } from "../typechain";
 
 const main = async () => {
   const network = await setNetwork(config);
   const { netConfig, wallet, networkIndex, override } = network;
 
-  const proxyContract = (await ethers.getContractAt(
+  const proxyContract = await ethers.getContractAt(
     "ProxyOFT",
     netConfig.proxy,
     wallet
-  )) as ProxyOFT;
+  );
   for (let i = 0; i < config.length; i++) {
     if (i != networkIndex) {
       if (config[i].lzChainId && config[i].proxy) {

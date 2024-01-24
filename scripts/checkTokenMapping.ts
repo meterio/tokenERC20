@@ -1,6 +1,5 @@
 import { ethers } from "hardhat";
 import { json, config, getContractV2, green, yellow } from "./helper";
-import { ProxyOFT } from "../typechain";
 import { writeFileSync } from "fs";
 
 const main = async () => {
@@ -11,12 +10,12 @@ const main = async () => {
 
       console.log(`当前链: ${green(config[i].name)} Token Mapping配置:`);
 
-      let proxyContract = (await getContractV2(
+      let proxyContract = await getContractV2(
         ethers,
         config[i].rpc,
         "ProxyOFT",
         config[i].proxy
-      )) as ProxyOFT;
+      );
 
       let allLanes = await proxyContract.getAllLane();
       for (let j = 0; j < allLanes.length; j++) {
@@ -36,12 +35,12 @@ const main = async () => {
         writeFileSync(json, JSON.stringify(config, null, 2));
         for (let k = 0; k < config.length; k++) {
           if (config[k].lzChainId == allLanes[j].srcChainId) {
-            let dstProxyContract = (await getContractV2(
+            let dstProxyContract = await getContractV2(
               ethers,
               config[k].rpc,
               "ProxyOFT",
               config[k].proxy
-            )) as ProxyOFT;
+            );
             let laneExist = await dstProxyContract.laneExist(
               config[i].lzChainId,
               allLanes[j].dstToken

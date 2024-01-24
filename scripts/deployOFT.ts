@@ -1,7 +1,6 @@
 import { input, select, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
-import { ProxyOFT, SumerProxyAdmin } from "../typechain";
 import {
   json,
   config,
@@ -10,6 +9,7 @@ import {
   sendTransaction,
   yellow,
 } from "./helper";
+import { isAddress } from "ethers";
 
 const main = async () => {
   const network = await setNetwork(config);
@@ -35,7 +35,7 @@ const main = async () => {
       message: "输入Implementation合约地址",
       default: netConfig.oft_impl,
       validate: (value = "") =>
-        ethers.utils.isAddress(value) || "Pass a valid address value",
+        isAddress(value) || "Pass a valid address value",
     });
     writeFileSync(json, JSON.stringify(config, null, 2));
   }
@@ -57,19 +57,18 @@ const main = async () => {
   const proxyAdmin = await input({
     message: "输入ProxyAdmin地址:",
     default: netConfig.proxyAdmin,
-    validate: (value = "") =>
-      ethers.utils.isAddress(value) || "Pass a valid address value",
+    validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
   config[networkIndex].proxyAdmin = proxyAdmin;
   writeFileSync(json, JSON.stringify(config, null, 2));
 
   // upgrade
   if (deployProxyOrUpgrade == "upgrade") {
-    const proxyAdminContract = (await ethers.getContractAt(
+    const proxyAdminContract = await ethers.getContractAt(
       "SumerProxyAdmin",
       proxyAdmin,
       wallet
-    )) as SumerProxyAdmin;
+    );
 
     await sendTransaction(
       network,
@@ -86,13 +85,13 @@ const main = async () => {
       message: "输入合约Admin地址:",
       default: netConfig.admin,
       validate: (value = "") =>
-        ethers.utils.isAddress(value) || "Pass a valid address value",
+        isAddress(value) || "Pass a valid address value",
     });
     const lzEndpoint = await input({
       message: "输入LayerZero Endpoint地址:",
       default: netConfig.lzEndpoint,
       validate: (value = "") =>
-        ethers.utils.isAddress(value) || "Pass a valid address value",
+        isAddress(value) || "Pass a valid address value",
     });
     const lzChainId = await input({
       message: "输入LayerZero ChainId:",
@@ -100,11 +99,11 @@ const main = async () => {
       validate: (value = "") =>
         parseInt(value) > 0 || "Pass a valid lzChainId value",
     });
-    const oft_impl = (await ethers.getContractAt(
+    const oft_impl = await ethers.getContractAt(
       "ProxyOFT",
       netConfig.oft_impl,
       wallet
-    )) as ProxyOFT;
+    );
     const data = oft_impl.interface.encodeFunctionData("initialize", [
       lzEndpoint,
       admin,
@@ -116,11 +115,12 @@ const main = async () => {
     config[networkIndex].admin = admin;
     writeFileSync(json, JSON.stringify(config, null, 2));
 
+    const oftAddr = await oft_impl.getAddress();
     const proxy = await deployContractV2(
       ethers,
       network,
       "SumerProxy",
-      [oft_impl.address, proxyAdmin, data],
+      [oftAddr, proxyAdmin, data],
       override
     );
 

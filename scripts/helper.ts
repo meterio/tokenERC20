@@ -2,15 +2,14 @@ import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import {
   Contract,
   Signer,
-  BigNumber,
   BytesLike,
-  constants,
-  PayableOverrides,
   Wallet,
-  providers,
-  utils,
+  JsonRpcProvider,
+  ZeroAddress,
+  isBytesLike,
+  BigNumberish,
 } from "ethers";
-import { HardhatEthersHelpers } from "@nomiclabs/hardhat-ethers/types";
+import { HardhatEthersHelpers } from "@nomicfoundation/hardhat-ethers/types";
 import { Libraries } from "hardhat/types";
 import { input, select, password } from "@inquirer/prompts";
 import colors from "colors";
@@ -28,12 +27,12 @@ export const defaultPrivateKey =
 export const json = "./scripts/oft.config.mainnet.json";
 export const config = JSON.parse(readFileSync(json).toString());
 
-export function expandTo18Decimals(n: number): BigNumber {
-  return BigNumber.from(n).mul(BigNumber.from(10).pow(18));
+export function expandTo18Decimals(n: number): bigint {
+  return BigInt(n) * BigInt(10) ** BigInt(18);
 }
 
-export function BN(n: number): BigNumber {
-  return BigNumber.from(n);
+export function BN(n: number): bigint {
+  return BigInt(n);
 }
 export const overrides: any = {
   gasLimit: 8000000,
@@ -56,7 +55,7 @@ export function getContract(network: string, name: string) {
     let json = JSON.parse(readFileSync(path + latest).toString());
     return json.address;
   } else {
-    return constants.AddressZero;
+    return ZeroAddress;
   }
 }
 
@@ -88,9 +87,10 @@ export async function deployContract(
     libraries: libraries,
   });
   const contract = await factory.deploy(...args, overrides);
+  const tx = contract.deploymentTransaction();
   console.log("Deploying:", name);
   console.log("  to", contract.address);
-  console.log("  in", contract.deployTransaction.hash);
+  console.log("  in", tx?.hash);
   await saveFile(network, name, contract, args, libraries);
   return contract.deployed();
   // } else {
@@ -106,7 +106,7 @@ export async function deployContractOverrides(
   network: string,
   signer: Signer,
   args: Array<any> = [],
-  overrides: PayableOverrides = {}
+  overrides: any = {}
 ): Promise<Contract> {
   let address = getContract(network, name);
   // if (address == constants.AddressZero || network == "hardhat") {
@@ -114,9 +114,10 @@ export async function deployContractOverrides(
     signer: signer,
   });
   const contract = await factory.deploy(...args, overrides);
+  const tx = contract.deploymentTransaction();
   console.log("Deploying:", name);
   console.log("  to", contract.address);
-  console.log("  in", contract.deployTransaction.hash);
+  console.log("  in", tx?.hash);
   await saveFile(network, name, contract, args);
   return contract.deployed();
   // } else {
@@ -175,9 +176,9 @@ export function getChoices(config: any[]) {
 
 export type Network = {
   name: string;
-  provider: providers.JsonRpcProvider;
+  provider: JsonRpcProvider;
   wallet: Wallet;
-  override: PayableOverrides;
+  override: any;
   netConfig: any;
   networkIndex: number;
 };
@@ -186,7 +187,7 @@ export async function setNetwork(
   config: any[],
   name: string = ""
 ): Promise<Network> {
-  let override: PayableOverrides = {};
+  let override: any = {};
   const networkIndex = await select({
     message: `选择网络${green(name)}:`,
     choices: getChoices(config),
@@ -194,18 +195,19 @@ export async function setNetwork(
   const privateKey = await password({
     message: `输入网络${green(name)}的Private Key:`,
     validate: (value = "") =>
-      utils.isBytesLike(value) || "Pass a valid Private Key value",
+      isBytesLike(value) || "Pass a valid Private Key value",
     mask: "*",
   });
 
-  const provider = new providers.JsonRpcProvider(config[networkIndex].rpc);
+  const provider = new JsonRpcProvider(config[networkIndex].rpc);
   const wallet = new Wallet(privateKey, provider);
   console.log("Signer:", yellow(wallet.address));
 
-  const defaultGasPrice = await wallet.provider.getGasPrice();
+  const feeData = await provider.getFeeData();
+  const defaultGasPrice = feeData.gasPrice;
   override.gasPrice = await input({
     message: "输入Gas price:",
-    default: defaultGasPrice.toString(),
+    default: defaultGasPrice?.toString(),
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
@@ -215,10 +217,10 @@ export async function setNetwork(
 
 export async function sendTransaction(
   network: Network,
-  contract: Contract,
+  contract: any,
   func: string,
   args: any[],
-  override: PayableOverrides = {},
+  override: any = {},
   checkRole: BytesLike = "0x"
 ) {
   if (checkRole != "0x") {
@@ -235,7 +237,7 @@ export async function sendTransaction(
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  override.gasLimit = await contract.estimateGas[func](...args);
+  override.gasLimit = await contract[func].estimateGas(...args);
   console.log("gasLimit:", green(override.gasLimit.toString()));
   let receipt = await contract[func](...args, override);
   await receipt.wait();
@@ -247,7 +249,7 @@ export async function deployContractV2(
   network: Network,
   contract: string,
   args: any[],
-  override: PayableOverrides = {}
+  override: any = {}
 ): Promise<Contract> {
   override.nonce = await input({
     message: "输入nonce:",
@@ -259,9 +261,8 @@ export async function deployContractV2(
 
   const factory = await ethers.getContractFactory(contract, network.wallet);
 
-  override.gasLimit = await network.wallet.estimateGas(
-    factory.getDeployTransaction(...args)
-  );
+  const deployTx = await factory.getDeployTransaction(...args);
+  override.gasLimit = await network.wallet.estimateGas(deployTx);
   console.log("gasLimit:", green(override.gasLimit.toString()));
   const deploy = await factory.deploy(...args, override);
   const deployed = await deploy.deployed();
@@ -276,7 +277,7 @@ export async function getContractV2(
   contract: string,
   address: string
 ) {
-  const provider = new providers.JsonRpcProvider(rpc);
+  const provider = new JsonRpcProvider(rpc);
   const wallet = new Wallet(defaultPrivateKey, provider);
 
   return await ethers.getContractAt(contract, address, wallet);

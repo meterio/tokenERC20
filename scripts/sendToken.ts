@@ -7,9 +7,7 @@ import {
   getChoices,
   green,
 } from "./helper";
-import { ERC20MinterBurnerPauser, ProxyOFT } from "../typechain";
-import { BigNumber } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
+import { formatUnits, isAddress } from "ethers";
 
 const main = async () => {
   const srcNetwork = await setNetwork(config, "Src");
@@ -22,18 +20,16 @@ const main = async () => {
 
   const tokenAddress = await input({
     message: "输入Token地址:",
-    validate: (value = "") =>
-      ethers.utils.isAddress(value) || "Pass a valid address value",
+    validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 
   const toAddress = await input({
     message: "输入接收地址:",
     default: wallet.address,
-    validate: (value = "") =>
-      ethers.utils.isAddress(value) || "Pass a valid address value",
+    validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 
-  const amount = BigNumber.from(
+  const amount = BigInt(
     await input({
       message: "输入发送数量(单位:wei):",
       default: "1000000000000000000",
@@ -41,14 +37,14 @@ const main = async () => {
     })
   );
 
-  const token = (await ethers.getContractAt(
+  const token = await ethers.getContractAt(
     "ERC20MinterBurnerPauser",
     tokenAddress,
     wallet
-  )) as ERC20MinterBurnerPauser;
+  );
 
   const allowance = await token.allowance(wallet.address, netConfig.proxy);
-  if (allowance.lt(amount)) {
+  if (allowance < amount) {
     console.log("Approve:");
     await sendTransaction(srcNetwork, token, "approve(address,uint256)", [
       netConfig.proxy,
@@ -56,11 +52,11 @@ const main = async () => {
     ]);
   }
 
-  const proxyOFT = (await ethers.getContractAt(
+  const proxyOFT = await ethers.getContractAt(
     "ProxyOFT",
     netConfig.proxy,
     wallet
-  )) as ProxyOFT;
+  );
 
   override.value = (
     await proxyOFT.estimateSendFee(

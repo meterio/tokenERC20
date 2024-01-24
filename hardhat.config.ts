@@ -1,12 +1,12 @@
-import "hardhat-typechain";
-import "@nomiclabs/hardhat-ethers";
+import "@typechain/hardhat";
+import "@nomicfoundation/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import { task } from "hardhat/config";
 import { compileSetting } from "./scripts/deployTool";
 
 import { deployContract } from "./scripts/helper";
-// import { ProxyOFT, ProxyOFT__factory } from "./typechain";
+import { ProxyOFT, ProxyOFT__factory } from "./typechain-types";
 // import "@nomicfoundation/hardhat-verify";
 
 // const { setGlobalDispatcher, ProxyAgent } = require("undici");

@@ -7,7 +7,7 @@ import {
   green,
   sendTransaction,
 } from "./helper";
-import { utils } from "ethers";
+import { isAddress } from "ethers";
 
 const main = async () => {
   const network = await setNetwork(config);
@@ -15,7 +15,7 @@ const main = async () => {
 
   const pa = await input({
     message: "输入Proxy Admin地址:",
-    validate: (value = "") => utils.isAddress(value) || "Pass a valid value",
+    validate: (value = "") => isAddress(value) || "Pass a valid value",
   });
 
   const name = await input({
@@ -36,7 +36,7 @@ const main = async () => {
 
   const admin = await input({
     message: "输入合约Admin:",
-    validate: (value = "") => utils.isAddress(value) || "Pass a valid value",
+    validate: (value = "") => isAddress(value) || "Pass a valid value",
   });
 
   const implementation = await deployContractV2(
@@ -81,7 +81,7 @@ const main = async () => {
   } else if (proxy_answer == "update") {
     const proxyAddress = await input({
       message: "输入Proxy地址:",
-      validate: (value = "") => utils.isAddress(value) || "Pass a valid value",
+      validate: (value = "") => isAddress(value) || "Pass a valid value",
     });
     const proxyAdminContract = await ethers.getContractAt(
       "SumerProxyAdmin",

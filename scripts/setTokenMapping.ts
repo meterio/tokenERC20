@@ -1,7 +1,6 @@
 import { input, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
-import { ERC20MinterBurnerPauser, ProxyOFT } from "../typechain";
 import {
   json,
   config,
@@ -14,14 +13,15 @@ import {
   red,
   DEFAULT_ADMIN_ROLE,
 } from "./helper";
+import { isAddress } from "ethers";
 
 async function checkRole(network: Network, tokenAddress: string) {
   console.log(`查询网络${green(network.name)}的Token权限设置:`);
-  const tokenContract = (await ethers.getContractAt(
+  const tokenContract = await ethers.getContractAt(
     "ERC20MinterBurnerPauser",
     tokenAddress,
     network.wallet
-  )) as ERC20MinterBurnerPauser;
+  );
 
   const hasRoleA = await tokenContract.hasRole(
     MINTER_ROLE,
@@ -30,17 +30,17 @@ async function checkRole(network: Network, tokenAddress: string) {
 
   if (hasRoleA) {
     console.log(
-      `网络${green(network.name)}:\n ProxyOFT合约:${
-        yellow(network.netConfig.proxy)
-      }\n 拥有Token${green(network.name)}合约${yellow(
+      `网络${green(network.name)}:\n ProxyOFT合约:${yellow(
+        network.netConfig.proxy
+      )}\n 拥有Token${green(network.name)}合约${yellow(
         tokenAddress
       )}的MINTER_ROLE✅`
     );
   } else {
     console.log(
-      `网络${green(network.name)}:\n ProxyOFT合约:${
-        yellow(network.netConfig.proxy)
-      }\n 不拥有Token${green(network.name)}合约${yellow(
+      `网络${green(network.name)}:\n ProxyOFT合约:${yellow(
+        network.netConfig.proxy
+      )}\n 不拥有Token${green(network.name)}合约${yellow(
         tokenAddress
       )}的MINTER_ROLE❌`
     );
@@ -67,11 +67,11 @@ async function laneExist(
   dstToken: string
 ) {
   console.log(`查询网络${green(network.name)}的OFT设置:`);
-  const proxyOFT = (await ethers.getContractAt(
+  const proxyOFT = await ethers.getContractAt(
     "ProxyOFT",
     network.netConfig.proxy,
     network.wallet
-  )) as ProxyOFT;
+  );
   if (!config[network.networkIndex].tokenMapping) {
     config[network.networkIndex].tokenMapping = {};
     writeFileSync(json, JSON.stringify(config, null, 2));
@@ -84,9 +84,9 @@ async function laneExist(
   const laneExist = await proxyOFT.laneExist(srcChainId, srcToken);
   if (laneExist) {
     console.log(
-      `网络${green(network.name)}:\n ProxyOFT合约:${
-        yellow(network.netConfig.proxy)
-      }\n ` +
+      `网络${green(network.name)}:\n ProxyOFT合约:${yellow(
+        network.netConfig.proxy
+      )}\n ` +
         red("存在") +
         `srcChainId${green(srcChainId)}的srcToken: ${yellow(srcToken)}的链路✅`
     );
@@ -120,9 +120,9 @@ async function laneExist(
     }
   } else {
     console.log(
-      `网络${green(network.name)}:\n ProxyOFT合约:${
-        yellow(network.netConfig.proxy)
-      }\n ` +
+      `网络${green(network.name)}:\n ProxyOFT合约:${yellow(
+        network.netConfig.proxy
+      )}\n ` +
         red("不存在") +
         `srcChainId${green(srcChainId)}的srcToken: ${yellow(srcToken)}的链路❌`
     );
@@ -150,15 +150,13 @@ const main = async () => {
   const networkA = await setNetwork(config, "A");
   const tokenA = await input({
     message: "输入网络" + green("A") + "的Token地址:",
-    validate: (value = "") =>
-      ethers.utils.isAddress(value) || "Pass a valid address value",
+    validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 
   const networkB = await setNetwork(config, "B");
   const tokenB = await input({
     message: "输入网络" + green("B") + "的Token地址:",
-    validate: (value = "") =>
-      ethers.utils.isAddress(value) || "Pass a valid address value",
+    validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
   if (networkA.networkIndex == networkB.networkIndex) {
     throw new Error(red("网络A和网络B不能相同!"));
