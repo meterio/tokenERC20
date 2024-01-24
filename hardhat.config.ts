@@ -2,12 +2,11 @@ import "hardhat-typechain";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
-import { task, types } from "hardhat/config";
-import { BigNumber, constants, Signer, utils } from "ethers";
-import { compileSetting, allowVerifyChain } from "./scripts/deployTool";
-import { RPCS } from "./scripts/network";
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
+import { task } from "hardhat/config";
+import { compileSetting } from "./scripts/deployTool";
 
+import { deployContract } from "./scripts/helper";
+// import { ProxyOFT, ProxyOFT__factory } from "./typechain";
 // import "@nomicfoundation/hardhat-verify";
 
 // const { setGlobalDispatcher, ProxyAgent } = require("undici");
@@ -31,6 +30,56 @@ task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
   }
 });
 
+/* 
+npx hardhat oft-proxy \
+--lz 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+--pa 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+--admin 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+--network metermain
+*/
+task("oft-proxy", "deploy token proxy contract")
+  .addParam("lz", "lz endpoint")
+  .addParam("pa", "proxy admin")
+  .addParam("admin", "contract admin")
+  .setAction(async ({ lz, pa, admin }, { ethers, run, network }) => {
+    await run("compile");
+    const signers = await ethers.getSigners();
+
+    const impl = (await deployContract(
+      ethers,
+      "ProxyOFT",
+      network.name,
+      signers[0],
+      []
+    )) as ProxyOFT;
+
+    const data = impl.interface.encodeFunctionData("initialize", [lz, admin]);
+
+    console.log("data:", data);
+  });
+
+/* 
+npx hardhat oft-proxy-data \
+--lz 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+--pa 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+--admin 0x1381c573b97bf393a81fa42760dd21e109d8092b \
+--network metermain
+*/
+task("oft-proxy-data", "deploy token proxy contract")
+  .addParam("lz", "lz endpoint")
+  .addParam("pa", "proxy admin")
+  .addParam("admin", "contract admin")
+  .setAction(async ({ lz, pa, admin }, { ethers, run, network }) => {
+    await run("compile");
+    const signers = await ethers.getSigners();
+
+    const impl = new ProxyOFT__factory();
+
+    const data = impl.interface.encodeFunctionData("initialize", [lz, admin]);
+
+    console.log("data:", data);
+  });
+
 export default {
   networks: {
     metertest: {
@@ -45,9 +94,17 @@ export default {
       gasPrice: 500000000000,
       accounts: [process.env.MAINNET_CONTRACT_ADMIN_PRIVKEY],
     },
-    theta: {
-      url: `https://eth-rpc-api.thetatoken.org/rpc`,
-      chainId: 361,
+    sepolia: {
+      url: "https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      chainId: 11155111,
+      gasPrice: 4000000000000,
+      accounts: {
+        mnemonic: process.env.MNEMONIC,
+      },
+    },
+    ethereum: {
+      url: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // public infura endpoint
+      chainId: 1,
       gasPrice: 4000000000000,
       accounts: {
         mnemonic: process.env.MNEMONIC,
@@ -64,9 +121,9 @@ export default {
       chainId: 8453,
       accounts: [process.env.METER_TEST_PRIVKEY],
     },
-    ganache: {
-      url: `http:127.0.0.1:7545`,
-      chainId: 1337,
+    abitrum: {
+      url: `https://arb1.arbitrum.io/rpc`,
+      chainId: 42161,
       accounts: {
         mnemonic: process.env.MNEMONIC,
       },

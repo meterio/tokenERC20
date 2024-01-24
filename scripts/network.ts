@@ -14,23 +14,14 @@ export const RPCS = {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  ropsten: {
-    url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-  },
-  rinkeby: {
-    url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
   goerli: {
     url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
     accounts: {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  kovan: {
-    url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
+  sepolia: {
+    url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
     accounts: {
       mnemonic: process.env.MNEMONIC,
     },
@@ -51,23 +42,6 @@ export const RPCS = {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  hecotest: {
-    url: `https://http-testnet.hecochain.com`,
-    chainId: 256,
-    gasPrice: 1000000000,
-    gasLimit: 8000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  hecomain: {
-    url: `https://http-mainnet.hecochain.com`,
-    chainId: 128,
-    gasPrice: 2000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
   metertest: {
     url: `https://rpctest.meter.io`,
     chainId: 83,
@@ -82,55 +56,7 @@ export const RPCS = {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  clvtest: {
-    url: `https://rpc.clover.finance`,
-    chainId: 1023,
-    gasPrice: 50000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  clvmain: {
-    url: `https://rpc-ivy.clover.finance`,
-    chainId: 1024,
-    gasPrice: 50000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  haicmain: {
-    url: `http://121.40.100.237:8022`,
-    chainId: 17843,
-    gasPrice: 2000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  galtmain: {
-    url: `http://121.41.85.86:8025`,
-    chainId: 17845,
-    gasPrice: 50000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  coinextest: {
-    url: `https://testnet-rpc1.coinex.net`,
-    chainId: 53,
-    gasPrice: 500000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  coinexmain: {
-    url: `https://rpc.coinex.net`,
-    chainId: 52,
-    gasPrice: 500000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  maticmain: {
+  polygon: {
     url: `https://rpc-mainnet.maticvigil.com`,
     chainId: 137,
     gasPrice: 5000000000,
@@ -138,7 +64,7 @@ export const RPCS = {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  matictest: {
+  mumbai: {
     url: `https://rpc-mumbai.maticvigil.com`,
     chainId: 80001,
     gasPrice: 1000000000,
@@ -162,100 +88,21 @@ export const RPCS = {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  hootest: {
-    url: `https://http-testnet.hoosmartchain.com`,
-    chainId: 170,
-    gasPrice: 150000000000,
+  abitrum: {
+    url: `https://arb1.arbitrum.io/rpc`,
+    chainId: 42161,
     accounts: {
       mnemonic: process.env.MNEMONIC,
     },
   },
-  hoomain: {
-    url: `https://http-mainnet.hoosmartchain.com`,
-    chainId: 70,
-    gasPrice: 10000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
+  basetest: {
+    url: `https://goerli.base.org`,
+    chainId: 84531,
+    accounts: [process.env.METER_TEST_PRIVKEY],
   },
-  oktest: {
-    url: `https://exchaintestrpc.okex.org`,
-    chainId: 65,
-    gasPrice: 100000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
+  basemain: {
+    url: `https://base.publicnode.com`,
+    chainId: 8453,
+    accounts: [process.env.METER_TEST_PRIVKEY],
   },
-  okmain: {
-    url: `https://exchainrpc.okex.org`,
-    chainId: 66,
-    gasPrice: 100000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  xdai: {
-    url: `https://rpc.xdaichain.com`,
-    chainId: 100,
-    gasPrice: 20000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  harmonymain: {
-    url: `https://api.s0.t.hmny.io`,
-    chainId: 1666600000,
-    gasPrice: 10000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  harmonytest: {
-    url: `https://api.s0.b.hmny.io`,
-    chainId: 1666700000,
-    gasPrice: 10000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  avaxtest: {
-    url: `https://api.avax-test.network/ext/bc/C/rpc`,
-    chainId: 43113,
-    gasPrice: 225000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  avaxmain: {
-    url: `https://api.avax.network/ext/bc/C/rpc`,
-    chainId: 43114,
-    gasPrice: 225000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  celotest: {
-    url: `https://alfajores-forno.celo-testnet.org`,
-    chainId: 44787,
-    gasPrice: 500000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  celomain: {
-    url: `https://forno.celo.org`,
-    chainId: 42220,
-    gasPrice: 500000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  },
-  moonbeamtest: {
-    url: `https://rpc.testnet.moonbeam.network`,
-    chainId: 1287,
-    gasPrice: 1000000000,
-    accounts: {
-      mnemonic: process.env.MNEMONIC,
-    },
-  }
 };
