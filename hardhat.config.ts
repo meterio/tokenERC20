@@ -45,13 +45,13 @@ task("oft-proxy", "deploy token proxy contract")
     await run("compile");
     const signers = await ethers.getSigners();
 
-    const impl = (await deployContract(
+    const impl = await deployContract(
       ethers,
       "ProxyOFT",
       network.name,
       signers[0],
       []
-    )) as ProxyOFT;
+    );
 
     const data = impl.interface.encodeFunctionData("initialize", [lz, admin]);
 

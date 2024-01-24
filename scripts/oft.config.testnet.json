@@ -55,7 +55,8 @@
         "0x722CCB55Ab1752796Cf34c12D1eA7083158EcAf9": "0x0d893C092f7aE9D97c13307f2D66CFB59430b4Cb",
         "0xb14900CC638F84a3E4F167a2776502C7BCd42CdD": "0x21351bde0B42b4Cba5c04Fc92917b8c3254b1E88"
       }
-    }
+    },
+    "BasicTokenSender": "0x3881f44fCe4EB8864be07eF57D74175dF28dC64f"
   },
   {
     "name": "Polygon mumbai",

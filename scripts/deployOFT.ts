@@ -70,6 +70,7 @@ const main = async () => {
       wallet
     );
 
+    proxyAdminContract.getFunction("upgrade");
     await sendTransaction(
       network,
       proxyAdminContract,

@@ -35,13 +35,11 @@ export function compileSetting(version: string, runs: number) {
             "evm.deployedBytecode",
             "evm.methodIdentifiers",
             "metadata",
-            "storageLayout"
+            "storageLayout",
           ],
-          "": [
-            "ast"
-          ]
-        }
-      }
+          "": ["ast"],
+        },
+      },
     },
   };
 }
@@ -63,8 +61,8 @@ export async function deployContract(
   console.log("  to", contract.address);
   console.log("  in", contract.deployTransaction.hash);
   console.log("  receipt", await contract.deployTransaction.wait());
-  await saveFile(network, name, contract,args,libraries);
-  return contract.deployed();
+  await saveFile(network, name, contract, args, libraries);
+  return contract.waitForDeployment();
 }
 
 export function getContract(network: string, name: string) {
@@ -93,19 +91,25 @@ export async function saveFile(
   const file = `${contractName}.json`;
 
   mkdirSync(path, { recursive: true });
-  
+
   if (contractName != name) {
-    writeFileSync(path + file, JSON.stringify({
-      address: contract.address,
-      constructorArguments: args,
-      libraries:libraries,
-      contract:name
-    }));
-  }else{
-    writeFileSync(path + file, JSON.stringify({
-      address: contract.address,
-      constructorArguments: args,
-      libraries:libraries
-    }));
+    writeFileSync(
+      path + file,
+      JSON.stringify({
+        address: contract.address,
+        constructorArguments: args,
+        libraries: libraries,
+        contract: name,
+      })
+    );
+  } else {
+    writeFileSync(
+      path + file,
+      JSON.stringify({
+        address: contract.address,
+        constructorArguments: args,
+        libraries: libraries,
+      })
+    );
   }
 }

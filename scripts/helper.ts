@@ -24,7 +24,7 @@ export const bgYellow = colors.bgYellow;
 export const defaultPrivateKey =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // mnemonic:test test test test test test test test test test test junk
 
-export const json = "./scripts/oft.config.mainnet.json";
+export const json = "./scripts/oft.config.testnet.json";
 export const config = JSON.parse(readFileSync(json).toString());
 
 export function expandTo18Decimals(n: number): bigint {
@@ -92,7 +92,7 @@ export async function deployContract(
   console.log("  to", contract.address);
   console.log("  in", tx?.hash);
   await saveFile(network, name, contract, args, libraries);
-  return contract.deployed();
+  return contract.waitForDeployment();
   // } else {
   // console.log("Contract:", name);
   // console.log("  on", address.white);
@@ -119,7 +119,7 @@ export async function deployContractOverrides(
   console.log("  to", contract.address);
   console.log("  in", tx?.hash);
   await saveFile(network, name, contract, args);
-  return contract.deployed();
+  return contract.waitForDeployment();
   // } else {
   // console.log("Contract:", name);
   // console.log("  on", address.white);
@@ -265,9 +265,10 @@ export async function deployContractV2(
   override.gasLimit = await network.wallet.estimateGas(deployTx);
   console.log("gasLimit:", green(override.gasLimit.toString()));
   const deploy = await factory.deploy(...args, override);
-  const deployed = await deploy.deployed();
+  const deployed = await deploy.waitForDeployment();
 
-  console.log(`${contract} deployed:`, yellow(deployed.address));
+  const addr = await deployed.getAddress();
+  console.log(`${contract} deployed:`, yellow(addr));
   return deployed;
 }
 
