@@ -6,14 +6,13 @@ export async function getSign(
   owner: string,
   spender: string,
   value: bigint,
-  nonce: number,
+  nonce: bigint,
   deadline: number,
-  chainId: number
-): Promise<BytesLike> {
+  chainId: bigint
+): Promise<string> {
   const name = "PermitToken";
   const version = "1.0";
-  let signer = wallet as VoidSigner;
-  let signature = await signer.signTypedData(
+  let signature = await wallet.signTypedData(
     { name, version, chainId, verifyingContract },
     {
       Permit: [

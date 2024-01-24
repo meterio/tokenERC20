@@ -2,8 +2,6 @@ import { input, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
 import {
-  json,
-  config,
   MINTER_ROLE,
   setNetwork,
   Network,
@@ -64,7 +62,9 @@ async function laneExist(
   network: Network,
   srcChainId: string,
   srcToken: string,
-  dstToken: string
+  dstToken: string,
+  config: any,
+  configPath: string
 ) {
   console.log(`查询网络${green(network.name)}的OFT设置:`);
   const proxyOFT = await ethers.getContractAt(
@@ -74,11 +74,11 @@ async function laneExist(
   );
   if (!config[network.networkIndex].tokenMapping) {
     config[network.networkIndex].tokenMapping = {};
-    writeFileSync(json, JSON.stringify(config, null, 2));
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
   }
   if (!config[network.networkIndex].tokenMapping[srcChainId]) {
     config[network.networkIndex].tokenMapping[srcChainId] = {};
-    writeFileSync(json, JSON.stringify(config, null, 2));
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
   }
 
   const laneExist = await proxyOFT.laneExist(srcChainId, srcToken);
@@ -142,18 +142,18 @@ async function laneExist(
         dstToken;
     }
   }
-  writeFileSync(json, JSON.stringify(config, null, 2));
+  writeFileSync(configPath, JSON.stringify(config, null, 2));
 }
 
 const main = async () => {
   // 环境
-  const networkA = await setNetwork(config, "A");
+  const networkA = await setNetwork("A");
   const tokenA = await input({
     message: "输入网络" + green("A") + "的Token地址:",
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 
-  const networkB = await setNetwork(config, "B");
+  const networkB = await setNetwork("B");
   const tokenB = await input({
     message: "输入网络" + green("B") + "的Token地址:",
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
@@ -166,9 +166,23 @@ const main = async () => {
 
   await checkRole(networkB, tokenB);
 
-  await laneExist(networkA, networkB.netConfig.lzChainId, tokenB, tokenA);
+  await laneExist(
+    networkA,
+    networkB.netConfig.lzChainId,
+    tokenB,
+    tokenA,
+    networkA.config,
+    networkA.configPath
+  );
 
-  await laneExist(networkB, networkA.netConfig.lzChainId, tokenA, tokenB);
+  await laneExist(
+    networkB,
+    networkA.netConfig.lzChainId,
+    tokenA,
+    tokenB,
+    networkB.config,
+    networkB.configPath
+  );
 };
 
 main();

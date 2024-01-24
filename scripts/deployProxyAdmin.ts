@@ -1,11 +1,11 @@
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
 
-import { json, config, setNetwork, deployContractV2 } from "./helper";
+import { setNetwork, deployContractV2 } from "./helper";
 
 const main = async () => {
-  const network = await setNetwork(config);
-  let { override, networkIndex } = network;
+  const network = await setNetwork();
+  let { config, override, networkIndex, configPath } = network;
 
   const proxyAdmin = await deployContractV2(
     ethers,
@@ -16,7 +16,7 @@ const main = async () => {
   );
 
   config[networkIndex].proxyAdmin = proxyAdmin.address;
-  writeFileSync(json, JSON.stringify(config, null, 2));
+  writeFileSync(configPath, JSON.stringify(config, null, 2));
 };
 
 main();

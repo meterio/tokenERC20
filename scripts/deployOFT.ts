@@ -2,8 +2,6 @@ import { input, select, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
 import {
-  json,
-  config,
   setNetwork,
   deployContractV2,
   sendTransaction,
@@ -12,8 +10,9 @@ import {
 import { isAddress } from "ethers";
 
 const main = async () => {
-  const network = await setNetwork(config);
-  let { wallet, override, networkIndex, netConfig } = network;
+  const network = await setNetwork();
+  let { wallet, override, networkIndex, netConfig, config, configPath } =
+    network;
 
   // Implementation
   const isDeployImpl = await confirm({
@@ -29,7 +28,7 @@ const main = async () => {
     );
 
     config[networkIndex].oft_impl = oft_impl.address;
-    writeFileSync(json, JSON.stringify(config, null, 2));
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
   } else {
     config[networkIndex].oft_impl = await input({
       message: "输入Implementation合约地址",
@@ -37,7 +36,7 @@ const main = async () => {
       validate: (value = "") =>
         isAddress(value) || "Pass a valid address value",
     });
-    writeFileSync(json, JSON.stringify(config, null, 2));
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
   }
 
   // deployProxyOrUpgrade
@@ -60,7 +59,7 @@ const main = async () => {
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
   config[networkIndex].proxyAdmin = proxyAdmin;
-  writeFileSync(json, JSON.stringify(config, null, 2));
+  writeFileSync(configPath, JSON.stringify(config, null, 2));
 
   // upgrade
   if (deployProxyOrUpgrade == "upgrade") {
@@ -70,7 +69,7 @@ const main = async () => {
       wallet
     );
 
-    proxyAdminContract.getFunction("upgrade");
+    proxyAdminContract.getFunction("upgrade").send();
     await sendTransaction(
       network,
       proxyAdminContract,
@@ -114,7 +113,7 @@ const main = async () => {
     config[networkIndex].lzEndpoint = lzEndpoint;
     config[networkIndex].lzChainId = lzChainId;
     config[networkIndex].admin = admin;
-    writeFileSync(json, JSON.stringify(config, null, 2));
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
 
     const oftAddr = await oft_impl.getAddress();
     const proxy = await deployContractV2(
@@ -126,7 +125,7 @@ const main = async () => {
     );
 
     config[networkIndex].proxy = proxy.address;
-    writeFileSync(json, JSON.stringify(config, null, 2));
+    writeFileSync(configPath, JSON.stringify(config, null, 2));
   }
 };
 

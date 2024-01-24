@@ -7,7 +7,6 @@ import {
   JsonRpcProvider,
   ZeroAddress,
   isBytesLike,
-  BigNumberish,
 } from "ethers";
 import { HardhatEthersHelpers } from "@nomicfoundation/hardhat-ethers/types";
 import { Libraries } from "hardhat/types";
@@ -23,9 +22,6 @@ export const bgWhite = colors.bgWhite;
 export const bgYellow = colors.bgYellow;
 export const defaultPrivateKey =
   "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // mnemonic:test test test test test test test test test test test junk
-
-export const json = "./scripts/oft.config.testnet.json";
-export const config = JSON.parse(readFileSync(json).toString());
 
 export function expandTo18Decimals(n: number): bigint {
   return BigInt(n) * BigInt(10) ** BigInt(18);
@@ -181,12 +177,31 @@ export type Network = {
   override: any;
   netConfig: any;
   networkIndex: number;
+  config: any;
+  configPath: string;
 };
 
-export async function setNetwork(
-  config: any[],
-  name: string = ""
-): Promise<Network> {
+export async function setConfig() {
+  const configFiles = [
+    "oft.config.testnet.json",
+    "oft.config.mainnet.json",
+    "oft.config.local.json",
+    "oft.config.json",
+  ];
+  const configChoices = configFiles.map((f) => ({ name: f, value: f }));
+  const chosen = await select({
+    message: `选择配置文件:`,
+    choices: configChoices,
+  });
+
+  const configPath = `./scripts/${chosen}`;
+  const config = JSON.parse(readFileSync(configPath).toString());
+  return { configPath: configPath, config };
+}
+
+export async function setNetwork(name: string = ""): Promise<Network> {
+  const { config, configPath } = await setConfig();
+
   let override: any = {};
   const networkIndex = await select({
     message: `选择网络${green(name)}:`,
@@ -212,7 +227,16 @@ export async function setNetwork(
   });
 
   const netConfig = config[networkIndex];
-  return { name, provider, wallet, override, netConfig, networkIndex };
+  return {
+    name,
+    provider,
+    wallet,
+    override,
+    netConfig,
+    networkIndex,
+    config,
+    configPath,
+  };
 }
 
 export async function sendTransaction(

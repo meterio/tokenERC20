@@ -1,17 +1,11 @@
 import { input, select } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import {
-  config,
-  setNetwork,
-  sendTransaction,
-  getChoices,
-  green,
-} from "./helper";
+import { setNetwork, sendTransaction, getChoices, green } from "./helper";
 import { formatUnits, isAddress } from "ethers";
 
 const main = async () => {
-  const srcNetwork = await setNetwork(config, "Src");
-  let { wallet, netConfig, override } = srcNetwork;
+  const srcNetwork = await setNetwork("Src");
+  let { wallet, netConfig, override, config } = srcNetwork;
 
   const dstNetworkIndex = await select({
     message: `选择目标链网络:`,

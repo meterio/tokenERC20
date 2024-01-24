@@ -1,12 +1,12 @@
 import { input, select, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
-import { json, config, setNetwork, deployContractV2 } from "./helper";
+import { setNetwork, deployContractV2 } from "./helper";
 import { isAddress } from "ethers";
 
 const main = async () => {
-  const network = await setNetwork(config);
-  let { override, networkIndex, netConfig } = network;
+  const network = await setNetwork();
+  let { override, networkIndex, netConfig, config, configPath } = network;
 
   // Implementation
   const isDeployImpl = await confirm({
@@ -32,7 +32,7 @@ const main = async () => {
 
   const addr = await impl.getAddress();
   config[networkIndex].BasicTokenSender = addr;
-  writeFileSync(json, JSON.stringify(config, null, 2));
+  writeFileSync(configPath, JSON.stringify(config, null, 2));
 };
 
 main();

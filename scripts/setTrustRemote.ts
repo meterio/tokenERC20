@@ -2,8 +2,6 @@ import { select, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
 import {
-  json,
-  config,
   setNetwork,
   sendTransaction,
   green,
@@ -13,8 +11,9 @@ import {
 } from "./helper";
 
 const main = async () => {
-  const network = await setNetwork(config);
-  const { netConfig, wallet, networkIndex, override } = network;
+  const network = await setNetwork();
+  const { netConfig, wallet, networkIndex, override, config, configPath } =
+    network;
 
   const proxyContract = await ethers.getContractAt(
     "ProxyOFT",
@@ -91,7 +90,7 @@ const main = async () => {
                   config[i].lzChainId
                 )}, trust remote address: ${yellow(remoteAddress)}`
               );
-              writeFileSync(json, JSON.stringify(config, null, 2));
+              writeFileSync(configPath, JSON.stringify(config, null, 2));
             }
           } else {
             console.log(
