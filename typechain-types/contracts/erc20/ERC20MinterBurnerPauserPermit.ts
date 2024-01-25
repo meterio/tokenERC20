@@ -30,13 +30,7 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
       | "DOMAIN_SEPARATOR"
       | "MINTER_ROLE"
       | "PAUSER_ROLE"
-      | "_CACHED_CHAIN_ID"
-      | "_CACHED_DOMAIN_SEPARATOR"
-      | "_CACHED_THIS"
       | "_CONST_PERMIT_TYPEHASH"
-      | "_HASHED_NAME"
-      | "_HASHED_VERSION"
-      | "_TYPE_HASH"
       | "allowance"
       | "approve"
       | "balanceOf"
@@ -56,6 +50,7 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
       | "pause"
       | "paused"
       | "permit"
+      | "permitBySignature"
       | "renounceRole"
       | "revokeRole"
       | "symbol"
@@ -93,31 +88,7 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "_CACHED_CHAIN_ID",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_CACHED_DOMAIN_SEPARATOR",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_CACHED_THIS",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "_CONST_PERMIT_TYPEHASH",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_HASHED_NAME",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_HASHED_VERSION",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_TYPE_HASH",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -176,6 +147,18 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "permit",
+    values: [
+      AddressLike,
+      AddressLike,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "permitBySignature",
     values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
@@ -218,30 +201,9 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_CACHED_CHAIN_ID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_CACHED_DOMAIN_SEPARATOR",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_CACHED_THIS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_CONST_PERMIT_TYPEHASH",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_HASHED_NAME",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_HASHED_VERSION",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_TYPE_HASH", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -276,6 +238,10 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "permitBySignature",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -463,19 +429,7 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
 
   PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
 
-  _CACHED_CHAIN_ID: TypedContractMethod<[], [bigint], "view">;
-
-  _CACHED_DOMAIN_SEPARATOR: TypedContractMethod<[], [string], "view">;
-
-  _CACHED_THIS: TypedContractMethod<[], [string], "view">;
-
   _CONST_PERMIT_TYPEHASH: TypedContractMethod<[], [string], "view">;
-
-  _HASHED_NAME: TypedContractMethod<[], [string], "view">;
-
-  _HASHED_VERSION: TypedContractMethod<[], [string], "view">;
-
-  _TYPE_HASH: TypedContractMethod<[], [string], "view">;
 
   allowance: TypedContractMethod<
     [owner: AddressLike, spender: AddressLike],
@@ -555,6 +509,20 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
       spender: AddressLike,
       value: BigNumberish,
       deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
+  permitBySignature: TypedContractMethod<
+    [
+      owner: AddressLike,
+      spender: AddressLike,
+      value: BigNumberish,
+      deadline: BigNumberish,
       signature: BytesLike
     ],
     [void],
@@ -608,25 +576,7 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     nameOrSignature: "PAUSER_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "_CACHED_CHAIN_ID"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "_CACHED_DOMAIN_SEPARATOR"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "_CACHED_THIS"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "_CONST_PERMIT_TYPEHASH"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "_HASHED_NAME"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "_HASHED_VERSION"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "_TYPE_HASH"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "allowance"
@@ -720,6 +670,21 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "permit"
+  ): TypedContractMethod<
+    [
+      owner: AddressLike,
+      spender: AddressLike,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "permitBySignature"
   ): TypedContractMethod<
     [
       owner: AddressLike,

@@ -1,9 +1,9 @@
 import { input } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { setNetwork, deployContractV2 } from "./helper";
+import { selectNetwork, deployContractV2 } from "./helper";
 
 const main = async () => {
-  const network = await setNetwork();
+  const network = await selectNetwork();
   let { override } = network;
 
   const name = await input({

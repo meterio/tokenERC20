@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as access from "./access";
+export * as drafts from "./drafts";
 export * as presets from "./presets";
 export * as token from "./token";
 export * as utils from "./utils";

@@ -1,11 +1,10 @@
-import { input, select, confirm } from "@inquirer/prompts";
+import { input, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { writeFileSync } from "fs";
-import { setNetwork, deployContractV2 } from "./helper";
+import { selectNetwork, deployContractV2 } from "./helper";
 import { isAddress } from "ethers";
 
 const main = async (i: any) => {
-  const network = await setNetwork();
+  const network = await selectNetwork();
   let { override, netConfig, updateNetConfig } = network;
 
   // Implementation

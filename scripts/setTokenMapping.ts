@@ -2,7 +2,7 @@ import { input, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import {
   MINTER_ROLE,
-  setNetwork,
+  selectNetwork,
   Network,
   sendTransaction,
   green,
@@ -142,13 +142,13 @@ async function laneExist(
 
 const main = async () => {
   // 环境
-  const networkA = await setNetwork("A");
+  const networkA = await selectNetwork("A");
   const tokenA = await input({
     message: "输入网络" + green("A") + "的Token地址:",
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 
-  const networkB = await setNetwork("B");
+  const networkB = await selectNetwork("B");
   const tokenB = await input({
     message: "输入网络" + green("B") + "的Token地址:",
     validate: (value = "") => isAddress(value) || "Pass a valid address value",

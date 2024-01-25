@@ -1,0 +1,26 @@
+{
+  "contract": "ERC20MinterBurnerPauserPermit",
+  "address": "0x109F1dC1663Dd4c11AB288ebA0A85b908bDBE7e4",
+  "createdBy": "0x0205c2D862cA051010698b69b54278cbAf945C0b",
+  "createdAt": "2024-01-25T10:55:57-08:00",
+  "creationTx": "0x0b7b21f4d6c0a6cc97e0d3cdc5775faeec48f3b1a1734283261d3793c43c4544",
+  "constructorArguments": [
+    "T",
+    "t",
+    "18"
+  ],
+  "constructorArgumentsDefs": [
+    {
+      "name": "_name",
+      "type": "string"
+    },
+    {
+      "name": "_symbol",
+      "type": "string"
+    },
+    {
+      "name": "decimals_",
+      "type": "uint8"
+    }
+  ]
+}

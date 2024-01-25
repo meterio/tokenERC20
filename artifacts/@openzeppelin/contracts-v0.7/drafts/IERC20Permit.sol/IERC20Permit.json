@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "IERC20Permit",
-  "sourceName": "contracts/erc20/draft-IERC20Permit.sol",
+  "sourceName": "@openzeppelin/contracts-v0.7/drafts/IERC20Permit.sol",
   "abi": [
     {
       "inputs": [],
@@ -58,9 +58,19 @@
           "type": "uint256"
         },
         {
-          "internalType": "bytes",
-          "name": "signature",
-          "type": "bytes"
+          "internalType": "uint8",
+          "name": "v",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "s",
+          "type": "bytes32"
         }
       ],
       "name": "permit",

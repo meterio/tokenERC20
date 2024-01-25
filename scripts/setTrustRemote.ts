@@ -1,7 +1,7 @@
 import { select, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import {
-  setNetwork,
+  selectNetwork,
   sendTransaction,
   green,
   yellow,
@@ -10,7 +10,7 @@ import {
 } from "./helper";
 
 const main = async () => {
-  const network = await setNetwork();
+  const network = await selectNetwork();
   const { netConfig, wallet, override, updateNetConfig } = network;
 
   const proxyContract = await ethers.getContractAt(

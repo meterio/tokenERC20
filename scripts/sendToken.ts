@@ -1,7 +1,7 @@
 import { input, select } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import {
-  setNetwork,
+  selectNetwork,
   sendTransaction,
   green,
   getNetworkChoicesFromHardhat,
@@ -10,7 +10,7 @@ import {
 import { formatUnits, isAddress } from "ethers";
 
 const main = async () => {
-  const srcNetwork = await setNetwork("Src");
+  const srcNetwork = await selectNetwork("Src");
   let { wallet, netConfig, override, updateNetConfig } = srcNetwork;
 
   const dstNetwork = await select({

@@ -3,9 +3,9 @@ pragma solidity 0.7.0;
 
 import "@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser.sol";
 import "@openzeppelin/contracts-v0.7/utils/Counters.sol";
-import "./draft-IERC20Permit.sol";
-import "./draft-EIP712.sol";
-import "./ECDSA.sol";
+import "@openzeppelin/contracts-v0.7/drafts/IERC20Permit.sol";
+import "@openzeppelin/contracts-v0.7/drafts/EIP712.sol";
+import "@openzeppelin/contracts-v0.7/cryptography/ECDSA.sol";
 
 /**
  * @dev {ERC20} token, including:
@@ -30,7 +30,11 @@ contract ERC20MinterBurnerPauserPermit is
         string memory _name,
         string memory _symbol,
         uint8 decimals_
-    ) ERC20PresetMinterPauser(_name, _symbol) {
+    )
+        public
+        ERC20PresetMinterPauser(_name, _symbol)
+        EIP712("PermitToken", "1.0")
+    {
         _setupDecimals(decimals_);
     }
 
@@ -48,6 +52,25 @@ contract ERC20MinterBurnerPauserPermit is
     bytes32 public constant _CONST_PERMIT_TYPEHASH =
         0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
 
+    function permitBySignature(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        bytes memory signature
+    ) public {
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+        assembly {
+            r := mload(add(signature, 32))
+            s := mload(add(signature, 64))
+            v := and(mload(add(signature, 65)), 255)
+        }
+        if (v < 27) v += 27;
+        permit(owner, spender, value, deadline, v, r, s);
+    }
+
     /**
      * @dev Initializes the {EIP712} domain separator using the `name` parameter, and setting `version` to `"1"`.
      *
@@ -64,8 +87,11 @@ contract ERC20MinterBurnerPauserPermit is
         address spender,
         uint256 value,
         uint256 deadline,
-        bytes memory signature
-    ) public virtual override {
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public override {
+        bytes memory signature = abi.encodePacked(r, s, v);
         require(block.timestamp <= deadline, "ERC20Permit: expired deadline");
 
         bytes32 structHash = keccak256(

@@ -1,13 +1,25 @@
-import { input, select } from "@inquirer/prompts";
+import { input } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { setNetwork, sendTransaction, getChoices, green } from "./helper";
-import { formatUnits, isAddress } from "ethers";
+import { loadContractV2, selectNetwork } from "./helper";
+import { isAddress } from "ethers";
 import { getSign } from "./permitSign";
 
 const main = async () => {
-  const srcNetwork = await setNetwork("Src");
+  const srcNetwork = await selectNetwork("Src");
   let { wallet, netConfig, override, provider } = srcNetwork;
   const { chainId } = provider._network;
+  const c = await loadContractV2(
+    ethers,
+    srcNetwork,
+    "ERC20MinterBurnerPauserPermit"
+  );
+  const ci = (await ethers.getContractFactory("ERC20MinterBurnerPauserPermit"))
+    .interface;
+  console.log("ci", ci);
+  const cf = ci.deploy;
+  console.log("cf", cf);
+
+  console.log(cf?.inputs);
 
   const owner = wallet.address;
 
@@ -36,7 +48,7 @@ const main = async () => {
     wallet
   );
 
-  const allowance = await token.allowance(wallet.address, netConfig.proxy);
+  const allowance = await token.allowance(wallet.address, spender);
   const nonce = await token.nonces(owner);
   console.log(`Allowance before: `, allowance);
   console.log(`Nonce: `, nonce);
@@ -53,14 +65,19 @@ const main = async () => {
     deadline,
     chainId
   );
-  const response = await token.permit(
+  const response = await token.permitBySignature(
     owner,
     spender,
     amount,
     deadline,
     signature
   );
+  const receipt = await response.wait();
   console.log(response);
+  console.log(receipt);
+  const allowanceAfter = await token.allowance(wallet.address, spender);
+  console.log(`Allowance After: ${allowanceAfter}`);
+  console.log(`Allowance Diff:${allowanceAfter - allowance}`);
 };
 
 main();

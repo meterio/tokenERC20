@@ -3,6 +3,8 @@
 /* eslint-disable */
 import type * as access from "./access";
 export type { access };
+import type * as drafts from "./drafts";
+export type { drafts };
 import type * as presets from "./presets";
 export type { presets };
 import type * as token from "./token";

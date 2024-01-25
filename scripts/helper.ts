@@ -1,20 +1,17 @@
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from "fs";
 import {
   Contract,
-  Signer,
   BytesLike,
   Wallet,
   JsonRpcProvider,
-  ZeroAddress,
   isBytesLike,
 } from "ethers";
 import { HardhatEthersHelpers } from "@nomicfoundation/hardhat-ethers/types";
-import { Libraries } from "hardhat/types";
-import { input, select, password } from "@inquirer/prompts";
+import { input, select, password, confirm } from "@inquirer/prompts";
 import colors from "colors";
 colors.enable();
 import * as fs from "fs";
 import * as path from "path";
+import moment from "moment";
 
 import hardhatConfig from "../hardhat.config";
 import { exit } from "process";
@@ -25,16 +22,6 @@ export const red = colors.red;
 export const blue = colors.blue;
 export const bgWhite = colors.bgWhite;
 export const bgYellow = colors.bgYellow;
-export const defaultPrivateKey =
-  "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // mnemonic:test test test test test test test test test test test junk
-
-export function expandTo18Decimals(n: number): bigint {
-  return BigInt(n) * BigInt(10) ** BigInt(18);
-}
-
-export function BN(n: number): bigint {
-  return BigInt(n);
-}
 export const overrides: any = {
   gasLimit: 8000000,
 };
@@ -44,136 +31,7 @@ export const MINTER_ROLE: BytesLike =
 export const DEFAULT_ADMIN_ROLE: BytesLike =
   "0x0000000000000000000000000000000000000000000000000000000000000000";
 
-export const gasLeft = BN(28975827); //1ba22d3
-
-export function getContract(network: string, name: string) {
-  const nameArr = name.split(":");
-  const contractName = nameArr.length > 1 ? nameArr[1] : nameArr[0];
-  const path = `./deployments/${network}/`;
-  const latest = `${contractName}.json`;
-
-  if (existsSync(path + latest)) {
-    let json = JSON.parse(readFileSync(path + latest).toString());
-    return json.address;
-  } else {
-    return ZeroAddress;
-  }
-}
-
-export function getContractJson(network: string, name: string) {
-  const nameArr = name.split(":");
-  const contractName = nameArr.length > 1 ? nameArr[1] : nameArr[0];
-  const path = `./deployments/${network}/`;
-  const latest = `${contractName}.json`;
-
-  if (existsSync(path + latest)) {
-    return JSON.parse(readFileSync(path + latest).toString());
-  } else {
-    return "";
-  }
-}
-
-export async function deployContract(
-  ethers: HardhatEthersHelpers,
-  name: string,
-  network: string,
-  signer: Signer,
-  args: Array<any> = [],
-  libraries: Libraries = {}
-): Promise<Contract> {
-  let address = getContract(network, name);
-  // if (address == constants.AddressZero || network == "hardhat") {
-  const factory = await ethers.getContractFactory(name, {
-    signer: signer,
-    libraries: libraries,
-  });
-  const contract = await factory.deploy(...args, overrides);
-  const tx = contract.deploymentTransaction();
-  console.log("Deploying:", name);
-  console.log("  to", contract.address);
-  console.log("  in", tx?.hash);
-  await saveFile(network, name, contract, args, libraries);
-  return contract.waitForDeployment();
-  // } else {
-  // console.log("Contract:", name);
-  // console.log("  on", address.white);
-  // return await ethers.getContractAt(name, address, signer);
-  // }
-}
-
-export async function deployContractOverrides(
-  ethers: HardhatEthersHelpers,
-  name: string,
-  network: string,
-  signer: Signer,
-  args: Array<any> = [],
-  overrides: any = {}
-): Promise<Contract> {
-  let address = getContract(network, name);
-  // if (address == constants.AddressZero || network == "hardhat") {
-  const factory = await ethers.getContractFactory(name, {
-    signer: signer,
-  });
-  const contract = await factory.deploy(...args, overrides);
-  const tx = contract.deploymentTransaction();
-  console.log("Deploying:", name);
-  console.log("  to", contract.address);
-  console.log("  in", tx?.hash);
-  await saveFile(network, name, contract, args);
-  return contract.waitForDeployment();
-  // } else {
-  // console.log("Contract:", name);
-  // console.log("  on", address.white);
-  // return await ethers.getContractAt(name, address, signer);
-  // }
-}
-
-export async function saveFile(
-  network: string,
-  name: string,
-  contract: Contract,
-  args: Array<any> = [],
-  libraries: Object = {}
-) {
-  const nameArr = name.split(":");
-  const contractName = nameArr.length > 1 ? nameArr[1] : nameArr[0];
-  const path = `./deployments/${network}/`;
-  const file = `${contractName}.json`;
-
-  mkdirSync(path, { recursive: true });
-
-  if (contractName != name) {
-    writeFileSync(
-      path + file,
-      JSON.stringify({
-        address: contract.address,
-        constructorArguments: args,
-        libraries: libraries,
-        contract: name,
-      })
-    );
-  } else {
-    writeFileSync(
-      path + file,
-      JSON.stringify({
-        address: contract.address,
-        constructorArguments: args,
-        libraries: libraries,
-      })
-    );
-  }
-}
-
-export function getChoices(config: any[]) {
-  let result = [];
-  for (let i = 0; i < config.length; i++) {
-    result.push({
-      name: config[i].name,
-      value: i,
-    });
-  }
-  return result;
-}
+export const gasLeft: bigint = BigInt(28975827); //1ba22d3
 
 export type Network = {
   name: string;
@@ -184,72 +42,92 @@ export type Network = {
   updateNetConfig: Function;
 };
 
-export async function setConfig() {
-  const configFiles = [
-    "oft.config.testnet.json",
-    "oft.config.mainnet.json",
-    "oft.config.local.json",
-    "oft.config.json",
-  ];
-  const configChoices = configFiles.map((f) => ({ name: f, value: f }));
-  const chosen = await select({
-    message: `选择配置文件:`,
-    choices: configChoices,
-  });
-
-  const configPath = `./scripts/${chosen}`;
-  const config = JSON.parse(readFileSync(configPath).toString());
-  return { configPath: configPath, config };
-}
-
 const deployDir = path.join(__dirname, "..", "deployments");
-
-export function saveContractDeployment(
-  network: string,
-  name: string,
-  contract: Contract,
-  args: Array<any> = [],
-  libraries: Object = {}
-) {
-  const nameItems = name.split(":");
-  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
-  // const path = `./deployments/${network}/`;
-  const filepath = path.join(deployDir, network, `${contractName}.json`);
+function ensureDir(filepath: string) {
   if (!fs.lstatSync(path.dirname(filepath)).isDirectory()) {
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
   }
+}
 
-  fs.writeFileSync(
-    filepath,
-    JSON.stringify(
-      {
-        address: contract.address,
-        constructorArguments: args,
-        libraries: libraries,
-        contract: name,
-      },
-      null,
-      2
-    )
+type ContractInfo = {
+  contract: string;
+  address: string;
+  createdBy: string;
+  createdAt: string;
+  creationTx?: string;
+  constructorArguments: Array<string>;
+  constructorArgumentsDefs?: Array<{ name: string; type: string }>;
+  libraries?: Object;
+};
+
+export function saveContractInfo(
+  network: string,
+  name: string,
+  info: ContractInfo
+) {
+  const nameItems = name.split(":");
+  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
+  const filepath = path.join(deployDir, network, `${contractName}.json`);
+  ensureDir(filepath);
+
+  fs.writeFileSync(filepath, JSON.stringify(info, null, 2));
+  console.log(`saved contract info:`, yellow(filepath));
+}
+
+export function loadContractInfo(network: string, name: string): ContractInfo {
+  const nameItems = name.split(":");
+  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
+  const filepath = path.join(deployDir, network, `${contractName}.json`);
+  ensureDir(filepath);
+
+  if (fs.existsSync(filepath)) {
+    return JSON.parse(fs.readFileSync(filepath).toString()) as ContractInfo;
+  }
+  console.log(`load contract info:`, yellow(filepath));
+  return {} as ContractInfo;
+}
+
+export function moveContractInfo(network: string, name: string) {
+  const nameItems = name.split(":");
+  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
+  const filepath = path.join(deployDir, network, `${contractName}.json`);
+  ensureDir(filepath);
+
+  const content: ContractInfo = JSON.parse(
+    fs.readFileSync(filepath).toString()
   );
-  console.log(`updated contract info:`, yellow(filepath));
+
+  if (!content.address) {
+    return;
+  }
+
+  const filename = path.basename(filepath);
+  const ext = path.extname(filename);
+  const realname = filename.slice(0, filename.length - ext.length);
+  const newname = realname + "-" + content.address + ext;
+  const newpath = path.join(deployDir, network, newname);
+  console.log(`moved contract info: ${filepath} -> ${yellow(newpath)}`);
+  fs.writeFileSync(newpath, JSON.stringify(content, null, 2));
+  fs.unlinkSync(filepath);
 }
 
 export function loadNetConfig(netName: string): any {
-  if (!fs.lstatSync(deployDir).isDirectory()) {
-    fs.mkdirSync(deployDir);
-  }
   const netConfigPath = path.join(deployDir, netName, "config.json");
-  if (!fs.lstatSync(path.dirname(netConfigPath)).isDirectory()) {
-    fs.mkdirSync(path.dirname(netConfigPath), { recursive: true });
-  }
+  ensureDir(netConfigPath);
 
   if (!fs.existsSync(netConfigPath)) {
-    fs.writeFileSync(netConfigPath, "{}");
+    return {};
   }
+  console.log(`load network config:`, yellow(netConfigPath));
+  return JSON.parse(fs.readFileSync(netConfigPath).toString());
+}
 
-  let netConfig = JSON.parse(fs.readFileSync(netConfigPath).toString());
-  return netConfig;
+export function saveNetConfig(netName: string, newNetConfig: object) {
+  const netConfigPath = path.join(deployDir, netName, "config.json");
+  ensureDir(netConfigPath);
+
+  console.log(`saved network config:`, yellow(netConfigPath));
+  fs.writeFileSync(netConfigPath, JSON.stringify(newNetConfig, null, 2));
 }
 
 export function getNetworkChoicesFromHardhat() {
@@ -264,7 +142,26 @@ export function getNetworkChoicesFromHardhat() {
   return networkChoices;
 }
 
-export async function setNetwork(name: string = ""): Promise<Network> {
+export function getAllNetConfigs() {
+  const networks = Object.keys(hardhatConfig.networks);
+  let results = [];
+  for (const network of networks) {
+    const netConfig = loadNetConfig(network);
+    results.push({
+      ...netConfig,
+      name: network,
+      rpc: hardhatConfig.networks[
+        network as keyof typeof hardhatConfig.networks
+      ].url,
+      chainId:
+        hardhatConfig.networks[network as keyof typeof hardhatConfig.networks]
+          .chainId,
+    });
+  }
+  return results;
+}
+
+export async function selectNetwork(name: string = ""): Promise<Network> {
   // const { config, configPath } = await setConfig();
   if (!fs.lstatSync(deployDir).isDirectory()) {
     fs.mkdirSync(deployDir);
@@ -277,16 +174,7 @@ export async function setNetwork(name: string = ""): Promise<Network> {
   });
   type StatusKey = keyof typeof hardhatConfig.networks;
 
-  const netConfigPath = path.join(deployDir, netName, "config.json");
-  if (!fs.lstatSync(path.dirname(netConfigPath)).isDirectory()) {
-    fs.mkdirSync(path.dirname(netConfigPath), { recursive: true });
-  }
-
-  if (!fs.existsSync(netConfigPath)) {
-    fs.writeFileSync(netConfigPath, "{}");
-  }
-
-  let netConfig = JSON.parse(fs.readFileSync(netConfigPath).toString());
+  let netConfig = loadNetConfig(netName);
   netConfig.rpc = hardhatConfig.networks[netName as StatusKey].url;
   console.log(`使用 hardhat.config.ts 中配置的rpc: `, netConfig.rpc);
 
@@ -310,8 +198,7 @@ export async function setNetwork(name: string = ""): Promise<Network> {
   });
 
   const updateNetConfig = (newNetConfig: object) => {
-    console.log(`updated network config:`, yellow(netConfigPath));
-    fs.writeFileSync(netConfigPath, JSON.stringify(newNetConfig, null, 2));
+    saveNetConfig(netName, newNetConfig);
   };
 
   return {
@@ -348,8 +235,8 @@ export async function sendTransaction(
 
   override.gasLimit = await contract[func].estimateGas(...args);
   console.log("Estimated Gas:", green(override.gasLimit.toString()));
-  let receipt = await contract[func](...args, override);
-  await receipt.wait();
+  let response = await contract[func](...args, override);
+  const receipt = await response.wait();
   console.log(`${blue(func)} tx:`, yellow(receipt.hash));
 }
 
@@ -368,28 +255,74 @@ export async function deployContractV2(
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  const factory = await ethers.getContractFactory(contract, network.wallet);
+  const oldInfo = loadContractInfo(network.netConfig.name, contract);
+  if (oldInfo.address) {
+    const redeploy = await confirm({
+      message: `该合约已在${oldInfo.createdAt} 部署至 ${oldInfo.address}，确定要再次部署吗？ `,
+    });
+    if (redeploy) {
+      moveContractInfo(network.netConfig.name, contract);
+    } else {
+      exit(1);
+    }
+  }
 
+  const factory = await ethers.getContractFactory(contract, network.wallet);
   const deployTx = await factory.getDeployTransaction(...args);
   override.gasLimit = await network.wallet.estimateGas(deployTx);
   console.log("Estimated Gas:", green(override.gasLimit.toString()));
+
+  const constructorFragment = factory.interface.deploy;
+  const constructorArgumentsDefs = constructorFragment.inputs.map((f) => ({
+    name: f.name,
+    type: f.type,
+  }));
   const deploy = await factory.deploy(...args, override);
   const deployed = await deploy.waitForDeployment();
 
-  const addr = await deployed.getAddress();
-  console.log(`${contract} deployed:`, yellow(addr), "on", green(network.name));
-  saveContractDeployment(network.name, contract, deployed, args);
+  const address = await deployed.getAddress();
+  const response = await deployed.deploymentTransaction();
+  const tx = await response?.getTransaction();
+
+  console.log(
+    `${contract} deployed:`,
+    yellow(address),
+    "on",
+    green(network.name)
+  );
+  const info: ContractInfo = {
+    contract,
+    address,
+    createdBy: network.wallet.address,
+    createdAt: moment().format(),
+    creationTx: tx?.hash,
+    constructorArguments: args,
+    constructorArgumentsDefs,
+  };
+  saveContractInfo(network.name, contract, info);
   return deployed;
 }
 
-export async function getContractV2(
+export async function getContractReadOnly(
   ethers: HardhatEthersHelpers,
   rpc: string,
   contract: string,
   address: string
 ) {
   const provider = new JsonRpcProvider(rpc);
-  const wallet = new Wallet(defaultPrivateKey, provider);
 
-  return await ethers.getContractAt(contract, address, wallet);
+  return await ethers.getContractAt(contract, address);
+}
+
+export async function loadContractV2(
+  ethers: HardhatEthersHelpers,
+  network: Network,
+  contract: string
+) {
+  const info = loadContractInfo(network.name, contract);
+
+  if (info.address != "") {
+    return await ethers.getContractAt(contract, info.address, network.wallet);
+  }
+  return null;
 }

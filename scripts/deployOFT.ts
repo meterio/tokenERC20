@@ -2,7 +2,7 @@ import { input, select, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import { writeFileSync } from "fs";
 import {
-  setNetwork,
+  selectNetwork,
   deployContractV2,
   sendTransaction,
   yellow,
@@ -10,7 +10,7 @@ import {
 import { isAddress } from "ethers";
 
 const main = async () => {
-  const network = await setNetwork();
+  const network = await selectNetwork();
   let { wallet, override, netConfig, updateNetConfig } = network;
 
   // Implementation

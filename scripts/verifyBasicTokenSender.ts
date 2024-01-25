@@ -1,11 +1,11 @@
 import { input, confirm } from "@inquirer/prompts";
-import { setNetwork } from "./helper";
+import { selectNetwork } from "./helper";
 import { isAddress } from "ethers";
 // const hre = require("hardhat");
 import * as hre from "hardhat";
 
 const main = async () => {
-  const network = await setNetwork();
+  const network = await selectNetwork();
   let { netConfig } = network;
 
   // Implementation

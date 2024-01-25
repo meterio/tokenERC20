@@ -56,6 +56,8 @@ export type { IERC165Upgradeable } from "./@openzeppelin/contracts-upgradeable/u
 export { IERC165Upgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable__factory";
 export type { AccessControl } from "./@openzeppelin/contracts-v0.7/access/AccessControl";
 export { AccessControl__factory } from "./factories/@openzeppelin/contracts-v0.7/access/AccessControl__factory";
+export type { IERC20Permit } from "./@openzeppelin/contracts-v0.7/drafts/IERC20Permit";
+export { IERC20Permit__factory } from "./factories/@openzeppelin/contracts-v0.7/drafts/IERC20Permit__factory";
 export type { ERC20PresetMinterPauser } from "./@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser";
 export { ERC20PresetMinterPauser__factory } from "./factories/@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser__factory";
 export type { ERC20 } from "./@openzeppelin/contracts-v0.7/token/ERC20/ERC20";

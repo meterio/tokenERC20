@@ -1,10 +1,15 @@
 import { input, select } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { setNetwork, deployContractV2, green, sendTransaction } from "./helper";
+import {
+  selectNetwork,
+  deployContractV2,
+  green,
+  sendTransaction,
+} from "./helper";
 import { isAddress } from "ethers";
 
 const main = async () => {
-  const network = await setNetwork();
+  const network = await selectNetwork();
   let { override } = network;
 
   const pa = await input({
