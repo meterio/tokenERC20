@@ -34,5 +34,17 @@
     "rpc": "https://base.publicnode.com",
     "lzEndpoint": "0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7",
     "lzChainId": "184"
+  },
+  {
+    "name": "bsctest",
+    "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545",
+    "lzEndpoint": "0x6Fcb97553D41516Cb228ac03FdC8B9a0a9df04A1",
+    "lzChainId": "10102"
+  },
+  {
+    "name": "mumbai",
+    "rpc": "https://rpc-mumbai.maticvigil.com",
+    "lzEndpoint": "0xf69186dfBa60DdB133E91E9A4B5673624293d8F8",
+    "lzChainId": "10109"
   }
 ]
