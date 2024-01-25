@@ -1,13 +1,13 @@
 import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-ethers";
-import "@nomiclabs/hardhat-etherscan";
+// import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import { task } from "hardhat/config";
-import { compileSetting } from "./scripts/deployTool";
+import { compileSetting } from "./scripts/compilerConfig";
 
 import { deployContract } from "./scripts/helper";
 import { ProxyOFT, ProxyOFT__factory } from "./typechain-types";
-// import "@nomicfoundation/hardhat-verify";
+import "@nomicfoundation/hardhat-verify";
 
 // const { setGlobalDispatcher, ProxyAgent } = require("undici");
 // const proxyAgent = new ProxyAgent("http://127.0.0.1:7890");
@@ -86,13 +86,13 @@ export default {
       url: `https://rpctest.meter.io`,
       chainId: 83,
       gasPrice: 500000000000,
-      accounts: [process.env.METER_TEST_PRIVKEY],
+      accounts: [],
     },
     metermain: {
       url: `https://rpc.meter.io`,
       chainId: 82,
       gasPrice: 500000000000,
-      accounts: [process.env.MAINNET_CONTRACT_ADMIN_PRIVKEY],
+      accounts: [],
     },
     sepolia: {
       url: "https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
@@ -106,9 +106,7 @@ export default {
       url: "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", // public infura endpoint
       chainId: 1,
       gasPrice: 4000000000000,
-      accounts: {
-        mnemonic: process.env.MNEMONIC,
-      },
+      accounts: [],
     },
     basetest: {
       url: `https://goerli.base.org`,
@@ -121,16 +119,20 @@ export default {
       chainId: 8453,
       accounts: [process.env.METER_TEST_PRIVKEY],
     },
-    abitrum: {
+    arbitrum: {
       url: `https://arb1.arbitrum.io/rpc`,
       chainId: 42161,
-      accounts: {
-        mnemonic: process.env.MNEMONIC,
-      },
+      accounts: [process.env.METER_TEST_PRIVKEY],
     },
   },
   etherscan: {
-    apiKey: process.env.BASESCAN_API_KEY,
+    apiKey: {
+      basemain: process.env.BASESCAN_API_KEY,
+      ethereum: process.env.ETHERSCAN_API_KEY,
+      goerli: process.env.ETHERSCAN_API_KEY,
+      sepolia: process.env.ETHERSCAN_API_KEY,
+      arbitrum: process.env.ARBISCAN_API_KEY,
+    },
     customChains: [
       {
         network: "arbitrum",

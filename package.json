@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
-    "@nomiclabs/hardhat-etherscan": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.3",
     "@nomiclabs/hardhat-solhint": "^3.0.1",
     "@openzeppelin/contracts": "^4.8.2",
     "@openzeppelin/contracts-upgradeable": "^4.8.2",
@@ -50,13 +50,14 @@
     "@pythnetwork/pyth-sdk-solidity": "^2.2.1",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.0.0",
-    "ethers": "^6.9.1",
+    "axios": "^1.6.5",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-mocha-no-only": "^1.1.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
+    "ethers": "^6.9.1",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18"
   }
