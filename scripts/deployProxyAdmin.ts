@@ -5,7 +5,7 @@ import { setNetwork, deployContractV2 } from "./helper";
 
 const main = async () => {
   const network = await setNetwork();
-  let { config, override, networkIndex, configPath } = network;
+  let { override, netConfig, updateNetConfig } = network;
 
   const proxyAdmin = await deployContractV2(
     ethers,
@@ -15,8 +15,8 @@ const main = async () => {
     override
   );
 
-  config[networkIndex].proxyAdmin = proxyAdmin.address;
-  writeFileSync(configPath, JSON.stringify(config, null, 2));
+  netConfig.proxyAdmin = proxyAdmin.address;
+  updateNetConfig(netConfig);
 };
 
 main();

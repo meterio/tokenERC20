@@ -1,16 +1,23 @@
 import { input, select } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { setNetwork, sendTransaction, getChoices, green } from "./helper";
+import {
+  setNetwork,
+  sendTransaction,
+  green,
+  getNetworkChoicesFromHardhat,
+  loadNetConfig,
+} from "./helper";
 import { formatUnits, isAddress } from "ethers";
 
 const main = async () => {
   const srcNetwork = await setNetwork("Src");
-  let { wallet, netConfig, override, config } = srcNetwork;
+  let { wallet, netConfig, override, updateNetConfig } = srcNetwork;
 
-  const dstNetworkIndex = await select({
+  const dstNetwork = await select({
     message: `选择目标链网络:`,
-    choices: getChoices(config),
+    choices: getNetworkChoicesFromHardhat(),
   });
+  const dstNetConfig = loadNetConfig(dstNetwork);
 
   const tokenAddress = await input({
     message: "输入Token地址:",
@@ -55,7 +62,7 @@ const main = async () => {
   override.value = (
     await proxyOFT.estimateSendFee(
       tokenAddress,
-      config[dstNetworkIndex].lzChainId,
+      dstNetConfig.lzChainId,
       toAddress,
       amount
     )
@@ -67,7 +74,7 @@ const main = async () => {
     srcNetwork,
     proxyOFT,
     "sendFrom(address,uint16,bytes,uint256)",
-    [tokenAddress, config[dstNetworkIndex].lzChainId, toAddress, amount],
+    [tokenAddress, dstNetConfig.lzChainId, toAddress, amount],
     override
   );
 };

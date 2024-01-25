@@ -13,6 +13,11 @@ import { Libraries } from "hardhat/types";
 import { input, select, password } from "@inquirer/prompts";
 import colors from "colors";
 colors.enable();
+import * as fs from "fs";
+import * as path from "path";
+
+import hardhatConfig from "../hardhat.config";
+import { exit } from "process";
 
 export const yellow = colors.yellow;
 export const green = colors.green;
@@ -176,9 +181,7 @@ export type Network = {
   wallet: Wallet;
   override: any;
   netConfig: any;
-  networkIndex: number;
-  config: any;
-  configPath: string;
+  updateNetConfig: Function;
 };
 
 export async function setConfig() {
@@ -199,14 +202,94 @@ export async function setConfig() {
   return { configPath: configPath, config };
 }
 
+const deployDir = path.join(__dirname, "..", "deployments");
+
+export function saveContractDeployment(
+  network: string,
+  name: string,
+  contract: Contract,
+  args: Array<any> = [],
+  libraries: Object = {}
+) {
+  const nameItems = name.split(":");
+  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
+  // const path = `./deployments/${network}/`;
+  const filepath = path.join(deployDir, network, `${contractName}.json`);
+  if (!fs.lstatSync(path.dirname(filepath)).isDirectory()) {
+    fs.mkdirSync(path.dirname(filepath), { recursive: true });
+  }
+
+  fs.writeFileSync(
+    filepath,
+    JSON.stringify(
+      {
+        address: contract.address,
+        constructorArguments: args,
+        libraries: libraries,
+        contract: name,
+      },
+      null,
+      2
+    )
+  );
+  console.log(`updated contract info:`, yellow(filepath));
+}
+
+export function loadNetConfig(netName: string): any {
+  if (!fs.lstatSync(deployDir).isDirectory()) {
+    fs.mkdirSync(deployDir);
+  }
+  const netConfigPath = path.join(deployDir, netName, "config.json");
+  if (!fs.lstatSync(path.dirname(netConfigPath)).isDirectory()) {
+    fs.mkdirSync(path.dirname(netConfigPath), { recursive: true });
+  }
+
+  if (!fs.existsSync(netConfigPath)) {
+    fs.writeFileSync(netConfigPath, "{}");
+  }
+
+  let netConfig = JSON.parse(fs.readFileSync(netConfigPath).toString());
+  return netConfig;
+}
+
+export function getNetworkChoicesFromHardhat() {
+  const networkChoices = Object.keys(hardhatConfig.networks).map((n) => ({
+    name: `${n} (${
+      hardhatConfig.networks[n as keyof typeof hardhatConfig.networks].chainId
+    }) : ${
+      hardhatConfig.networks[n as keyof typeof hardhatConfig.networks].url
+    }`,
+    value: n,
+  }));
+  return networkChoices;
+}
+
 export async function setNetwork(name: string = ""): Promise<Network> {
-  const { config, configPath } = await setConfig();
+  // const { config, configPath } = await setConfig();
+  if (!fs.lstatSync(deployDir).isDirectory()) {
+    fs.mkdirSync(deployDir);
+  }
 
   let override: any = {};
-  const networkIndex = await select({
+  const netName = await select({
     message: `选择网络${green(name)}:`,
-    choices: getChoices(config),
+    choices: getNetworkChoicesFromHardhat(),
   });
+  type StatusKey = keyof typeof hardhatConfig.networks;
+
+  const netConfigPath = path.join(deployDir, netName, "config.json");
+  if (!fs.lstatSync(path.dirname(netConfigPath)).isDirectory()) {
+    fs.mkdirSync(path.dirname(netConfigPath), { recursive: true });
+  }
+
+  if (!fs.existsSync(netConfigPath)) {
+    fs.writeFileSync(netConfigPath, "{}");
+  }
+
+  let netConfig = JSON.parse(fs.readFileSync(netConfigPath).toString());
+  netConfig.rpc = hardhatConfig.networks[netName as StatusKey].url;
+  console.log(`使用 hardhat.config.ts 中配置的rpc: `, netConfig.rpc);
+
   const privateKey = await password({
     message: `输入网络${green(name)}的Private Key:`,
     validate: (value = "") =>
@@ -214,7 +297,7 @@ export async function setNetwork(name: string = ""): Promise<Network> {
     mask: "*",
   });
 
-  const provider = new JsonRpcProvider(config[networkIndex].rpc);
+  const provider = new JsonRpcProvider(netConfig.rpc);
   const wallet = new Wallet(privateKey, provider);
   console.log("Signer:", yellow(wallet.address));
 
@@ -226,16 +309,18 @@ export async function setNetwork(name: string = ""): Promise<Network> {
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  const netConfig = config[networkIndex];
+  const updateNetConfig = (newNetConfig: object) => {
+    console.log(`updated network config:`, yellow(netConfigPath));
+    fs.writeFileSync(netConfigPath, JSON.stringify(newNetConfig, null, 2));
+  };
+
   return {
-    name,
+    name: netName,
     provider,
     wallet,
     override,
     netConfig,
-    networkIndex,
-    config,
-    configPath,
+    updateNetConfig,
   };
 }
 
@@ -262,7 +347,7 @@ export async function sendTransaction(
   });
 
   override.gasLimit = await contract[func].estimateGas(...args);
-  console.log("gasLimit:", green(override.gasLimit.toString()));
+  console.log("Estimated Gas:", green(override.gasLimit.toString()));
   let receipt = await contract[func](...args, override);
   await receipt.wait();
   console.log(`${blue(func)} tx:`, yellow(receipt.hash));
@@ -287,12 +372,13 @@ export async function deployContractV2(
 
   const deployTx = await factory.getDeployTransaction(...args);
   override.gasLimit = await network.wallet.estimateGas(deployTx);
-  console.log("gasLimit:", green(override.gasLimit.toString()));
+  console.log("Estimated Gas:", green(override.gasLimit.toString()));
   const deploy = await factory.deploy(...args, override);
   const deployed = await deploy.waitForDeployment();
 
   const addr = await deployed.getAddress();
-  console.log(`${contract} deployed:`, yellow(addr));
+  console.log(`${contract} deployed:`, yellow(addr), "on", green(network.name));
+  saveContractDeployment(network.name, contract, deployed, args);
   return deployed;
 }
 

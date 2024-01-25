@@ -1,6 +1,5 @@
 import { input, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { writeFileSync } from "fs";
 import {
   MINTER_ROLE,
   setNetwork,
@@ -62,23 +61,22 @@ async function laneExist(
   network: Network,
   srcChainId: string,
   srcToken: string,
-  dstToken: string,
-  config: any,
-  configPath: string
+  dstToken: string
 ) {
+  const netConfig = network.netConfig;
   console.log(`查询网络${green(network.name)}的OFT设置:`);
   const proxyOFT = await ethers.getContractAt(
     "ProxyOFT",
     network.netConfig.proxy,
     network.wallet
   );
-  if (!config[network.networkIndex].tokenMapping) {
-    config[network.networkIndex].tokenMapping = {};
-    writeFileSync(configPath, JSON.stringify(config, null, 2));
+  if (!netConfig.tokenMapping) {
+    netConfig.tokenMapping = {};
+    network.updateNetConfig(netConfig);
   }
-  if (!config[network.networkIndex].tokenMapping[srcChainId]) {
-    config[network.networkIndex].tokenMapping[srcChainId] = {};
-    writeFileSync(configPath, JSON.stringify(config, null, 2));
+  if (!netConfig.tokenMapping[srcChainId]) {
+    netConfig.tokenMapping[srcChainId] = {};
+    network.updateNetConfig(netConfig);
   }
 
   const laneExist = await proxyOFT.laneExist(srcChainId, srcToken);
@@ -92,8 +90,7 @@ async function laneExist(
     );
     const LaneDetail = await proxyOFT.tokenMapping(srcChainId, srcToken);
     console.log(`dstToken地址:${yellow(LaneDetail.dstToken)}`);
-    config[network.networkIndex].tokenMapping[srcChainId][srcToken] =
-      LaneDetail.dstToken;
+    netConfig.tokenMapping[srcChainId][srcToken] = LaneDetail.dstToken;
     if (
       dstToken.toLocaleLowerCase() != LaneDetail.dstToken.toLocaleLowerCase()
     ) {
@@ -114,8 +111,7 @@ async function laneExist(
           network.override,
           DEFAULT_ADMIN_ROLE
         );
-        config[network.networkIndex].tokenMapping[srcChainId][srcToken] =
-          dstToken;
+        netConfig.tokenMapping[srcChainId][srcToken] = dstToken;
       }
     }
   } else {
@@ -138,11 +134,10 @@ async function laneExist(
         network.override,
         DEFAULT_ADMIN_ROLE
       );
-      config[network.networkIndex].tokenMapping[srcChainId][srcToken] =
-        dstToken;
+      netConfig.tokenMapping[srcChainId][srcToken] = dstToken;
     }
   }
-  writeFileSync(configPath, JSON.stringify(config, null, 2));
+  network.updateNetConfig(netConfig);
 }
 
 const main = async () => {
@@ -158,7 +153,7 @@ const main = async () => {
     message: "输入网络" + green("B") + "的Token地址:",
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
-  if (networkA.networkIndex == networkB.networkIndex) {
+  if (networkA.name == networkB.name) {
     throw new Error(red("网络A和网络B不能相同!"));
   }
 
@@ -166,23 +161,9 @@ const main = async () => {
 
   await checkRole(networkB, tokenB);
 
-  await laneExist(
-    networkA,
-    networkB.netConfig.lzChainId,
-    tokenB,
-    tokenA,
-    networkA.config,
-    networkA.configPath
-  );
+  await laneExist(networkA, networkB.netConfig.lzChainId, tokenB, tokenA);
 
-  await laneExist(
-    networkB,
-    networkA.netConfig.lzChainId,
-    tokenA,
-    tokenB,
-    networkB.config,
-    networkB.configPath
-  );
+  await laneExist(networkB, networkA.netConfig.lzChainId, tokenA, tokenB);
 };
 
 main();

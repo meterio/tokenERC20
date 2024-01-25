@@ -11,8 +11,7 @@ import { isAddress } from "ethers";
 
 const main = async () => {
   const network = await setNetwork();
-  let { wallet, override, networkIndex, netConfig, config, configPath } =
-    network;
+  let { wallet, override, netConfig, updateNetConfig } = network;
 
   // Implementation
   const isDeployImpl = await confirm({
@@ -27,17 +26,16 @@ const main = async () => {
       override
     );
 
-    config[networkIndex].oft_impl = oft_impl.address;
-    writeFileSync(configPath, JSON.stringify(config, null, 2));
+    netConfig.oft_impl = oft_impl.address;
   } else {
-    config[networkIndex].oft_impl = await input({
+    netConfig.oft_impl = await input({
       message: "输入Implementation合约地址",
       default: netConfig.oft_impl,
       validate: (value = "") =>
         isAddress(value) || "Pass a valid address value",
     });
-    writeFileSync(configPath, JSON.stringify(config, null, 2));
   }
+  updateNetConfig(netConfig);
 
   // deployProxyOrUpgrade
   const deployProxyOrUpgrade = await select({
@@ -58,8 +56,8 @@ const main = async () => {
     default: netConfig.proxyAdmin,
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
-  config[networkIndex].proxyAdmin = proxyAdmin;
-  writeFileSync(configPath, JSON.stringify(config, null, 2));
+  netConfig.proxyAdmin = proxyAdmin;
+  updateNetConfig(netConfig);
 
   // upgrade
   if (deployProxyOrUpgrade == "upgrade") {
@@ -108,12 +106,12 @@ const main = async () => {
       lzEndpoint,
       admin,
     ]);
-    config[networkIndex].oft_init_data = data;
+    netConfig.oft_init_data = data;
     console.log("OFT initialize data:", yellow(data));
-    config[networkIndex].lzEndpoint = lzEndpoint;
-    config[networkIndex].lzChainId = lzChainId;
-    config[networkIndex].admin = admin;
-    writeFileSync(configPath, JSON.stringify(config, null, 2));
+    netConfig.lzEndpoint = lzEndpoint;
+    netConfig.lzChainId = lzChainId;
+    netConfig.admin = admin;
+    updateNetConfig(netConfig);
 
     const oftAddr = await oft_impl.getAddress();
     const proxy = await deployContractV2(
@@ -124,8 +122,8 @@ const main = async () => {
       override
     );
 
-    config[networkIndex].proxy = proxy.address;
-    writeFileSync(configPath, JSON.stringify(config, null, 2));
+    netConfig.proxy = proxy.address;
+    updateNetConfig(netConfig);
   }
 };
 

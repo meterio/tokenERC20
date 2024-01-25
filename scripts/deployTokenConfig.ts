@@ -1,9 +1,9 @@
 import { readFileSync, writeFileSync } from "fs";
 import { ethers } from "hardhat";
-import { config, setNetwork, deployContractV2 } from "./helper";
+import { setNetwork, deployContractV2 } from "./helper";
 
 const main = async () => {
-  const network = await setNetwork(config);
+  const network = await setNetwork();
   let { override } = network;
 
   const tokens_json = "./scripts/tokens.json";

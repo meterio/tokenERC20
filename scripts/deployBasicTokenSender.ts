@@ -4,9 +4,9 @@ import { writeFileSync } from "fs";
 import { setNetwork, deployContractV2 } from "./helper";
 import { isAddress } from "ethers";
 
-const main = async () => {
+const main = async (i: any) => {
   const network = await setNetwork();
-  let { override, networkIndex, netConfig, config, configPath } = network;
+  let { override, netConfig, updateNetConfig } = network;
 
   // Implementation
   const isDeployImpl = await confirm({
@@ -31,8 +31,8 @@ const main = async () => {
   );
 
   const addr = await impl.getAddress();
-  config[networkIndex].BasicTokenSender = addr;
-  writeFileSync(configPath, JSON.stringify(config, null, 2));
+  netConfig.BasicTokenSender = addr;
+  updateNetConfig(netConfig);
 };
 
-main();
+main(hre);
