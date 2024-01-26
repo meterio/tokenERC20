@@ -225,6 +225,7 @@ export async function sendTransaction(
       throw new Error(red("签名人不具有DEFAULT_ADMIN_ROLE权限!"));
     }
   }
+  const address = await contract.getAddress();
   override.nonce = await input({
     message: "输入nonce:",
     default: (
@@ -237,7 +238,10 @@ export async function sendTransaction(
   console.log("Estimated Gas:", green(override.gasLimit.toString()));
   let response = await contract[func](...args, override);
   const receipt = await response.wait();
-  console.log(`${blue(func)} tx:`, yellow(receipt.hash));
+  console.log(
+    `called ${blue(func)} at ${address} by tx:`,
+    yellow(receipt.hash)
+  );
 }
 
 export async function deployContractV2(
@@ -285,10 +289,7 @@ export async function deployContractV2(
   const tx = await response?.getTransaction();
 
   console.log(
-    `${contract} deployed:`,
-    yellow(address),
-    "on",
-    green(network.name)
+    `${contract} deployed on ${green(network.name)} at: ${yellow(address)}`
   );
   const info: ContractInfo = {
     contract,
