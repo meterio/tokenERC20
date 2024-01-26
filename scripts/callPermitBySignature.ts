@@ -65,7 +65,7 @@ const main = async () => {
     deadline,
     chainId
   );
-  const response = await token.permitBySignature(
+  const response = await token.permit(
     owner,
     spender,
     amount,

@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-v0.7/utils/Counters.sol";
 import "@openzeppelin/contracts-v0.7/drafts/IERC20Permit.sol";
 import "@openzeppelin/contracts-v0.7/drafts/EIP712.sol";
 import "@openzeppelin/contracts-v0.7/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts-v0.7/introspection/ERC165.sol";
 
 /**
  * @dev {ERC20} token, including:
@@ -24,7 +25,8 @@ import "@openzeppelin/contracts-v0.7/cryptography/ECDSA.sol";
 contract ERC20MinterBurnerPauserPermit is
     ERC20PresetMinterPauser,
     IERC20Permit,
-    EIP712
+    EIP712,
+    ERC165
 {
     constructor(
         string memory _name,
@@ -34,8 +36,12 @@ contract ERC20MinterBurnerPauserPermit is
         public
         ERC20PresetMinterPauser(_name, _symbol)
         EIP712("PermitToken", "1.0")
+        ERC165()
     {
         _setupDecimals(decimals_);
+        _registerInterface(0x9fd5a6cf); // permit with signature
+        _registerInterface(type(IERC20Permit).interfaceId);
+        _registerInterface(type(IERC20).interfaceId);
     }
 
     using Counters for Counters.Counter;
@@ -47,12 +53,9 @@ contract ERC20MinterBurnerPauserPermit is
     bytes32 private immutable _PERMIT_TYPEHASH =
         keccak256(
             "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-        );
+        ); // 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
 
-    bytes32 public constant _CONST_PERMIT_TYPEHASH =
-        0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
-
-    function permitBySignature(
+    function permit(
         address owner,
         address spender,
         uint256 value,
@@ -96,7 +99,7 @@ contract ERC20MinterBurnerPauserPermit is
 
         bytes32 structHash = keccak256(
             abi.encode(
-                _CONST_PERMIT_TYPEHASH,
+                _PERMIT_TYPEHASH,
                 owner,
                 spender,
                 value,

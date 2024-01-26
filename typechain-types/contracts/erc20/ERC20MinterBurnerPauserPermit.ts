@@ -30,7 +30,6 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
       | "DOMAIN_SEPARATOR"
       | "MINTER_ROLE"
       | "PAUSER_ROLE"
-      | "_CONST_PERMIT_TYPEHASH"
       | "allowance"
       | "approve"
       | "balanceOf"
@@ -49,10 +48,11 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
       | "nonces"
       | "pause"
       | "paused"
-      | "permit"
-      | "permitBySignature"
+      | "permit(address,address,uint256,uint256,bytes)"
+      | "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"
       | "renounceRole"
       | "revokeRole"
+      | "supportsInterface"
       | "symbol"
       | "totalSupply"
       | "transfer"
@@ -85,10 +85,6 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "PAUSER_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_CONST_PERMIT_TYPEHASH",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -146,7 +142,11 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "permit",
+    functionFragment: "permit(address,address,uint256,uint256,bytes)",
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)",
     values: [
       AddressLike,
       AddressLike,
@@ -158,16 +158,16 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "permitBySignature",
-    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -198,10 +198,6 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "PAUSER_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_CONST_PERMIT_TYPEHASH",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
@@ -237,9 +233,12 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "permitBySignature",
+    functionFragment: "permit(address,address,uint256,uint256,bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -247,6 +246,10 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -429,8 +432,6 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
 
   PAUSER_ROLE: TypedContractMethod<[], [string], "view">;
 
-  _CONST_PERMIT_TYPEHASH: TypedContractMethod<[], [string], "view">;
-
   allowance: TypedContractMethod<
     [owner: AddressLike, spender: AddressLike],
     [bigint],
@@ -503,7 +504,19 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
-  permit: TypedContractMethod<
+  "permit(address,address,uint256,uint256,bytes)": TypedContractMethod<
+    [
+      owner: AddressLike,
+      spender: AddressLike,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
+  "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": TypedContractMethod<
     [
       owner: AddressLike,
       spender: AddressLike,
@@ -512,18 +525,6 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike
-    ],
-    [void],
-    "nonpayable"
-  >;
-
-  permitBySignature: TypedContractMethod<
-    [
-      owner: AddressLike,
-      spender: AddressLike,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      signature: BytesLike
     ],
     [void],
     "nonpayable"
@@ -539,6 +540,12 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     [role: BytesLike, account: AddressLike],
     [void],
     "nonpayable"
+  >;
+
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
   >;
 
   symbol: TypedContractMethod<[], [string], "view">;
@@ -574,9 +581,6 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "PAUSER_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "_CONST_PERMIT_TYPEHASH"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "allowance"
@@ -669,7 +673,20 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "permit"
+    nameOrSignature: "permit(address,address,uint256,uint256,bytes)"
+  ): TypedContractMethod<
+    [
+      owner: AddressLike,
+      spender: AddressLike,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      signature: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)"
   ): TypedContractMethod<
     [
       owner: AddressLike,
@@ -679,19 +696,6 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
       v: BigNumberish,
       r: BytesLike,
       s: BytesLike
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "permitBySignature"
-  ): TypedContractMethod<
-    [
-      owner: AddressLike,
-      spender: AddressLike,
-      value: BigNumberish,
-      deadline: BigNumberish,
-      signature: BytesLike
     ],
     [void],
     "nonpayable"
@@ -710,6 +714,9 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "symbol"
   ): TypedContractMethod<[], [string], "view">;
