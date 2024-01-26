@@ -4,7 +4,7 @@ pragma solidity 0.7.0;
 import "@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser.sol";
 import "@openzeppelin/contracts-v0.7/utils/Counters.sol";
 import "@openzeppelin/contracts-v0.7/drafts/IERC20Permit.sol";
-import "@openzeppelin/contracts-v0.7/drafts/EIP712.sol";
+import "./EIP712.sol";
 import "@openzeppelin/contracts-v0.7/cryptography/ECDSA.sol";
 
 // import "@openzeppelin/contracts-v0.7/introspection/ERC165.sol";
@@ -23,7 +23,7 @@ import "@openzeppelin/contracts-v0.7/cryptography/ECDSA.sol";
  * roles, as well as the default admin role, which will let it grant both minter
  * and pauser roles to aother accounts
  */
-contract ERC20MinterBurnerPauserPermit is
+contract ERC20MinterBurnerPauserPermitForReplacement is
     ERC20PresetMinterPauser,
     IERC20Permit,
     EIP712

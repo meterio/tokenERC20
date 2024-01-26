@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../../../common";
 
 export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   getFunction(
@@ -43,6 +43,7 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
       | "grantRole"
       | "hasRole"
       | "increaseAllowance"
+      | "initialize"
       | "mint"
       | "name"
       | "nonces"
@@ -131,6 +132,10 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
@@ -223,6 +228,7 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
@@ -481,6 +487,8 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     "nonpayable"
   >;
 
+  initialize: TypedContractMethod<[], [void], "nonpayable">;
+
   mint: TypedContractMethod<
     [to: AddressLike, amount: BigNumberish],
     [void],
@@ -638,6 +646,9 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     [boolean],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "mint"
   ): TypedContractMethod<

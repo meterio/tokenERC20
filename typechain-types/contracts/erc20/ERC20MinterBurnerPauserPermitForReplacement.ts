@@ -23,7 +23,8 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
+export interface ERC20MinterBurnerPauserPermitForReplacementInterface
+  extends Interface {
   getFunction(
     nameOrSignature:
       | "DEFAULT_ADMIN_ROLE"
@@ -43,6 +44,7 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
       | "grantRole"
       | "hasRole"
       | "increaseAllowance"
+      | "initialize"
       | "mint"
       | "name"
       | "nonces"
@@ -131,6 +133,10 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
@@ -223,6 +229,7 @@ export interface ERC20MinterBurnerPauserPermitInterface extends Interface {
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
@@ -372,11 +379,14 @@ export namespace UnpausedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface ERC20MinterBurnerPauserPermit extends BaseContract {
-  connect(runner?: ContractRunner | null): ERC20MinterBurnerPauserPermit;
+export interface ERC20MinterBurnerPauserPermitForReplacement
+  extends BaseContract {
+  connect(
+    runner?: ContractRunner | null
+  ): ERC20MinterBurnerPauserPermitForReplacement;
   waitForDeployment(): Promise<this>;
 
-  interface: ERC20MinterBurnerPauserPermitInterface;
+  interface: ERC20MinterBurnerPauserPermitForReplacementInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -480,6 +490,8 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     [boolean],
     "nonpayable"
   >;
+
+  initialize: TypedContractMethod<[], [void], "nonpayable">;
 
   mint: TypedContractMethod<
     [to: AddressLike, amount: BigNumberish],
@@ -638,6 +650,9 @@ export interface ERC20MinterBurnerPauserPermit extends BaseContract {
     [boolean],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "initialize"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "mint"
   ): TypedContractMethod<

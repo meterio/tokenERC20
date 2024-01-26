@@ -206,6 +206,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BasicTokenSender__factory>;
     getContractFactory(
+      name: "EIP712",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EIP712__factory>;
+    getContractFactory(
       name: "ERC20MintablePauseableUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20MintablePauseableUpgradeable__factory>;
@@ -217,6 +221,10 @@ declare module "hardhat/types/runtime" {
       name: "ERC20MinterBurnerPauserPermit",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20MinterBurnerPauserPermit__factory>;
+    getContractFactory(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement__factory>;
     getContractFactory(
       name: "ILayerZeroEndpointUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -507,6 +515,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.BasicTokenSender>;
     getContractAt(
+      name: "EIP712",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EIP712>;
+    getContractAt(
       name: "ERC20MintablePauseableUpgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -521,6 +534,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20MinterBurnerPauserPermit>;
+    getContractAt(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement>;
     getContractAt(
       name: "ILayerZeroEndpointUpgradeable",
       address: string | ethers.Addressable,
@@ -775,6 +793,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BasicTokenSender>;
     deployContract(
+      name: "EIP712",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EIP712>;
+    deployContract(
       name: "ERC20MintablePauseableUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20MintablePauseableUpgradeable>;
@@ -786,6 +808,10 @@ declare module "hardhat/types/runtime" {
       name: "ERC20MinterBurnerPauserPermit",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20MinterBurnerPauserPermit>;
+    deployContract(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement>;
     deployContract(
       name: "ILayerZeroEndpointUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1076,6 +1102,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BasicTokenSender>;
     deployContract(
+      name: "EIP712",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EIP712>;
+    deployContract(
       name: "ERC20MintablePauseableUpgradeable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1090,6 +1121,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20MinterBurnerPauserPermit>;
+    deployContract(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement>;
     deployContract(
       name: "ILayerZeroEndpointUpgradeable",
       args: any[],

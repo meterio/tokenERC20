@@ -84,12 +84,16 @@ export type { IERC20Metadata } from "./@openzeppelin/contracts/token/ERC20/exten
 export { IERC20Metadata__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata__factory";
 export type { BasicTokenSender } from "./contracts/BasicTokenSender";
 export { BasicTokenSender__factory } from "./factories/contracts/BasicTokenSender__factory";
+export type { EIP712 } from "./contracts/erc20/EIP712";
+export { EIP712__factory } from "./factories/contracts/erc20/EIP712__factory";
 export type { ERC20MintablePauseableUpgradeable } from "./contracts/erc20/ERC20MintablePauseableUpgradeable";
 export { ERC20MintablePauseableUpgradeable__factory } from "./factories/contracts/erc20/ERC20MintablePauseableUpgradeable__factory";
 export type { ERC20MinterBurnerPauser } from "./contracts/erc20/ERC20MinterBurnerPauser";
 export { ERC20MinterBurnerPauser__factory } from "./factories/contracts/erc20/ERC20MinterBurnerPauser__factory";
 export type { ERC20MinterBurnerPauserPermit } from "./contracts/erc20/ERC20MinterBurnerPauserPermit";
 export { ERC20MinterBurnerPauserPermit__factory } from "./factories/contracts/erc20/ERC20MinterBurnerPauserPermit__factory";
+export type { ERC20MinterBurnerPauserPermitForReplacement } from "./contracts/erc20/ERC20MinterBurnerPauserPermitForReplacement";
+export { ERC20MinterBurnerPauserPermitForReplacement__factory } from "./factories/contracts/erc20/ERC20MinterBurnerPauserPermitForReplacement__factory";
 export type { ILayerZeroEndpointUpgradeable } from "./contracts/interfaces/ILayerZeroEndpointUpgradeable";
 export { ILayerZeroEndpointUpgradeable__factory } from "./factories/contracts/interfaces/ILayerZeroEndpointUpgradeable__factory";
 export type { ILayerZeroReceiverUpgradeable } from "./contracts/interfaces/ILayerZeroReceiverUpgradeable";
