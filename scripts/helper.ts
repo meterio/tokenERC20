@@ -90,6 +90,7 @@ export function loadContractInfo(network: string, name: string): ContractInfo {
 export function moveContractInfo(network: string, name: string) {
   const nameItems = name.split(":");
   const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
+  console.log(deployDir, network);
   const filepath = path.join(deployDir, network, `${contractName}.json`);
   ensureDir(filepath);
 
@@ -161,7 +162,10 @@ export function getAllNetConfigs() {
   return results;
 }
 
-export async function selectNetwork(name: string = ""): Promise<Network> {
+export async function selectNetwork(
+  name: string = "",
+  readonly = false
+): Promise<Network> {
   // const { config, configPath } = await setConfig();
   if (!fs.lstatSync(deployDir).isDirectory()) {
     fs.mkdirSync(deployDir);
@@ -178,16 +182,19 @@ export async function selectNetwork(name: string = ""): Promise<Network> {
   netConfig.rpc = hardhatConfig.networks[netName as StatusKey].url;
   console.log(`使用 hardhat.config.ts 中配置的rpc: `, netConfig.rpc);
 
-  const privateKey = await password({
-    message: `输入网络${green(name)}的Private Key:`,
-    validate: (value = "") =>
-      isBytesLike(value) || "Pass a valid Private Key value",
-    mask: "*",
-  });
-
   const provider = new JsonRpcProvider(netConfig.rpc);
-  const wallet = new Wallet(privateKey, provider);
-  console.log("Signer:", yellow(wallet.address));
+  let wallet = {} as Wallet;
+  if (!readonly) {
+    const privateKey = await password({
+      message: `输入网络${green(name)}的Private Key:`,
+      validate: (value = "") =>
+        isBytesLike(value) || "Pass a valid Private Key value",
+      mask: "*",
+    });
+
+    wallet = new Wallet(privateKey, provider);
+    console.log("Signer:", yellow(wallet.address));
+  }
 
   const feeData = await provider.getFeeData();
   const defaultGasPrice = feeData.gasPrice;
@@ -259,13 +266,13 @@ export async function deployContractV2(
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  const oldInfo = loadContractInfo(network.netConfig.name, contract);
+  const oldInfo = loadContractInfo(network.name, contract);
   if (oldInfo.address) {
     const redeploy = await confirm({
       message: `该合约已在${oldInfo.createdAt} 部署至 ${oldInfo.address}，确定要再次部署吗？ `,
     });
     if (redeploy) {
-      moveContractInfo(network.netConfig.name, contract);
+      moveContractInfo(network.name, contract);
     } else {
       exit(1);
     }

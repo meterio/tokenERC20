@@ -20,14 +20,53 @@ import type {
 } from "../../common";
 
 export interface EIP712Interface extends Interface {
-  getFunction(nameOrSignature: "initialize"): FunctionFragment;
+  getFunction(
+    nameOrSignature:
+      | "_CACHED_CHAIN_ID"
+      | "_CACHED_DOMAIN_SEPARATOR"
+      | "_HASHED_NAME"
+      | "_HASHED_VERSION"
+      | "_TYPE_HASH"
+  ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "initialize",
+    functionFragment: "_CACHED_CHAIN_ID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_CACHED_DOMAIN_SEPARATOR",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_HASHED_NAME",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_HASHED_VERSION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_TYPE_HASH",
     values?: undefined
   ): string;
 
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_CACHED_CHAIN_ID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_CACHED_DOMAIN_SEPARATOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_HASHED_NAME",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_HASHED_VERSION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_TYPE_HASH", data: BytesLike): Result;
 }
 
 export interface EIP712 extends BaseContract {
@@ -73,15 +112,35 @@ export interface EIP712 extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  initialize: TypedContractMethod<[], [void], "nonpayable">;
+  _CACHED_CHAIN_ID: TypedContractMethod<[], [bigint], "view">;
+
+  _CACHED_DOMAIN_SEPARATOR: TypedContractMethod<[], [string], "view">;
+
+  _HASHED_NAME: TypedContractMethod<[], [string], "view">;
+
+  _HASHED_VERSION: TypedContractMethod<[], [string], "view">;
+
+  _TYPE_HASH: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "initialize"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+    nameOrSignature: "_CACHED_CHAIN_ID"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "_CACHED_DOMAIN_SEPARATOR"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "_HASHED_NAME"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "_HASHED_VERSION"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "_TYPE_HASH"
+  ): TypedContractMethod<[], [string], "view">;
 
   filters: {};
 }

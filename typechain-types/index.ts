@@ -58,10 +58,6 @@ export type { AccessControl } from "./@openzeppelin/contracts-v0.7/access/Access
 export { AccessControl__factory } from "./factories/@openzeppelin/contracts-v0.7/access/AccessControl__factory";
 export type { IERC20Permit } from "./@openzeppelin/contracts-v0.7/drafts/IERC20Permit";
 export { IERC20Permit__factory } from "./factories/@openzeppelin/contracts-v0.7/drafts/IERC20Permit__factory";
-export type { ERC165 } from "./@openzeppelin/contracts-v0.7/introspection/ERC165";
-export { ERC165__factory } from "./factories/@openzeppelin/contracts-v0.7/introspection/ERC165__factory";
-export type { IERC165 } from "./@openzeppelin/contracts-v0.7/introspection/IERC165";
-export { IERC165__factory } from "./factories/@openzeppelin/contracts-v0.7/introspection/IERC165__factory";
 export type { ERC20PresetMinterPauser } from "./@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser";
 export { ERC20PresetMinterPauser__factory } from "./factories/@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser__factory";
 export type { ERC20 } from "./@openzeppelin/contracts-v0.7/token/ERC20/ERC20";
@@ -82,6 +78,10 @@ export type { IAccessControlEnumerable } from "./@openzeppelin/contracts/access/
 export { IAccessControlEnumerable__factory } from "./factories/@openzeppelin/contracts/access/IAccessControlEnumerable__factory";
 export type { IERC20Metadata } from "./@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata";
 export { IERC20Metadata__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata__factory";
+export type { ERC165 } from "./@openzeppelin/contracts/utils/introspection/ERC165";
+export { ERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/ERC165__factory";
+export type { IERC165 } from "./@openzeppelin/contracts/utils/introspection/IERC165";
+export { IERC165__factory } from "./factories/@openzeppelin/contracts/utils/introspection/IERC165__factory";
 export type { BasicTokenSender } from "./contracts/BasicTokenSender";
 export { BasicTokenSender__factory } from "./factories/contracts/BasicTokenSender__factory";
 export type { EIP712 } from "./contracts/erc20/EIP712";

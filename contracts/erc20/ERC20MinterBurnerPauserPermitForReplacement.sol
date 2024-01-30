@@ -3,9 +3,9 @@ pragma solidity 0.7.0;
 
 import "@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser.sol";
 import "@openzeppelin/contracts-v0.7/utils/Counters.sol";
-import "@openzeppelin/contracts-v0.7/drafts/IERC20Permit.sol";
+import "./draft-IERC20Permit.sol";
 import "./EIP712.sol";
-import "@openzeppelin/contracts-v0.7/cryptography/ECDSA.sol";
+import "./ECDSA.sol";
 
 // import "@openzeppelin/contracts-v0.7/introspection/ERC165.sol";
 
@@ -27,17 +27,12 @@ contract ERC20MinterBurnerPauserPermitForReplacement is
     ERC20PresetMinterPauser,
     IERC20Permit,
     EIP712
-    // ERC165
 {
     constructor(
         string memory _name,
         string memory _symbol,
         uint8 decimals_
-    )
-        ERC20PresetMinterPauser(_name, _symbol)
-        EIP712("PermitToken", "1.0")
-    // ERC165()
-    {
+    ) ERC20PresetMinterPauser(_name, _symbol) EIP712("PermitToken", "1.0") {
         _setupDecimals(decimals_);
         // _registerInterface(0x9fd5a6cf); // permit with signature
         // _registerInterface(type(IERC20Permit).interfaceId);
@@ -50,10 +45,27 @@ contract ERC20MinterBurnerPauserPermitForReplacement is
 
     // NOTE: delibrately leave it as is to be compatible with v1 storage
     // solhint-disable-next-line var-name-mixedcase
-    bytes32 private immutable _PERMIT_TYPEHASH =
-        keccak256(
+    bytes32 public _PERMIT_TYPEHASH;
+
+    function initialize() public {
+        bytes32 hashedName = keccak256(bytes("PermitToken"));
+        bytes32 hashedVersion = keccak256(bytes("1.0"));
+        bytes32 typeHash = keccak256(
+            "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+        );
+        _HASHED_NAME = hashedName;
+        _HASHED_VERSION = hashedVersion;
+        _CACHED_CHAIN_ID = _getChainId();
+        _CACHED_DOMAIN_SEPARATOR = _buildDomainSeparator(
+            typeHash,
+            hashedName,
+            hashedVersion
+        );
+        _TYPE_HASH = typeHash;
+        _PERMIT_TYPEHASH = keccak256(
             "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
         ); // 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
+    }
 
     function permit(
         address owner,
@@ -61,40 +73,7 @@ contract ERC20MinterBurnerPauserPermitForReplacement is
         uint256 value,
         uint256 deadline,
         bytes memory signature
-    ) public {
-        bytes32 r;
-        bytes32 s;
-        uint8 v;
-        assembly {
-            r := mload(add(signature, 32))
-            s := mload(add(signature, 64))
-            v := and(mload(add(signature, 65)), 255)
-        }
-        if (v < 27) v += 27;
-        permit(owner, spender, value, deadline, v, r, s);
-    }
-
-    /**
-     * @dev Initializes the {EIP712} domain separator using the `name` parameter, and setting `version` to `"1"`.
-     *
-     * It's a good idea to use the same `name` that is defined as the ERC20 token name.
-     */
-    // NOTE: delibrately comment out since only constants are allowed in bytecode override
-    // constructor(string memory name) EIP712(name, "v1.0") {}
-
-    /**
-     * @dev See {IERC20Permit-permit}.
-     */
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
     ) public override {
-        bytes memory signature = abi.encodePacked(r, s, v);
         require(block.timestamp <= deadline, "ERC20Permit: expired deadline");
 
         bytes32 structHash = keccak256(

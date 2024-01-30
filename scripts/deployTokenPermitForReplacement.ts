@@ -8,11 +8,13 @@ const main = async () => {
 
   const name = await input({
     message: "输入Token name:",
+    default: "Test Token",
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
   const symbol = await input({
     message: "输入Token symbol:",
+    default: "test",
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 

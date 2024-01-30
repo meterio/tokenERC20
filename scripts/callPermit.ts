@@ -3,6 +3,8 @@ import { ethers, network } from "hardhat";
 import { selectNetwork, sendTransaction } from "./helper";
 import { isAddress } from "ethers";
 import { getSign } from "./permitSign";
+import { sign } from "crypto";
+import { BasicTokenSender__factory } from "../typechain-types";
 
 const main = async () => {
   const srcNetwork = await selectNetwork("Src");
@@ -10,16 +12,18 @@ const main = async () => {
   const { chainId } = provider._network;
   const owner = wallet.address;
 
-  const tokenAddress = await input({
-    message: "输入Token地址:",
-    validate: (value = "") => isAddress(value) || "Pass a valid address value",
-  });
+  // const tokenAddress = await input({
+  //   message: "输入Token地址:",
+  //   validate: (value = "") => isAddress(value) || "Pass a valid address value",
+  // });
+  const tokenAddress = "0xd86e243fc0007e6226b07c9a50c9d70d78299eb5"; //"0xd86e243fc0007e6226b07c9a50c9d70d78299eb5";
+  const spender = "0x14b27D8DC12E59a9904DaC6d17D33B8de2E80e66";
 
-  const spender = await input({
-    message: "输入spender:",
-    default: wallet.address,
-    validate: (value = "") => isAddress(value) || "Pass a valid address value",
-  });
+  // const spender = await input({
+  //   message: "输入spender:",
+  //   default: wallet.address,
+  //   validate: (value = "") => isAddress(value) || "Pass a valid address value",
+  // });
 
   const amount = BigInt(
     await input({
@@ -30,7 +34,7 @@ const main = async () => {
   );
 
   const token = await ethers.getContractAt(
-    "ERC20MinterBurnerPauserPermit",
+    "ERC20MinterBurnerPauserPermitForReplacement",
     tokenAddress,
     wallet
   );
@@ -51,6 +55,8 @@ const main = async () => {
     deadline,
     chainId
   );
+  console.log(signature);
+  console.log(signature.length);
 
   await sendTransaction(srcNetwork, token, "permit", [
     owner,
