@@ -46,22 +46,22 @@ abstract contract EIP712 {
      * NOTE: These parameters cannot be changed except through a xref:learn::upgrading-smart-contracts.adoc[smart
      * contract upgrade].
      */
-    constructor(string memory name, string memory version) internal {
-        bytes32 hashedName = keccak256(bytes(name));
-        bytes32 hashedVersion = keccak256(bytes(version));
-        bytes32 typeHash = keccak256(
-            "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-        );
-        _HASHED_NAME = hashedName;
-        _HASHED_VERSION = hashedVersion;
-        _CACHED_CHAIN_ID = _getChainId();
-        _CACHED_DOMAIN_SEPARATOR = _buildDomainSeparator(
-            typeHash,
-            hashedName,
-            hashedVersion
-        );
-        _TYPE_HASH = typeHash;
-    }
+    // constructor(string memory name, string memory version) internal {
+    //     bytes32 hashedName = keccak256(bytes(name));
+    //     bytes32 hashedVersion = keccak256(bytes(version));
+    //     bytes32 typeHash = keccak256(
+    //         "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+    //     );
+    //     _HASHED_NAME = hashedName;
+    //     _HASHED_VERSION = hashedVersion;
+    //     _CACHED_CHAIN_ID = _getChainId();
+    //     _CACHED_DOMAIN_SEPARATOR = _buildDomainSeparator(
+    //         typeHash,
+    //         hashedName,
+    //         hashedVersion
+    //     );
+    //     _TYPE_HASH = typeHash;
+    // }
 
     /**
      * @dev Returns the domain separator for the current chain.

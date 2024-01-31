@@ -3,9 +3,9 @@ pragma solidity 0.7.0;
 
 import "@openzeppelin/contracts-v0.7/presets/ERC20PresetMinterPauser.sol";
 import "@openzeppelin/contracts-v0.7/utils/Counters.sol";
+import "@openzeppelin/contracts-v0.7/cryptography/ECDSA.sol";
 import "./draft-IERC20Permit.sol";
 import "./EIP712.sol";
-import "./ECDSA.sol";
 
 // import "@openzeppelin/contracts-v0.7/introspection/ERC165.sol";
 
@@ -32,20 +32,15 @@ contract ERC20MinterBurnerPauserPermitForReplacement is
         string memory _name,
         string memory _symbol,
         uint8 decimals_
-    ) ERC20PresetMinterPauser(_name, _symbol) EIP712("PermitToken", "1.0") {
+    ) ERC20PresetMinterPauser(_name, _symbol) {
         _setupDecimals(decimals_);
-        // _registerInterface(0x9fd5a6cf); // permit with signature
-        // _registerInterface(type(IERC20Permit).interfaceId);
-        // _registerInterface(type(IERC20).interfaceId);
     }
+
+    bytes32 public _PERMIT_TYPEHASH;
 
     using Counters for Counters.Counter;
 
     mapping(address => Counters.Counter) private _nonces;
-
-    // NOTE: delibrately leave it as is to be compatible with v1 storage
-    // solhint-disable-next-line var-name-mixedcase
-    bytes32 public _PERMIT_TYPEHASH;
 
     function initialize() public {
         bytes32 hashedName = keccak256(bytes("PermitToken"));

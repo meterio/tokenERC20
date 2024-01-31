@@ -185,24 +185,32 @@ export async function selectNetwork(
   const provider = new JsonRpcProvider(netConfig.rpc);
   let wallet = {} as Wallet;
   if (!readonly) {
-    const privateKey = await password({
-      message: `输入网络${green(name)}的Private Key:`,
-      validate: (value = "") =>
-        isBytesLike(value) || "Pass a valid Private Key value",
-      mask: "*",
-    });
+    let privateKey = "";
+    const env_privkey = process.env[`${netName.toUpperCase()}_PRIVKEY`];
+    if (env_privkey && isBytesLike(env_privkey)) {
+      privateKey = env_privkey;
+    } else {
+      privateKey = await password({
+        message: `输入网络${green(name)}的Private Key:`,
+        validate: (value = "") =>
+          isBytesLike(value) || "Pass a valid Private Key value",
+        mask: "*",
+      });
+    }
 
     wallet = new Wallet(privateKey, provider);
     console.log("Signer:", yellow(wallet.address));
   }
 
   const feeData = await provider.getFeeData();
-  const defaultGasPrice = feeData.gasPrice;
-  override.gasPrice = await input({
-    message: "输入Gas price:",
-    default: defaultGasPrice?.toString(),
-    validate: (value = "") => value.length > 0 || "Pass a valid value",
-  });
+  if (!readonly) {
+    const defaultGasPrice = feeData.gasPrice;
+    override.gasPrice = await input({
+      message: "输入Gas price:",
+      default: defaultGasPrice?.toString(),
+      validate: (value = "") => value.length > 0 || "Pass a valid value",
+    });
+  }
 
   const updateNetConfig = (newNetConfig: object) => {
     saveNetConfig(netName, newNetConfig);
