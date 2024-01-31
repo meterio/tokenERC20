@@ -198,6 +198,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BasicTokenSender__factory>;
     getContractFactory(
+      name: "BasicTokenSender",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BasicTokenSender__factory>;
+    getContractFactory(
+      name: "Withdraw",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Withdraw__factory>;
+    getContractFactory(
       name: "IERC20Permit",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20Permit__factory>;
@@ -250,6 +258,34 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NonblockingLzAppUpgradeable__factory>;
     getContractFactory(
+      name: "ILayerZeroEndpointUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILayerZeroEndpointUpgradeable__factory>;
+    getContractFactory(
+      name: "ILayerZeroReceiverUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILayerZeroReceiverUpgradeable__factory>;
+    getContractFactory(
+      name: "ILayerZeroUserApplicationConfigUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ILayerZeroUserApplicationConfigUpgradeable__factory>;
+    getContractFactory(
+      name: "IOFTCoreUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOFTCoreUpgradeable__factory>;
+    getContractFactory(
+      name: "IOFTUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOFTUpgradeable__factory>;
+    getContractFactory(
+      name: "LzAppUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LzAppUpgradeable__factory>;
+    getContractFactory(
+      name: "NonblockingLzAppUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NonblockingLzAppUpgradeable__factory>;
+    getContractFactory(
       name: "OFTAccessControlUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OFTAccessControlUpgradeable__factory>;
@@ -265,6 +301,34 @@ declare module "hardhat/types/runtime" {
       name: "ProxyOFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ProxyOFT__factory>;
+    getContractFactory(
+      name: "OFTAccessControlUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OFTAccessControlUpgradeable__factory>;
+    getContractFactory(
+      name: "OFTCoreUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OFTCoreUpgradeable__factory>;
+    getContractFactory(
+      name: "ERC20MintAndBurn",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20MintAndBurn__factory>;
+    getContractFactory(
+      name: "ProxyOFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProxyOFT__factory>;
+    getContractFactory(
+      name: "IERC20Permit",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Permit__factory>;
+    getContractFactory(
+      name: "EIP712",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EIP712__factory>;
+    getContractFactory(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement__factory>;
     getContractFactory(
       name: "Withdraw",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -501,6 +565,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.BasicTokenSender>;
     getContractAt(
+      name: "BasicTokenSender",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BasicTokenSender>;
+    getContractAt(
+      name: "Withdraw",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Withdraw>;
+    getContractAt(
       name: "IERC20Permit",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -566,6 +640,41 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.NonblockingLzAppUpgradeable>;
     getContractAt(
+      name: "ILayerZeroEndpointUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILayerZeroEndpointUpgradeable>;
+    getContractAt(
+      name: "ILayerZeroReceiverUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILayerZeroReceiverUpgradeable>;
+    getContractAt(
+      name: "ILayerZeroUserApplicationConfigUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ILayerZeroUserApplicationConfigUpgradeable>;
+    getContractAt(
+      name: "IOFTCoreUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOFTCoreUpgradeable>;
+    getContractAt(
+      name: "IOFTUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOFTUpgradeable>;
+    getContractAt(
+      name: "LzAppUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LzAppUpgradeable>;
+    getContractAt(
+      name: "NonblockingLzAppUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NonblockingLzAppUpgradeable>;
+    getContractAt(
       name: "OFTAccessControlUpgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -585,6 +694,41 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ProxyOFT>;
+    getContractAt(
+      name: "OFTAccessControlUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OFTAccessControlUpgradeable>;
+    getContractAt(
+      name: "OFTCoreUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OFTCoreUpgradeable>;
+    getContractAt(
+      name: "ERC20MintAndBurn",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20MintAndBurn>;
+    getContractAt(
+      name: "ProxyOFT",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProxyOFT>;
+    getContractAt(
+      name: "IERC20Permit",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Permit>;
+    getContractAt(
+      name: "EIP712",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EIP712>;
+    getContractAt(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement>;
     getContractAt(
       name: "Withdraw",
       address: string | ethers.Addressable,
@@ -776,6 +920,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BasicTokenSender>;
     deployContract(
+      name: "BasicTokenSender",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BasicTokenSender>;
+    deployContract(
+      name: "Withdraw",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Withdraw>;
+    deployContract(
       name: "IERC20Permit",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Permit>;
@@ -828,6 +980,34 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.NonblockingLzAppUpgradeable>;
     deployContract(
+      name: "ILayerZeroEndpointUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ILayerZeroEndpointUpgradeable>;
+    deployContract(
+      name: "ILayerZeroReceiverUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ILayerZeroReceiverUpgradeable>;
+    deployContract(
+      name: "ILayerZeroUserApplicationConfigUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ILayerZeroUserApplicationConfigUpgradeable>;
+    deployContract(
+      name: "IOFTCoreUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IOFTCoreUpgradeable>;
+    deployContract(
+      name: "IOFTUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IOFTUpgradeable>;
+    deployContract(
+      name: "LzAppUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LzAppUpgradeable>;
+    deployContract(
+      name: "NonblockingLzAppUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NonblockingLzAppUpgradeable>;
+    deployContract(
       name: "OFTAccessControlUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OFTAccessControlUpgradeable>;
@@ -843,6 +1023,34 @@ declare module "hardhat/types/runtime" {
       name: "ProxyOFT",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ProxyOFT>;
+    deployContract(
+      name: "OFTAccessControlUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OFTAccessControlUpgradeable>;
+    deployContract(
+      name: "OFTCoreUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OFTCoreUpgradeable>;
+    deployContract(
+      name: "ERC20MintAndBurn",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MintAndBurn>;
+    deployContract(
+      name: "ProxyOFT",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ProxyOFT>;
+    deployContract(
+      name: "IERC20Permit",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Permit>;
+    deployContract(
+      name: "EIP712",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EIP712>;
+    deployContract(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement>;
     deployContract(
       name: "Withdraw",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1079,6 +1287,16 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BasicTokenSender>;
     deployContract(
+      name: "BasicTokenSender",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BasicTokenSender>;
+    deployContract(
+      name: "Withdraw",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Withdraw>;
+    deployContract(
       name: "IERC20Permit",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1144,6 +1362,41 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.NonblockingLzAppUpgradeable>;
     deployContract(
+      name: "ILayerZeroEndpointUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ILayerZeroEndpointUpgradeable>;
+    deployContract(
+      name: "ILayerZeroReceiverUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ILayerZeroReceiverUpgradeable>;
+    deployContract(
+      name: "ILayerZeroUserApplicationConfigUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ILayerZeroUserApplicationConfigUpgradeable>;
+    deployContract(
+      name: "IOFTCoreUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IOFTCoreUpgradeable>;
+    deployContract(
+      name: "IOFTUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IOFTUpgradeable>;
+    deployContract(
+      name: "LzAppUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LzAppUpgradeable>;
+    deployContract(
+      name: "NonblockingLzAppUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.NonblockingLzAppUpgradeable>;
+    deployContract(
       name: "OFTAccessControlUpgradeable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1163,6 +1416,41 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ProxyOFT>;
+    deployContract(
+      name: "OFTAccessControlUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OFTAccessControlUpgradeable>;
+    deployContract(
+      name: "OFTCoreUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OFTCoreUpgradeable>;
+    deployContract(
+      name: "ERC20MintAndBurn",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MintAndBurn>;
+    deployContract(
+      name: "ProxyOFT",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ProxyOFT>;
+    deployContract(
+      name: "IERC20Permit",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Permit>;
+    deployContract(
+      name: "EIP712",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.EIP712>;
+    deployContract(
+      name: "ERC20MinterBurnerPauserPermitForReplacement",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MinterBurnerPauserPermitForReplacement>;
     deployContract(
       name: "Withdraw",
       args: any[],

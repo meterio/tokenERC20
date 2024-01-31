@@ -3,12 +3,18 @@
 /* eslint-disable */
 import type * as proxyOftSol from "./ProxyOFT.sol";
 export type { proxyOftSol };
+import type * as ccip from "./ccip";
+export type { ccip };
 import type * as erc20 from "./erc20";
 export type { erc20 };
 import type * as interfaces from "./interfaces";
 export type { interfaces };
 import type * as lzApp from "./lzApp";
 export type { lzApp };
+import type * as oft from "./oft";
+export type { oft };
+import type * as tokenReplacement from "./tokenReplacement";
+export type { tokenReplacement };
 import type * as utils from "./utils";
 export type { utils };
 export type { BasicTokenSender } from "./BasicTokenSender";

@@ -40,7 +40,6 @@ const main = async () => {
   const nonce = await token.nonces(
     "0x0205c2D862cA051010698b69b54278cbAf945C0b"
   );
-  const gchainId = await token.getChainID();
 
   console.log(`cachedDomainSeparator: ${cachedDomainSeparator}`);
   console.log(`domainSeparator: ${domainSeparator}`);
@@ -50,23 +49,12 @@ const main = async () => {
   console.log(`typeHash: ${typeHash}`);
   console.log(`_PERMIT_TYPEHASH: ${permitHash}`);
   console.log(`nonce: `, nonce);
-  console.log(`chainId: `, gchainId);
 
-  let allowance = await token.allowance(
+  const allowance = await token.allowance(
     "0x0205c2D862cA051010698b69b54278cbAf945C0b",
     "0x14b27D8DC12E59a9904DaC6d17D33B8de2E80e66"
   );
-  console.log(`1.allowance: ${allowance}`);
-  allowance = await token.allowance(
-    "0x0205c2D862cA051010698b69b54278cbAf945C0b",
-    "0x14b27D8DC12E59a9904DaC6d17D33B8de2E80e66"
-  );
-  console.log(`2.allowance: ${allowance}`);
-  allowance = await token.allowance(
-    "0x0205c2D862cA051010698b69b54278cbAf945C0b",
-    "0x14b27D8DC12E59a9904DaC6d17D33B8de2E80e66"
-  );
-  console.log(`3.allowance: ${allowance}`);
+  console.log(`allowance: ${allowance}`);
 };
 
 main();
