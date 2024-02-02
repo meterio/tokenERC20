@@ -21,5 +21,7 @@
         "0xe85411C030fB32A9D8b14Bbbc6CB19417391F711": "0xe85411C030fB32A9D8b14Bbbc6CB19417391F711"
       }
     }
-  }
+  },
+  "ProxyOFT": "0xbd702feeb59bc2a51a4bb881352a61d0edf8def6",
+  "ProxyOFT-proxy": "0xbb5972e940bba6de48cf35e4b8d9389c713037a1"
 }
