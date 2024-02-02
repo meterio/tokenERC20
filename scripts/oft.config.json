@@ -1,50 +1,42 @@
 [
   {
     "name": "Ethereum",
-    "rpc": "https://ethereum.publicnode.com",
     "lzEndpoint": "0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675",
-    "lzChainId": "101"
+    "lzEndpointId": "101"
   },
   {
     "name": "Bsc main",
-    "rpc": "https://bsc-dataseed.binance.org",
     "lzEndpoint": "0x3c2269811836af69497E5F486A85D7316753cf62",
-    "lzChainId": "102"
+    "lzEndpointId": "102"
   },
   {
     "name": "Meter main",
-    "rpc": "https://rpc.meter.io",
     "lzEndpoint": "0xa3a8e19253Ab400acDac1cB0eA36B88664D8DedF",
-    "lzChainId": "176"
+    "lzEndpointId": "176"
   },
   {
     "name": "Polygon",
-    "rpc": "https://rpc-mainnet.maticvigil.com",
     "lzEndpoint": "0x3c2269811836af69497E5F486A85D7316753cf62",
-    "lzChainId": "109"
+    "lzEndpointId": "109"
   },
   {
     "name": "Abitrum",
-    "rpc": "https://arb1.arbitrum.io/rpc",
     "lzEndpoint": "0x3c2269811836af69497E5F486A85D7316753cf62",
-    "lzChainId": "110"
+    "lzEndpointId": "110"
   },
   {
     "name": "Base main",
-    "rpc": "https://base.publicnode.com",
     "lzEndpoint": "0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7",
-    "lzChainId": "184"
+    "lzEndpointId": "184"
   },
   {
     "name": "bsctest",
-    "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545",
     "lzEndpoint": "0x6Fcb97553D41516Cb228ac03FdC8B9a0a9df04A1",
-    "lzChainId": "10102"
+    "lzEndpointId": "10102"
   },
   {
     "name": "mumbai",
-    "rpc": "https://rpc-mumbai.maticvigil.com",
     "lzEndpoint": "0xf69186dfBa60DdB133E91E9A4B5673624293d8F8",
-    "lzChainId": "10109"
+    "lzEndpointId": "10109"
   }
 ]

@@ -5,3 +5,4 @@ export * as proxyOftSol from "./ProxyOFT.sol";
 export * as interfaces from "./interfaces";
 export * as lzApp from "./lzApp";
 export { OFTCoreUpgradeable__factory } from "./OFTCoreUpgradeable__factory";
+export { ProxyOFTV2__factory } from "./ProxyOFTV2__factory";

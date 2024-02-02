@@ -27,7 +27,8 @@ const main = async () => {
     network,
     "ERC20MinterBurnerPauserPermit",
     [name, symbol, decimals],
-    override
+    override,
+    symbol
   );
 };
 

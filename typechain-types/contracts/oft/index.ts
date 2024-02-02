@@ -8,3 +8,4 @@ export type { interfaces };
 import type * as lzApp from "./lzApp";
 export type { lzApp };
 export type { OFTCoreUpgradeable } from "./OFTCoreUpgradeable";
+export type { ProxyOFTV2 } from "./ProxyOFTV2";

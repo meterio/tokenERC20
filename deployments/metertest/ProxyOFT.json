@@ -1,1 +1,9 @@
-{"address":"0x2C9F8C28b3d6F73DBe87Bbb7bD683d808490bd22","constructorArguments":[],"libraries":{}}
+{
+  "contract": "ProxyOFT",
+  "address": "0xD1bd7486b319e98ADf17Ad063122ebcF52eeffA8",
+  "createdBy": "0x0205c2D862cA051010698b69b54278cbAf945C0b",
+  "createdAt": "2024-02-02T11:04:10-08:00",
+  "creationTx": "0x06ee03aae593a5606920fa42a79ed671cd6e55de46515a349398f09d72610416",
+  "constructorArguments": [],
+  "constructorArgumentsDefs": []
+}

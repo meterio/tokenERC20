@@ -4,6 +4,9 @@ import {
   Wallet,
   JsonRpcProvider,
   isBytesLike,
+  isAddress,
+  ZeroAddress,
+  Interface,
 } from "ethers";
 import { HardhatEthersHelpers } from "@nomicfoundation/hardhat-ethers/types";
 import { input, select, password, confirm } from "@inquirer/prompts";
@@ -49,7 +52,7 @@ function ensureDir(filepath: string) {
   }
 }
 
-type ContractInfo = {
+export type ContractInfo = {
   contract: string;
   address: string;
   createdBy: string;
@@ -60,25 +63,37 @@ type ContractInfo = {
   libraries?: Object;
 };
 
+function getContractInfoFilePath(
+  network: string,
+  contractName: string,
+  isProxy = false
+): string {
+  let filepath = path.join(deployDir, network, `${contractName}.json`);
+  if (isProxy) {
+    filepath = path.join(deployDir, network, `${contractName}-proxy.json`);
+  }
+  ensureDir(filepath);
+  return filepath;
+}
+
 export function saveContractInfo(
   network: string,
-  name: string,
-  info: ContractInfo
+  contractName: string,
+  info: ContractInfo,
+  isProxy = false
 ) {
-  const nameItems = name.split(":");
-  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
-  const filepath = path.join(deployDir, network, `${contractName}.json`);
-  ensureDir(filepath);
+  let filepath = getContractInfoFilePath(network, contractName, isProxy);
 
   fs.writeFileSync(filepath, JSON.stringify(info, null, 2));
   console.log(`saved contract info:`, yellow(filepath));
 }
 
-export function loadContractInfo(network: string, name: string): ContractInfo {
-  const nameItems = name.split(":");
-  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
-  const filepath = path.join(deployDir, network, `${contractName}.json`);
-  ensureDir(filepath);
+export function loadContractInfo(
+  network: string,
+  contractName: string,
+  isProxy = false
+): ContractInfo {
+  let filepath = getContractInfoFilePath(network, contractName, isProxy);
 
   if (fs.existsSync(filepath)) {
     return JSON.parse(fs.readFileSync(filepath).toString()) as ContractInfo;
@@ -87,12 +102,80 @@ export function loadContractInfo(network: string, name: string): ContractInfo {
   return {} as ContractInfo;
 }
 
-export function moveContractInfo(network: string, name: string) {
-  const nameItems = name.split(":");
-  const contractName = nameItems.length > 1 ? nameItems[1] : nameItems[0];
-  console.log(deployDir, network);
-  const filepath = path.join(deployDir, network, `${contractName}.json`);
-  ensureDir(filepath);
+export function loadTokenMapping(network: Network, proxyAddress: string) {
+  const { netConfig } = network;
+  if (netConfig.tokenMapping) {
+    return {};
+  }
+  if (netConfig.tokenMapping[proxyAddress]) {
+    return netConfig.tokenMapping[proxyAddress];
+  }
+  return {};
+}
+
+export function saveTokenMapping(
+  network: Network,
+  proxyAddress: string,
+  tokenMapping: object
+) {
+  const { netConfig, updateNetConfig } = network;
+  if (!netConfig.tokenMapping) {
+    netConfig.tokenMapping = {};
+  }
+  netConfig.tokenMapping[proxyAddress] = tokenMapping;
+  updateNetConfig(netConfig);
+}
+
+export function loadDeployedAddresses(
+  network: Network,
+  name: string,
+  isProxy = false
+): string[] {
+  const { netConfig } = network;
+
+  if (isProxy) {
+    name += "-proxy";
+  }
+  let result = [];
+  if (netConfig.hasOwnProperty(name)) {
+    if (typeof netConfig[name] == "string") {
+      result = [netConfig[name]];
+    } else if (Array.isArray(netConfig[name])) {
+      result = netConfig[name];
+    }
+  }
+  return result;
+}
+
+export function saveDeployedAddress(
+  network: Network,
+  name: string,
+  address: string,
+  isProxy = false
+) {
+  if (isProxy) {
+    name += "-proxy";
+  }
+  const { netConfig, updateNetConfig } = network;
+  if (!netConfig[name]) {
+    netConfig[name] = address;
+  } else if (typeof netConfig[name] == "string" && netConfig[name] != address) {
+    netConfig[name] = [address, netConfig[name]];
+  } else if (Array.isArray(netConfig[name])) {
+    netConfig[name].unshift(address);
+  }
+  updateNetConfig(netConfig);
+}
+export function moveContractInfo(
+  network: string,
+  contractName: string,
+  isProxy = false
+) {
+  const filepath = getContractInfoFilePath(network, contractName, isProxy);
+
+  if (!fs.existsSync(filepath)) {
+    return;
+  }
 
   const content: ContractInfo = JSON.parse(
     fs.readFileSync(filepath).toString()
@@ -162,6 +245,28 @@ export function getAllNetConfigs() {
   return results;
 }
 
+export async function selectProxyOFT(network: Network) {
+  const v1Proxies = loadDeployedAddresses(network, "ProxyOFT", true);
+  const v2Proxies = loadDeployedAddresses(network, "ProxyOFTV2", true);
+  let choicesB: { name: string; value: string }[] = [];
+  v1Proxies.map((p) => {
+    choicesB.push({ name: `V1: ${p}`, value: p });
+  });
+  v2Proxies.map((p) => {
+    choicesB.push({ name: `V2: ${p}`, value: p });
+  });
+  if (choicesB.length <= 0) {
+    console.log(`${network.name} 上还没有部署任何ProxyOFT，请先部署`);
+    exit(-1);
+  }
+  const proxyAddress = await select({
+    message: `选择网络${green(network.name)}上ProxyOFT地址:`,
+    choices: choicesB,
+  });
+  const version = v1Proxies.includes(proxyAddress) ? "v1" : "v2";
+  return { address: proxyAddress, version };
+}
+
 export async function selectNetwork(
   name: string = "",
   readonly = false
@@ -199,7 +304,7 @@ export async function selectNetwork(
     }
 
     wallet = new Wallet(privateKey, provider);
-    console.log("Signer:", yellow(wallet.address));
+    console.log("Wallet Signer:", yellow(wallet.address));
   }
 
   const feeData = await provider.getFeeData();
@@ -249,7 +354,7 @@ export async function sendTransaction(
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  override.gasLimit = await contract[func].estimateGas(...args);
+  override.gasLimit = await contract[func].estimateGas(...args, override);
   console.log("Estimated Gas:", green(override.gasLimit.toString()));
   let response = await contract[func](...args, override);
   const receipt = await response.wait();
@@ -259,32 +364,122 @@ export async function sendTransaction(
   );
 }
 
-export async function deployContractV2(
+export async function loadOrDeployImplContract(
   ethers: HardhatEthersHelpers,
   network: Network,
   contract: string,
   args: any[],
   override: any = {}
 ): Promise<Contract> {
+  const deployedAddresses = loadDeployedAddresses(network, contract);
+  if (deployedAddresses.length > 0) {
+    const redeploy = await confirm({
+      message: `${contract} Impl合约已部署至${deployedAddresses[0]}等${deployedAddresses.length}个地址，需要重新部署吗？ `,
+      default: false,
+    });
+    if (redeploy) {
+      moveContractInfo(network.name, contract);
+    } else {
+      const address = await input({
+        message: `输入${contract} Impl合约地址`,
+        default: deployedAddresses[0],
+        validate: (value = "") =>
+          isAddress(value) || "Pass a valid address value",
+      });
+      return ethers.getContractAt(contract, address, network.wallet);
+    }
+  }
+
+  return deployContractV2(ethers, network, contract, args, override);
+}
+
+export async function loadOrDeployProxyContract(
+  ethers: HardhatEthersHelpers,
+  network: Network,
+  implContractName: string,
+  implAddr: string,
+  buildData: (network: Network, _interface: Interface) => Promise<string>,
+  override: any = {}
+): Promise<Contract> {
+  const { netConfig, updateNetConfig } = network;
+  const deployedAddresses = loadDeployedAddresses(
+    network,
+    implContractName,
+    true
+  );
+  if (deployedAddresses.length > 0) {
+    const redeploy = await confirm({
+      message: `${implContractName} Proxy合约已部署至${deployedAddresses[0]}等${deployedAddresses.length}个地址，需要重新部署吗？`,
+      default: false,
+    });
+    if (redeploy) {
+      moveContractInfo(network.name, implContractName, true);
+    } else {
+      const address = await input({
+        message: `确认${implContractName} Proxy合约地址`,
+        default: deployedAddresses[0],
+        validate: (value = "") =>
+          isAddress(value) || "Pass a valid address value",
+      });
+      return ethers.getContractAt(
+        "TransparentUpgradeableProxy",
+        address,
+        network.wallet
+      );
+    }
+  }
+
+  const proxyAdmin = await input({
+    message: "输入ProxyAdmin地址:",
+    default: netConfig.proxyAdmin,
+    validate: (value = "") => isAddress(value) || "Pass a valid address value",
+  });
+  netConfig.proxyAdmin = proxyAdmin;
+  updateNetConfig(netConfig);
+
+  const implContract = await ethers.getContractAt(
+    implContractName,
+    ZeroAddress
+  );
+  const data = await buildData(network, implContract.interface);
+  return deployContractV2(
+    ethers,
+    network,
+    "TransparentUpgradeableProxy",
+    [implAddr, proxyAdmin, data],
+    override,
+    `${implContractName}-proxy`
+  );
+}
+
+export async function deployContractV2(
+  ethers: HardhatEthersHelpers,
+  network: Network,
+  contract: string,
+  args: any[],
+  override: any = {},
+  alias = ""
+): Promise<Contract> {
+  const { netConfig, updateNetConfig } = network;
   override.nonce = await input({
-    message: "输入nonce:",
+    message: `准备部署${contract}，输入nonce:`,
     default: (
       await network.provider.getTransactionCount(network.wallet.address)
     ).toString(),
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  const oldInfo = loadContractInfo(network.name, contract);
-  if (oldInfo.address) {
-    const redeploy = await confirm({
-      message: `该合约已在${oldInfo.createdAt} 部署至 ${oldInfo.address}，确定要再次部署吗？ `,
-    });
-    if (redeploy) {
-      moveContractInfo(network.name, contract);
-    } else {
-      exit(1);
-    }
-  }
+  // const oldInfo = loadContractInfo(network.name, contract);
+  // if (oldInfo.address) {
+  //   const redeploy = await confirm({
+  //     message: `该合约已在${oldInfo.createdAt} 部署至 ${oldInfo.address}，需要重新部署吗？ `,
+  //   });
+  //   if (redeploy) {
+  moveContractInfo(network.name, contract);
+  //   } else {
+  //     exit(1);
+  //   }
+  // }
 
   const factory = await ethers.getContractFactory(contract, network.wallet);
   const deployTx = await factory.getDeployTransaction(...args);
@@ -315,7 +510,14 @@ export async function deployContractV2(
     constructorArguments: args,
     constructorArgumentsDefs,
   };
-  saveContractInfo(network.name, contract, info);
+  let key = contract;
+  if (alias) {
+    key = alias;
+    saveContractInfo(network.name, alias, info);
+  } else {
+    saveContractInfo(network.name, contract, info);
+  }
+  saveDeployedAddress(network, key, info.address);
   return deployed;
 }
 

@@ -2,6 +2,6 @@
   "name": "goerli",
   "rpc": "https://ethereum-goerli.publicnode.com",
   "lzEndpoint": "0xbfD2135BFfbb0B5378b56643c2Df8a87552Bfa23",
-  "lzChainId": "10121",
+  "lzEndpointId": "10121",
   "BasicTokenSender": "0x686e5219a382eD925A10693543217D496719ecb3"
 }
