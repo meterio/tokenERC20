@@ -1,4 +1,4 @@
-import { confirm, input, select } from "@inquirer/prompts";
+import { confirm, input } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import {
   selectNetwork,
@@ -7,7 +7,6 @@ import {
   yellow,
   red,
   DEFAULT_ADMIN_ROLE,
-  loadDeployedAddresses,
   selectProxyOFT,
 } from "../helper";
 import { isAddress } from "ethers";
@@ -30,7 +29,7 @@ const main = async () => {
       parseInt(value) > 0 || "Pass a valid lzEndpointId value",
   });
   const remoteAddress = await input({
-    message: "输入LayerZero Remote地址:",
+    message: "输入LayerZero Remote ProxyOFT地址:",
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 
@@ -52,7 +51,6 @@ const main = async () => {
   } else {
     let trustedRemoteAddress =
       await proxyContract.getTrustedRemoteAddress(remoteEndpointId);
-    console.log("Trust remote address", yellow(trustedRemoteAddress));
     if (trustedRemoteAddress.toLowerCase() != remoteAddress.toLowerCase()) {
       const needUpdate = await confirm({
         message: `合约上读取的TrustRemote地址(${red(trustedRemoteAddress)})与输入(${yellow(remoteAddress)})不一致，是否更新合约配置？`,
@@ -68,6 +66,11 @@ const main = async () => {
           DEFAULT_ADMIN_ROLE
         );
       }
+    } else {
+      console.log(
+        "TrustRemote地址与合约配置一致",
+        yellow(trustedRemoteAddress)
+      );
     }
   }
 };

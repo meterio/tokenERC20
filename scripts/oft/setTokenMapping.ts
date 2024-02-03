@@ -9,15 +9,17 @@ import {
   yellow,
   red,
   DEFAULT_ADMIN_ROLE,
-  loadDeployedAddresses,
   loadTokenMapping,
   saveTokenMapping,
   selectProxyOFT,
 } from "../helper";
 import { isAddress } from "ethers";
-import { exit } from "process";
 
-async function checkRole(network: Network, tokenAddress: string) {
+async function checkRole(
+  network: Network,
+  proxyAddress: string,
+  tokenAddress: string
+) {
   console.log(`查询网络${green(network.name)}的Token权限设置:`);
   const tokenContract = await ethers.getContractAt(
     "ERC20MinterBurnerPauser",
@@ -25,26 +27,19 @@ async function checkRole(network: Network, tokenAddress: string) {
     network.wallet
   );
 
-  const hasRoleA = await tokenContract.hasRole(
-    MINTER_ROLE,
-    network.netConfig.proxy
-  );
+  const hasRoleA = await tokenContract.hasRole(MINTER_ROLE, proxyAddress);
 
   if (hasRoleA) {
     console.log(
       `网络${green(network.name)}:\n ProxyOFT合约:${yellow(
-        network.netConfig.proxy
-      )}\n 拥有Token${green(network.name)}合约${yellow(
-        tokenAddress
-      )}的MINTER_ROLE✅`
+        proxyAddress
+      )}\n 拥有Token ${yellow(tokenAddress)}的MINTER_ROLE✅`
     );
   } else {
     console.log(
       `网络${green(network.name)}:\n ProxyOFT合约:${yellow(
-        network.netConfig.proxy
-      )}\n 不拥有Token${green(network.name)}合约${yellow(
-        tokenAddress
-      )}的MINTER_ROLE❌`
+        proxyAddress
+      )}\n 不拥有Token ${yellow(tokenAddress)}的MINTER_ROLE❌`
     );
     const grantRole = await confirm({
       message: `是否配置?`,
@@ -54,7 +49,7 @@ async function checkRole(network: Network, tokenAddress: string) {
         network,
         tokenContract,
         "grantRole(bytes32,address)",
-        [MINTER_ROLE, network.netConfig.proxy],
+        [MINTER_ROLE, proxyAddress],
         network.override,
         DEFAULT_ADMIN_ROLE
       );
@@ -69,7 +64,7 @@ async function laneExist(
   srcToken: string,
   dstToken: string
 ) {
-  console.log(`查询网络${green(network.name)}的OFT设置:`);
+  console.log(`查询网络${green(network.name)}的ProxyOFT设置:`);
   const proxyOFT = await ethers.getContractAt(
     "ProxyOFT",
     proxyAddr,
@@ -164,12 +159,12 @@ const main = async () => {
   }
 
   if (resA.version == "v1") {
-    await checkRole(networkA, tokenA);
+    await checkRole(networkA, proxyA, tokenA);
   }
 
-  // if (resB.version == "v1") {
-  //   await checkRole(networkB, tokenB);
-  // }
+  if (resB.version == "v1") {
+    await checkRole(networkB, proxyB, tokenB);
+  }
 
   await laneExist(
     networkA,
