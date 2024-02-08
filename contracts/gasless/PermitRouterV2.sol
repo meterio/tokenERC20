@@ -12,9 +12,7 @@ contract PermitRouterV2 is Ownable {
     using SafeERC20 for IERC20;
 
     uint256 public fee;
-    address[] public path;
-    address public tokenIn;
-    IWMTR public immutable wmtr;
+    IWMTR public constant wmtr = IWMTR(0x160361ce13ec33C993b5cCA8f62B6864943eb083);
 
     modifier ensure(uint256 deadline) {
         require(deadline >= block.timestamp, "UniswapV2Router: EXPIRED");
@@ -25,16 +23,8 @@ contract PermitRouterV2 is Ownable {
         require(msg.sender == address(wmtr), "Router: NOT_WMTR");
     }
 
-    constructor(
-        uint256 _fee,
-        address _tokenIn,
-        IWMTR _wmtr,
-        address[] memory _path
-    ) {
-        path = _path;
+    constructor( uint256 _fee) {
         fee = _fee;
-        tokenIn = _tokenIn;
-        wmtr = _wmtr;
     }
 
     function setFee(uint256 _fee) public onlyOwner {
@@ -53,16 +43,20 @@ contract PermitRouterV2 is Ownable {
         uint256 amountIn,
         uint256 amountOutMin,
         uint256 deadline,
+        address tokenIn,
+        address[] memory path,
         bytes memory signature
     ) external ensure(deadline) returns (uint256[] memory amounts) {
+        
+        require(path.length>0, "invalid path");
+        require(IUniswapV2Pair(path[0]).token0() == tokenIn || IUniswapV2Pair(path[0]).token1()==tokenIn, "invalid path: not include tokenIn");
         IEIP712(tokenIn).permit(
             _owner,
             address(this),
             amountIn,
             deadline,
             signature
-        );
-
+        ); 
         TransferHelper.safeTransferFrom(tokenIn, _owner, path[0], amountIn);
 
         amounts = new uint256[](path.length + 1);
@@ -93,11 +87,16 @@ contract PermitRouterV2 is Ownable {
     }
 
     function getAmountsOut(
-        uint256 amountIn
+        uint256 amountIn,
+        address tokenIn,
+        address[] memory path
     ) external view returns (uint256[] memory) {
         uint256[] memory amounts = new uint256[](path.length + 1);
         amounts[0] = amountIn;
+        require(path.length>0, "invalid path");
+        require(IUniswapV2Pair(path[0]).token0() == tokenIn || IUniswapV2Pair(path[0]).token1()==tokenIn, "invalid path: not include tokenIn");
         address currentToken = tokenIn;
+
         for (uint256 i = 0; i < path.length; ++i) {
             address _pair = path[i];
             address token0 = IUniswapV2Pair(_pair).token0();
