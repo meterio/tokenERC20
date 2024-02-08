@@ -1,6 +1,8 @@
 import { Signer, VoidSigner } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
 export async function signPermit(
+  name: string,
+  version: string,
   wallet: Signer,
   verifyingContract: string,
   owner: string,
@@ -10,8 +12,8 @@ export async function signPermit(
   deadline: number,
   chainId: bigint
 ): Promise<string> {
-  const name = "PermitToken";
-  const version = "1.0";
+  // const name = "PermitToken";
+  // const version = "1.0";
   let signature = await wallet.signTypedData(
     { name, version, chainId, verifyingContract },
     {
