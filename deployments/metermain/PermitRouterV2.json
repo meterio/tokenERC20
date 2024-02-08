@@ -1,13 +1,16 @@
 {
-  "address": "0x30Ce2904dBcc49A940BcA362C06f17062C04cb38",
+  "contract": "PermitRouterV2",
+  "address": "0xB1Fa6159dC42fe5281D68502944B17D3929dbebe",
+  "createdBy": "0x2AfE1451665958ED5b159558D320802fa96F2968",
+  "createdAt": "2024-02-07T16:14:19-08:00",
+  "creationTx": "0x6c2d0bcc52d4352ffb9e472b9ff35724476c0f023f0688b800d5de36473bee0f",
   "constructorArguments": [
-    300,
-    "0xf0e86246519be0810c9fafc8430c49799985aaa8",
-    "0x160361ce13ec33C993b5cCA8f62B6864943eb083",
-    [
-      "0xa10b1935c3c1f4e74a0c6f0b94fbed8b6562c096",
-      "0xf803f4432d6b85bc7525f85f7a9cf7398b5ebe7d"
-    ]
+    "300"
   ],
-  "libraries": {}
+  "constructorArgumentsDefs": [
+    {
+      "name": "_fee",
+      "type": "uint256"
+    }
+  ]
 }

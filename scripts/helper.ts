@@ -104,7 +104,7 @@ export function loadContractInfo(
 
 export function loadTokenMapping(network: Network, proxyAddress: string) {
   const { netConfig } = network;
-  if (netConfig.tokenMapping) {
+  if (!netConfig.tokenMapping) {
     return {};
   }
   if (netConfig.tokenMapping[proxyAddress]) {
@@ -224,6 +224,32 @@ export function getNetworkChoicesFromHardhat() {
     value: n,
   }));
   return networkChoices;
+}
+
+export function getNetwork2LZMap() {
+  let configMap: { [key: string]: any } = {};
+  for (const network in hardhatConfig.networks) {
+    const config = loadNetConfig(network);
+    if (
+      config.hasOwnProperty("lzEndpointId") &&
+      config.hasOwnProperty("lzEndpoint")
+    ) {
+      configMap[network] = {
+        lzEndpointId: config.lzEndpointId,
+        lzEndpoint: config.lzEndpoint,
+      };
+    }
+  }
+  return configMap;
+}
+
+export function getLZ2NetworkMap() {
+  const n2l = getNetwork2LZMap();
+  let l2n: { [key: string]: string } = {};
+  for (const netName in n2l) {
+    l2n[n2l[netName].lzEndpointId] = netName;
+  }
+  return l2n;
 }
 
 export function getAllNetConfigs() {
@@ -469,17 +495,7 @@ export async function deployContractV2(
     validate: (value = "") => value.length > 0 || "Pass a valid value",
   });
 
-  // const oldInfo = loadContractInfo(network.name, contract);
-  // if (oldInfo.address) {
-  //   const redeploy = await confirm({
-  //     message: `该合约已在${oldInfo.createdAt} 部署至 ${oldInfo.address}，需要重新部署吗？ `,
-  //   });
-  //   if (redeploy) {
   moveContractInfo(network.name, contract);
-  //   } else {
-  //     exit(1);
-  //   }
-  // }
 
   const factory = await ethers.getContractFactory(contract, network.wallet);
   const deployTx = await factory.getDeployTransaction(...args);

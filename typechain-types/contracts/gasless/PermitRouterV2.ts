@@ -29,11 +29,9 @@ export interface PermitRouterV2Interface extends Interface {
       | "fee"
       | "getAmountsOut"
       | "owner"
-      | "path"
       | "renounceOwnership"
       | "setFee"
       | "swapExactTokensForTokens"
-      | "tokenIn"
       | "transferOwnership"
       | "wmtr"
   ): FunctionFragment;
@@ -43,10 +41,9 @@ export interface PermitRouterV2Interface extends Interface {
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getAmountsOut",
-    values: [BigNumberish]
+    values: [BigNumberish, AddressLike, AddressLike[]]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "path", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -57,9 +54,16 @@ export interface PermitRouterV2Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "swapExactTokensForTokens",
-    values: [AddressLike, BigNumberish, BigNumberish, BigNumberish, BytesLike]
+    values: [
+      AddressLike,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      AddressLike,
+      AddressLike[],
+      BytesLike
+    ]
   ): string;
-  encodeFunctionData(functionFragment: "tokenIn", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [AddressLike]
@@ -72,7 +76,6 @@ export interface PermitRouterV2Interface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "path", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -82,7 +85,6 @@ export interface PermitRouterV2Interface extends Interface {
     functionFragment: "swapExactTokensForTokens",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "tokenIn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -149,14 +151,12 @@ export interface PermitRouterV2 extends BaseContract {
   fee: TypedContractMethod<[], [bigint], "view">;
 
   getAmountsOut: TypedContractMethod<
-    [amountIn: BigNumberish],
+    [amountIn: BigNumberish, tokenIn: AddressLike, path: AddressLike[]],
     [bigint[]],
     "view"
   >;
 
   owner: TypedContractMethod<[], [string], "view">;
-
-  path: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
@@ -168,13 +168,13 @@ export interface PermitRouterV2 extends BaseContract {
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
+      tokenIn: AddressLike,
+      path: AddressLike[],
       signature: BytesLike
     ],
     [bigint[]],
     "nonpayable"
   >;
-
-  tokenIn: TypedContractMethod<[], [string], "view">;
 
   transferOwnership: TypedContractMethod<
     [newOwner: AddressLike],
@@ -193,13 +193,14 @@ export interface PermitRouterV2 extends BaseContract {
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "getAmountsOut"
-  ): TypedContractMethod<[amountIn: BigNumberish], [bigint[]], "view">;
+  ): TypedContractMethod<
+    [amountIn: BigNumberish, tokenIn: AddressLike, path: AddressLike[]],
+    [bigint[]],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "path"
-  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
@@ -214,14 +215,13 @@ export interface PermitRouterV2 extends BaseContract {
       amountIn: BigNumberish,
       amountOutMin: BigNumberish,
       deadline: BigNumberish,
+      tokenIn: AddressLike,
+      path: AddressLike[],
       signature: BytesLike
     ],
     [bigint[]],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "tokenIn"
-  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
