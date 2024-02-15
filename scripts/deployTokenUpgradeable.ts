@@ -45,6 +45,7 @@ const main = async () => {
     [],
     override
   );
+  const implAddress = await implementation.getAddress();
 
   const proxy_answer = await select({
     message: `选择${green(name)} 的${green("Proxy")}合约:`,
@@ -74,7 +75,7 @@ const main = async () => {
       ethers,
       network,
       "SumerProxy",
-      [implementation.address, pa, data],
+      [implAddress, pa, data],
       override
     );
   } else if (proxy_answer == "update") {
@@ -91,7 +92,7 @@ const main = async () => {
       network,
       proxyAdminContract,
       "upgrade(address,address)",
-      [proxyAddress, implementation.address],
+      [proxyAddress, implAddress],
       override
     );
   }
