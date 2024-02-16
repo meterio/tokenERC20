@@ -102,6 +102,54 @@ export function loadContractInfo(
   return {} as ContractInfo;
 }
 
+export function loadContractInfoByAddress(
+  network: string,
+  address: string
+): ContractInfo {
+  const q = [path.join(deployDir, network)];
+  while (q.length > 0) {
+    const dir = q.shift();
+    if (!dir) {
+      continue;
+    }
+    const files = fs.readdirSync(dir);
+    for (const f of files) {
+      const filepath = path.join(dir, f);
+      if (fs.lstatSync(filepath).isDirectory()) {
+        q.push(filepath);
+      } else if (f.endsWith(".json")) {
+        const content = JSON.parse(fs.readFileSync(filepath).toString());
+        if (content.address.toLowerCase() == address.toLowerCase()) {
+          return content as ContractInfo;
+        }
+      }
+    }
+  }
+  throw new Error(`没有找到对应地址 ${address} 的配置`);
+}
+
+export function findContractPath(name: string): string {
+  const q = [path.join(__dirname, "..", "contracts")];
+  while (q.length > 0) {
+    const dir = q.shift();
+    if (!dir) {
+      continue;
+    }
+    const files = fs.readdirSync(dir);
+    for (const f of files) {
+      const filepath = path.join(dir, f);
+      if (fs.lstatSync(filepath).isDirectory()) {
+        q.push(filepath);
+      } else if (f == name + ".sol") {
+        return (
+          filepath.replace(path.join(__dirname, "..") + "/", "") + `:${name}`
+        );
+      }
+    }
+  }
+  throw new Error(`没有找到合约 ${name} 的.sol文件`);
+}
+
 export function loadTokenMapping(network: Network, proxyAddress: string) {
   const { netConfig } = network;
   if (!netConfig.tokenMapping) {
