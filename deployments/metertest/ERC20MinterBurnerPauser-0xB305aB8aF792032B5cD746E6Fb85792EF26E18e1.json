@@ -1,13 +1,13 @@
 {
   "contract": "ERC20MinterBurnerPauser",
-  "address": "0x64d44524f248978a67D6Cb40f143876800339bb4",
+  "address": "0xB305aB8aF792032B5cD746E6Fb85792EF26E18e1",
   "createdBy": "0x0205c2D862cA051010698b69b54278cbAf945C0b",
-  "createdAt": "2024-07-31T16:54:08-07:00",
-  "creationTx": "0xe7890bc199d0e742bf1e409a3ff0b34b753fdd272377c7f6789befc9b0c845e7",
+  "createdAt": "2024-06-08T11:24:15-07:00",
+  "creationTx": "0x42a95472dcfe9162fcc4a78516b6c2d3bfbf71a3c24ad5c8728a6fe19c0b539f",
   "constructorArguments": [
-    "Test USDC",
-    "USDC",
-    "10000000000000000000000000000"
+    "Sumer USDx Testing Deposit",
+    "sdrUSDx",
+    "0"
   ],
   "constructorArgumentsDefs": [
     {

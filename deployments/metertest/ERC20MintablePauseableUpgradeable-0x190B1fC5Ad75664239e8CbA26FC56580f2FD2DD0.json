@@ -1,0 +1,9 @@
+{
+  "contract": "ERC20MintablePauseableUpgradeable",
+  "address": "0x190B1fC5Ad75664239e8CbA26FC56580f2FD2DD0",
+  "createdBy": "0x0205c2D862cA051010698b69b54278cbAf945C0b",
+  "createdAt": "2024-02-15T09:47:06-08:00",
+  "creationTx": "0xb27148d01be67fbb48197093b9672e9c280f36183ae5f82dab0e9be65af77e58",
+  "constructorArguments": [],
+  "constructorArgumentsDefs": []
+}
