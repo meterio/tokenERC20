@@ -30,7 +30,7 @@ const main = async () => {
 
   await hre.run("verify:verify", {
     address: contractAddr,
-    contract: `contracts/BasicTokenSender.sol:BasicTokenSender`,
+    contract: `contracts/ccip/BasicTokenSender.sol:BasicTokenSender`,
     constructorArguments: [routerAddr],
   });
 };

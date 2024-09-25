@@ -1,7 +1,8 @@
 import { input, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { selectNetwork, deployContractV2 } from "./helper";
+import { selectNetwork, deployContractV2 } from "../helper";
 import { isAddress } from "ethers";
+import * as hre from "hardhat";
 
 const main = async (i: any) => {
   const network = await selectNetwork();
