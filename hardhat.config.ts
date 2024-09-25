@@ -57,6 +57,11 @@ export default {
       chainId: 42161,
       accounts: [],
     },
+    beratest: {
+      url: `https://bartio.rpc.berachain.com/`,
+      chainId: 80084,
+      accounts: [],
+    },
   },
   etherscan: {
     apiKey: {
