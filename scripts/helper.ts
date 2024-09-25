@@ -414,6 +414,7 @@ export async function sendTransaction(
   checkRole: BytesLike = "0x"
 ) {
   if (checkRole != "0x") {
+    console.log(checkRole, network.wallet.address);
     let hasRole = await contract.hasRole(checkRole, network.wallet.address);
     if (!hasRole) {
       throw new Error(red("签名人不具有DEFAULT_ADMIN_ROLE权限!"));

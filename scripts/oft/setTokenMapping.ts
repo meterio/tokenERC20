@@ -75,6 +75,7 @@ async function laneExist(
     tokenMapping[srcChainId] = {};
   }
 
+  console.log(proxyAddr, network.wallet.address, srcChainId, srcToken);
   const laneExist = await proxyOFT.laneExist(srcChainId, srcToken);
   if (laneExist) {
     console.log(
@@ -109,9 +110,7 @@ async function laneExist(
     saveTokenMapping(network, proxyAddr, tokenMapping);
   } else {
     console.log(
-      `网络${green(network.name)}:\n ProxyOFT合约:${yellow(
-        network.netConfig.proxy
-      )}\n ` +
+      `网络${green(network.name)}:\n ProxyOFT合约:${yellow(proxyAddr)}\n ` +
         red("不存在") +
         `srcChainId${green(srcChainId)}的srcToken: ${yellow(srcToken)}的链路❌`
     );
