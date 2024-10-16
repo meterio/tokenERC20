@@ -561,17 +561,19 @@ export async function deployContractV2(
   const deployer = Deployer.fromEthWallet(hre, network.wallet!);
   const artifact = await deployer.loadArtifact(contract);
   const deployedContract = await deployer.deploy(artifact, args);
-  await deployedContract.waitForDeployment();
+  const deployment = await deployedContract.waitForDeployment();
+  const tx = deployment.deploymentTransaction();
   const address = await deployedContract.getAddress();
 
   console.log(
-    `${contract} deployed on ${green(network.name)} at: ${yellow(address)}`
+    `${contract} deployed on ${green(network.name)} at: ${yellow(address)} by ${tx?.hash}`
   );
   const info: ContractInfo = {
     contract,
     address,
     createdBy: network.wallet.address,
     createdAt: moment().format(),
+    creationTx: tx?.hash,
     constructorArguments: args,
     constructorArgumentsDefs,
   };
