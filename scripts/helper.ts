@@ -561,7 +561,7 @@ export async function deployContractV2(
   const deployer = Deployer.fromEthWallet(hre, network.wallet!);
   const artifact = await deployer.loadArtifact(contract);
   const deployedContract = await deployer.deploy(artifact, args);
-
+  await deployedContract.waitForDeployment();
   const address = await deployedContract.getAddress();
 
   console.log(
