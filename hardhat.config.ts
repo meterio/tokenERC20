@@ -62,6 +62,11 @@ export default {
       chainId: 80084,
       accounts: [],
     },
+    b2main: {
+      url: 'https://rpc.bsquared.network/',
+      chainId: 223,
+      ethNetwork: 'b2main',
+    },
   },
   etherscan: {
     apiKey: {
@@ -71,6 +76,7 @@ export default {
       sepolia: process.env.ETHERSCAN_API_KEY,
       arbitrum: process.env.ARBISCAN_API_KEY,
       mainnet: process.env.ETHERSCAN_API_KEY,
+      b2main: "no-api-key-needed",
     },
     customChains: [
       {
@@ -87,6 +93,14 @@ export default {
         urls: {
           apiURL: `https://api-goerli.etherscan.io/api`,
           browserURL: "https://goerli.etherscan.io",
+        },
+      },
+      {
+        network: 'b2main',
+        chainId: 223,
+        urls: {
+          apiURL: 'https://explorer.bsquared.network/api',
+          browserURL: 'https://explorer.bsquared.network/',
         },
       },
       {
