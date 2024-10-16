@@ -15,6 +15,8 @@ colors.enable();
 import * as fs from "fs";
 import * as path from "path";
 import moment from "moment";
+import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
+import * as hre from "hardhat";
 
 import hardhatConfig from "../hardhat.config";
 import { exit } from "process";
@@ -547,21 +549,20 @@ export async function deployContractV2(
   moveContractInfo(network.name, contract);
 
   const factory = await ethers.getContractFactory(contract, network.wallet);
-  const deployTx = await factory.getDeployTransaction(...args);
-  override.gasLimit = await network.wallet.estimateGas(deployTx);
-  console.log("Estimated Gas:", green(override.gasLimit.toString()));
+  // const deployTx = await factory.getDeployTransaction(...args);
+  // override.gasLimit = await network.wallet.estimateGas(deployTx);
+  // console.log("Estimated Gas:", green(override.gasLimit.toString()));
 
   const constructorFragment = factory.interface.deploy;
   const constructorArgumentsDefs = constructorFragment.inputs.map((f) => ({
     name: f.name,
     type: f.type,
   }));
-  const deploy = await factory.deploy(...args, override);
-  const deployed = await deploy.waitForDeployment();
+  const deployer = Deployer.fromEthWallet(hre, network.wallet!);
+  const artifact = await deployer.loadArtifact(contract);
+  const deployedContract = await deployer.deploy(artifact, args);
 
-  const address = await deployed.getAddress();
-  const response = await deployed.deploymentTransaction();
-  const tx = await response?.getTransaction();
+  const address = await deployedContract.getAddress();
 
   console.log(
     `${contract} deployed on ${green(network.name)} at: ${yellow(address)}`
@@ -571,7 +572,6 @@ export async function deployContractV2(
     address,
     createdBy: network.wallet.address,
     createdAt: moment().format(),
-    creationTx: tx?.hash,
     constructorArguments: args,
     constructorArgumentsDefs,
   };
@@ -583,7 +583,7 @@ export async function deployContractV2(
     saveContractInfo(network.name, contract, info);
   }
   saveDeployedAddress(network, key, info.address);
-  return deployed;
+  return deployedContract;
 }
 
 export async function getContractReadOnly(
