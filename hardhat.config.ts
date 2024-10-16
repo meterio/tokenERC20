@@ -1,6 +1,6 @@
 import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-ethers";
-import "@openzeppelin/hardhat-upgrades";
+// import "@openzeppelin/hardhat-upgrades";
 import { compileSetting } from "./scripts/compilerConfig";
 import "@nomicfoundation/hardhat-verify";
 
@@ -63,10 +63,13 @@ export default {
       accounts: [],
     },
     b2main: {
-      url: 'https://rpc.bsquared.network/',
+      url: "https://rpc.bsquared.network/",
       chainId: 223,
-      ethNetwork: 'b2main',
+      ethNetwork: "b2main",
     },
+  },
+  sourcify: {
+    enabled: false,
   },
   etherscan: {
     apiKey: {
@@ -96,11 +99,11 @@ export default {
         },
       },
       {
-        network: 'b2main',
+        network: "b2main",
         chainId: 223,
         urls: {
-          apiURL: 'https://explorer.bsquared.network/api',
-          browserURL: 'https://explorer.bsquared.network/',
+          apiURL: "https://explorer.bsquared.network/api",
+          browserURL: "https://explorer.bsquared.network/",
         },
       },
       {
