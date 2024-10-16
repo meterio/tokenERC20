@@ -1,8 +1,12 @@
 import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-ethers";
-import "@openzeppelin/hardhat-upgrades";
+// import "@openzeppelin/hardhat-upgrades";
 import { compileSetting } from "./scripts/compilerConfig";
-import "@nomicfoundation/hardhat-verify";
+// import "@nomicfoundation/hardhat-verify";
+import "@matterlabs/hardhat-zksync";
+import "@matterlabs/hardhat-zksync-solc";
+import "@matterlabs/hardhat-zksync-deploy";
+import "@matterlabs/hardhat-zksync-verify";
 
 // const { setGlobalDispatcher, ProxyAgent } = require("undici");
 // const proxyAgent = new ProxyAgent("http://127.0.0.1:7890");
@@ -11,7 +15,16 @@ import "@nomicfoundation/hardhat-verify";
 const dotenv = require("dotenv");
 dotenv.config();
 export default {
+  defaultNetwork: "zklink",
   networks: {
+    zklink: {
+      url: "https://rpc.zklink.io",
+      chainId: 810180,
+      // safeTxServiceUrl: '',
+      zksync: true,
+      ethNetwork: "mainnet",
+      verifyURL: "https://explorer.zklink.io/contract_verification",
+    },
     metertest: {
       url: `https://rpctest.meter.io`,
       chainId: 83,
@@ -101,6 +114,20 @@ export default {
   },
   solidity: {
     compilers: [compileSetting("0.7.0", 200), compileSetting("0.8.19", 200)],
+  },
+  zksolc: {
+    version: "1.3.22", // optional.
+    settings: {
+      // compilerPath: 'zksolc', // optional. Ignored for compilerSource "docker". Can be used if compiler is located in a specific folder
+      // missingLibrariesPath: './.zksolc-libraries-cache/missingLibraryDependencies.json', // optional. This path serves as a cache that stores all the libraries that are missing or have dependencies on other libraries. A `hardhat-zksync-deploy` plugin uses this cache later to compile and deploy the libraries, especially when the `deploy-zksync:libraries` task is executed
+      enableEraVMExtensions: false, // optional.  Enables Yul instructions available only for ZKsync system contracts and libraries. In the older versions of the plugin known as 'isSystem' flag
+      forceEVMLA: false, // Compile with EVM legacy assembly codegen. In the older versions of the plugin known as a 'forceEvmla' flag
+      optimizer: {
+        enabled: true, // optional. True by default
+        mode: "z", // optional. 3 by default, z to optimize bytecode size
+        fallback_to_optimizing_for_size: false, // optional. Try to recompile with optimizer mode "z" if the bytecode is too large
+      },
+    },
   },
   mocha: {
     timeout: 200000,

@@ -6,7 +6,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy": "hardhat deploy",
-    "check":"hardhat check"
+    "check": "hardhat check"
   },
   "license": "MIT",
   "dependencies": {
@@ -48,6 +48,12 @@
     "prettier": "^3.0.0",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
     "solhint": "^4.1.1",
-    "solhint-plugin-prettier": "^0.1.0"
+    "solhint-plugin-prettier": "^0.1.0",
+    "@matterlabs/hardhat-zksync": "^1.1.0",
+    "@matterlabs/hardhat-zksync-deploy": "^1.5.0",
+    "@matterlabs/hardhat-zksync-solc": "^1.2.1",
+    "@matterlabs/hardhat-zksync-verify": "^1.6.0",
+    "@safe-global/api-kit": "^2.4.2",
+    "@safe-global/protocol-kit": "^4.0.2"
   }
 }
