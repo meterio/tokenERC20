@@ -5,7 +5,7 @@ const main = async () => {
   const srcNetwork = await selectNetwork("源链");
   let { wallet } = srcNetwork;
 
-  const srcProxy = await selectProxyOFT(srcNetwork);
+  const srcProxy = await selectProxyOFT(srcNetwork.netConfig);
 
   const proxyOFT = await ethers.getContractAt(
     "ProxyOFT",

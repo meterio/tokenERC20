@@ -28,6 +28,8 @@ export const bgYellow = colors.bgYellow;
 export const overrides: any = {
   gasLimit: 8000000,
 };
+import hardhatContractConfig from "../hardhat.config";
+import * as LAYERZERO_V1 from "./layerzero_v1.json";
 
 export const MINTER_ROLE: BytesLike =
   "0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6";
@@ -150,8 +152,7 @@ export function findContractPath(name: string): string {
   throw new Error(`没有找到合约 ${name} 的.sol文件`);
 }
 
-export function loadTokenMapping(network: Network, proxyAddress: string) {
-  const { netConfig } = network;
+export function loadTokenMapping(netConfig: any, proxyAddress: string) {
   if (!netConfig.tokenMapping) {
     return {};
   }
@@ -162,25 +163,23 @@ export function loadTokenMapping(network: Network, proxyAddress: string) {
 }
 
 export function saveTokenMapping(
-  network: Network,
+  netName: string,
+  netConfig: any,
   proxyAddress: string,
   tokenMapping: object
 ) {
-  const { netConfig, updateNetConfig } = network;
   if (!netConfig.tokenMapping) {
     netConfig.tokenMapping = {};
   }
   netConfig.tokenMapping[proxyAddress] = tokenMapping;
-  updateNetConfig(netConfig);
+  saveNetConfig(netName, netConfig);
 }
 
 export function loadDeployedAddresses(
-  network: Network,
+  netConfig: any,
   name: string,
   isProxy = false
 ): string[] {
-  const { netConfig } = network;
-
   if (isProxy) {
     name += "-proxy";
   }
@@ -243,6 +242,32 @@ export function moveContractInfo(
   fs.unlinkSync(filepath);
 }
 
+export function getNetworkChoicesFromHardhat() {
+  const networkChoices = Object.keys(hardhatContractConfig.networks).map(
+    (n) => ({
+      name: `${n} (${hardhatContractConfig.networks[n as keyof typeof hardhatContractConfig.networks].chainId}) : ${
+        hardhatContractConfig.networks[
+          n as keyof typeof hardhatContractConfig.networks
+        ].url
+      }`,
+      value: n,
+    })
+  );
+  return networkChoices;
+}
+
+export function loadNetConfigFromHardhat(net: string) {
+  const config =
+    hardhatContractConfig.networks[
+      net as keyof typeof hardhatContractConfig.networks
+    ];
+  return {
+    ...config,
+    ...LAYERZERO_V1[net as keyof typeof LAYERZERO_V1],
+    name: net,
+  };
+}
+
 export function loadNetConfig(netName: string): any {
   const netConfigPath = path.join(deployDir, netName, "config.json");
   ensureDir(netConfigPath);
@@ -250,28 +275,27 @@ export function loadNetConfig(netName: string): any {
   if (!fs.existsSync(netConfigPath)) {
     return {};
   }
-  console.log(`load network config:`, yellow(netConfigPath));
-  return JSON.parse(fs.readFileSync(netConfigPath).toString());
+  const config = JSON.parse(fs.readFileSync(netConfigPath).toString());
+  const hardhatNetConfig = loadNetConfigFromHardhat(netName);
+  return { ...config, ...hardhatNetConfig, name: netName };
 }
 
-export function saveNetConfig(netName: string, newNetConfig: object) {
+export function saveNetConfig(netName: string, newNetConfig: any) {
   const netConfigPath = path.join(deployDir, netName, "config.json");
   ensureDir(netConfigPath);
 
-  console.log(`saved network config:`, yellow(netConfigPath));
-  fs.writeFileSync(netConfigPath, JSON.stringify(newNetConfig, null, 2));
-}
+  const config = JSON.parse(JSON.stringify(newNetConfig));
 
-export function getNetworkChoicesFromHardhat() {
-  const networkChoices = Object.keys(hardhatConfig.networks).map((n) => ({
-    name: `${n} (${
-      hardhatConfig.networks[n as keyof typeof hardhatConfig.networks].chainId
-    }) : ${
-      hardhatConfig.networks[n as keyof typeof hardhatConfig.networks].url
-    }`,
-    value: n,
-  }));
-  return networkChoices;
+  delete config.lzEndpoint;
+  delete config.lzEndpointId;
+  delete config.url;
+  delete config.accounts;
+  delete config.chainId;
+  delete config.gasPrice;
+  delete config.name;
+
+  console.log(`保存网络 ${blue(netName)} config.json:`, yellow(netConfigPath));
+  fs.writeFileSync(netConfigPath, JSON.stringify(config, null, 2));
 }
 
 export function getNetwork2LZMap() {
@@ -319,9 +343,9 @@ export function getAllNetConfigs() {
   return results;
 }
 
-export async function selectProxyOFT(network: Network) {
-  const v1Proxies = loadDeployedAddresses(network, "ProxyOFT", true);
-  const v2Proxies = loadDeployedAddresses(network, "ProxyOFTV2", true);
+export async function selectProxyOFT(netConfig: any) {
+  const v1Proxies = loadDeployedAddresses(netConfig, "ProxyOFT", true);
+  const v2Proxies = loadDeployedAddresses(netConfig, "ProxyOFTV2", true);
   let choicesB: { name: string; value: string }[] = [];
   v1Proxies.map((p) => {
     choicesB.push({ name: `V1: ${p}`, value: p });
@@ -330,11 +354,11 @@ export async function selectProxyOFT(network: Network) {
     choicesB.push({ name: `V2: ${p}`, value: p });
   });
   if (choicesB.length <= 0) {
-    console.log(`${network.name} 上还没有部署任何ProxyOFT，请先部署`);
+    console.log(`${netConfig.name} 上还没有部署任何ProxyOFT，请先部署`);
     exit(-1);
   }
   const proxyAddress = await select({
-    message: `选择网络${green(network.name)}上ProxyOFT地址:`,
+    message: `选择网络 ${blue(netConfig.name)} 上ProxyOFT地址:`,
     choices: choicesB,
   });
   const version = v1Proxies.includes(proxyAddress) ? "v1" : "v2";
@@ -352,16 +376,14 @@ export async function selectNetwork(
 
   let override: any = {};
   const netName = await select({
-    message: `选择网络${green(name)}:`,
+    message: `选择网络 ${blue(name)}:`,
     choices: getNetworkChoicesFromHardhat(),
   });
-  type StatusKey = keyof typeof hardhatConfig.networks;
 
   let netConfig = loadNetConfig(netName);
-  netConfig.rpc = hardhatConfig.networks[netName as StatusKey].url;
-  console.log(`使用 hardhat.config.ts 中配置的rpc: `, netConfig.rpc);
+  console.log(`使用 hardhat.config.ts 中配置的url: `, netConfig.url);
 
-  const provider = new JsonRpcProvider(netConfig.rpc);
+  const provider = new JsonRpcProvider(netConfig.url);
   let wallet = {} as Wallet;
   if (!readonly) {
     let privateKey = "";
@@ -381,15 +403,15 @@ export async function selectNetwork(
     console.log("Wallet Signer:", yellow(wallet.address));
   }
 
-  const feeData = await provider.getFeeData();
-  if (!readonly) {
-    const defaultGasPrice = feeData.gasPrice;
-    override.gasPrice = await input({
-      message: "输入Gas price:",
-      default: defaultGasPrice?.toString(),
-      validate: (value = "") => value.length > 0 || "Pass a valid value",
-    });
-  }
+  // const feeData = await provider.getFeeData();
+  // if (!readonly) {
+  //   const defaultGasPrice = feeData.gasPrice;
+  //   override.gasPrice = await input({
+  //     message: "输入Gas price:",
+  //     default: defaultGasPrice?.toString(),
+  //     validate: (value = "") => value.length > 0 || "Pass a valid value",
+  //   });
+  // }
 
   const updateNetConfig = (newNetConfig: object) => {
     saveNetConfig(netName, newNetConfig);
@@ -421,13 +443,13 @@ export async function sendTransaction(
     }
   }
   const address = await contract.getAddress();
-  override.nonce = await input({
-    message: "输入nonce:",
-    default: (
-      await network.provider.getTransactionCount(network.wallet.address)
-    ).toString(),
-    validate: (value = "") => value.length > 0 || "Pass a valid value",
-  });
+  // override.nonce = await input({
+  //   message: "输入nonce:",
+  //   default: (
+  //     await network.provider.getTransactionCount(network.wallet.address)
+  //   ).toString(),
+  //   validate: (value = "") => value.length > 0 || "Pass a valid value",
+  // });
 
   override.gasLimit = await contract[func].estimateGas(...args, override);
   console.log("Estimated Gas:", green(override.gasLimit.toString()));
@@ -446,7 +468,7 @@ export async function loadOrDeployImplContract(
   args: any[],
   override: any = {}
 ): Promise<Contract> {
-  const deployedAddresses = loadDeployedAddresses(network, contract);
+  const deployedAddresses = loadDeployedAddresses(network.netConfig, contract);
   if (deployedAddresses.length > 0) {
     const redeploy = await confirm({
       message: `${contract} Impl合约已部署至${deployedAddresses[0]}等${deployedAddresses.length}个地址，需要重新部署吗？ `,
@@ -478,7 +500,7 @@ export async function loadOrDeployProxyContract(
 ): Promise<Contract> {
   const { netConfig, updateNetConfig } = network;
   const deployedAddresses = loadDeployedAddresses(
-    network,
+    network.netConfig,
     implContractName,
     true
   );
@@ -564,7 +586,7 @@ export async function deployContractV2(
   const tx = await response?.getTransaction();
 
   console.log(
-    `${contract} deployed on ${green(network.name)} at: ${yellow(address)}`
+    `${contract} deployed on ${blue(network.name)} at: ${yellow(address)}`
   );
   const info: ContractInfo = {
     contract,

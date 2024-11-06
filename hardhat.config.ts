@@ -58,7 +58,7 @@ export default {
       accounts: [],
     },
     beratest: {
-      url: `https://bartio.rpc.berachain.com/`,
+      url: `https://bartio.rpc.berachain.com`,
       chainId: 80084,
       accounts: [],
     },
@@ -79,8 +79,18 @@ export default {
       arbitrum: process.env.ARBISCAN_API_KEY,
       mainnet: process.env.ETHERSCAN_API_KEY,
       b2main: "no-api-key-needed",
+      beratest: "beratest", // apiKey is not required, just set a placeholder
     },
     customChains: [
+      {
+        network: "beratest",
+        chainId: 80084,
+        urls: {
+          apiURL:
+            "https://api.routescan.io/v2/network/testnet/evm/80084/etherscan",
+          browserURL: "https://bartio.beratrail.io/",
+        },
+      },
       {
         network: "arbitrum",
         chainId: 42161,
@@ -108,11 +118,7 @@ export default {
     ],
   },
   solidity: {
-    compilers: [
-      compileSetting("0.7.0", 200),
-      compileSetting("0.8.19", 200),
-      compileSetting("0.8.25", 200),
-    ],
+    compilers: [compileSetting("0.7.0", 200), compileSetting("0.8.19", 200)],
   },
   mocha: {
     timeout: 200000,

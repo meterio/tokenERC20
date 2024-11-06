@@ -2,14 +2,13 @@ import { input, confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
 import {
   MINTER_ROLE,
-  Network,
   green,
   yellow,
+  blue,
   red,
   loadTokenMapping,
-  selectProxyOFTByNetworkName,
-  loadNetConfig,
-  saveNetConfig,
+  saveTokenMapping,
+  selectProxyOFT,
 } from "../helper";
 import { isAddress } from "ethers";
 import { SafeHelper } from "../safeHelper";
@@ -19,36 +18,30 @@ async function checkRole(
   proxyAddress: string,
   tokenAddress: string
 ) {
-  const netName = safeHelper.netConfig.name;
-  console.log(`查询网络${green(netName)}的Token权限设置:`);
+  const { signer, netConfig } = safeHelper;
+  console.log(
+    `查询网络 ${blue(netConfig.name)} 上ProxyOFT: ${proxyAddress} 是否拥有 Token: ${tokenAddress} 的MINTER权限:`
+  );
   const tokenContract = await ethers.getContractAt(
     "ERC20MinterBurnerPauser",
     tokenAddress,
-    safeHelper.signer
+    signer
   );
 
   const hasRoleA = await tokenContract.hasRole(MINTER_ROLE, proxyAddress);
 
   if (hasRoleA) {
-    console.log(
-      `网络${green(netName)}:\n ProxyOFT合约:${yellow(
-        proxyAddress
-      )}\n 拥有Token ${yellow(tokenAddress)}的MINTER_ROLE✅`
-    );
+    console.log(`  是 MINTER_ROLE ✅`);
   } else {
-    console.log(
-      `网络${green(netName)}:\n ProxyOFT合约:${yellow(
-        proxyAddress
-      )}\n 不拥有Token ${yellow(tokenAddress)}的MINTER_ROLE❌`
-    );
     const grantRole = await confirm({
-      message: `是否配置?`,
+      message: `不是 MINTER_ROLE ❌, 是否配置?`,
     });
     if (grantRole) {
-      await safeHelper.appendSafeTxForCall(tokenContract, "grantRole", [
-        MINTER_ROLE,
-        proxyAddress,
-      ]);
+      await safeHelper.appendSafeTxForCall(
+        tokenContract,
+        "grantRole(bytes32,address)",
+        [MINTER_ROLE, proxyAddress]
+      );
       await safeHelper.proposeSafeTx();
     }
   }
@@ -61,76 +54,51 @@ async function laneExist(
   srcToken: string,
   dstToken: string
 ) {
-  const netName = safeHelper.netConfig.name;
-  console.log(`查询网络${green(netName)}的ProxyOFT设置:`);
-  const proxyOFT = await ethers.getContractAt(
-    "ProxyOFT",
-    proxyAddr,
-    safeHelper.signer
+  const { signer, netConfig } = safeHelper;
+  console.log(
+    `查询网络 ${blue(netConfig.name)} 的ProxyOFT: ${proxyAddr} 的tokenMapping:`
   );
-  const netConfig = loadNetConfig(netName);
-  const tokenMapping = loadTokenMapping({ netConfig } as Network, proxyAddr);
+  const proxyOFT = await ethers.getContractAt("ProxyOFT", proxyAddr, signer);
+  const tokenMapping = loadTokenMapping(netConfig, proxyAddr);
   if (!tokenMapping[srcChainId]) {
     tokenMapping[srcChainId] = {};
   }
 
-  console.log(proxyAddr, srcChainId, srcToken);
   const laneExist = await proxyOFT.laneExist(srcChainId, srcToken);
   if (laneExist) {
     console.log(
-      `网络${green(netName)}:\n ProxyOFT合约:${yellow(proxyAddr)}\n ` +
-        red("存在") +
-        `srcChainId${green(srcChainId)}的srcToken: ${yellow(srcToken)}的链路✅`
+      `  ${green("存在")} (srcEid: ${green(srcChainId)}, srcToken: ${yellow(srcToken)}) 链路 ✅`
     );
     const LaneDetail = await proxyOFT.tokenMapping(srcChainId, srcToken);
-    console.log(`dstToken地址:${yellow(LaneDetail.dstToken)}`);
     tokenMapping[srcChainId][srcToken] = LaneDetail.dstToken;
     if (dstToken.toLowerCase() != LaneDetail.dstToken.toLowerCase()) {
-      console.log(
-        `网络${green(
-          netName
-        )}合约记录的dstToken地址:${yellow(LaneDetail.dstToken)}与输入的Token地址${yellow(dstToken)}不一致!`
-      );
       const update = await confirm({
-        message: `是否配置?`,
+        message: `合约记录的dstToken: ${yellow(LaneDetail.dstToken)} 与输入的Token: ${yellow(dstToken)} 不一致，是否配置?`,
       });
       if (update) {
-        await safeHelper.appendSafeTxForCall(proxyOFT, "updateTokenMapping", [
-          srcChainId,
-          srcToken,
-          dstToken,
-        ]);
+        await safeHelper.appendSafeTxForCall(
+          proxyOFT,
+          "updateTokenMapping(uint16,address,address)",
+          [srcChainId, srcToken, dstToken]
+        );
         tokenMapping[srcChainId][srcToken] = dstToken;
         await safeHelper.proposeSafeTx();
       }
     }
-    if (!netConfig.tokenMapping) {
-      netConfig.tokenMapping = {};
-    }
-    netConfig.tokenMapping[proxyAddr] = tokenMapping;
-    saveNetConfig(netName, netConfig);
+    saveTokenMapping(netConfig.name, netConfig, proxyAddr, tokenMapping);
   } else {
-    console.log(
-      `网络${green(netName)}:\n ProxyOFT合约:${yellow(proxyAddr)}\n ` +
-        red("不存在") +
-        `srcChainId${green(srcChainId)}的srcToken: ${yellow(srcToken)}的链路❌`
-    );
     const add = await confirm({
-      message: `是否配置?`,
+      message: `${red("不存在")} (srcEid: ${green(srcChainId)}, srcToken: ${yellow(srcToken)}) 链路 ❌，是否配置?`,
     });
     if (add) {
-      await safeHelper.appendSafeTxForCall(proxyOFT, "addTokenMapping", [
-        srcChainId,
-        srcToken,
-        dstToken,
-      ]);
+      await safeHelper.appendSafeTxForCall(
+        proxyOFT,
+        "addTokenMapping(uint16,address,address)",
+        [srcChainId, srcToken, dstToken]
+      );
+      tokenMapping[srcChainId][srcToken] = dstToken;
       await safeHelper.proposeSafeTx();
-
-      if (!netConfig.tokenMapping) {
-        netConfig.tokenMapping = {};
-      }
-      netConfig.tokenMapping[proxyAddr] = tokenMapping;
-      saveNetConfig(netName, netConfig);
+      saveTokenMapping(netConfig.name, netConfig, proxyAddr, tokenMapping);
     }
   }
 }
@@ -139,22 +107,20 @@ const main = async () => {
   // 环境
   const safeHelperA = new SafeHelper();
   await safeHelperA.init(ethers);
-
-  const resA = await selectProxyOFTByNetworkName(safeHelperA.netConfig.name);
+  const resA = await selectProxyOFT(safeHelperA.netConfig);
   const proxyA = resA.address;
 
   const tokenA = await input({
-    message: `输入网络${green("A")}上Token地址:`,
+    message: `输入网络 ${blue(safeHelperA.netConfig.name)} 上Token地址:`,
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 
   const safeHelperB = new SafeHelper();
   await safeHelperB.init(ethers);
-
-  const resB = await selectProxyOFTByNetworkName(safeHelperB.netConfig.name);
+  const resB = await selectProxyOFT(safeHelperB.netConfig);
   const proxyB = resB.address;
   const tokenB = await input({
-    message: `输入网络${green("B")}上Token地址:`,
+    message: `输入网络 ${blue(safeHelperB.netConfig.name)} 上Token地址:`,
     validate: (value = "") => isAddress(value) || "Pass a valid address value",
   });
 

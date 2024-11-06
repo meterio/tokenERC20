@@ -1,14 +1,13 @@
-import { confirm, input } from "@inquirer/prompts";
+import { confirm } from "@inquirer/prompts";
 import { ethers } from "hardhat";
-import { green, yellow, red, selectProxyOFTByNetworkName } from "../helper";
-import { isAddress } from "ethers";
+import { selectNetwork, green, yellow, selectProxyOFT } from "../helper";
 import { SafeHelper } from "../safeHelper";
 
 const main = async () => {
   const safeHelper = new SafeHelper();
   await safeHelper.init(ethers);
 
-  const proxy = await selectProxyOFTByNetworkName(safeHelper.netConfig.name);
+  const proxy = await selectProxyOFT(safeHelper.netConfig);
 
   const proxyAddr = proxy.address;
   const proxyContract = await ethers.getContractAt(
@@ -16,51 +15,53 @@ const main = async () => {
     proxyAddr,
     safeHelper.signer
   );
-  const remoteEndpointId = await input({
-    message: "输入LayerZero Remote Endpoint Id:",
-    validate: (value = "") =>
-      parseInt(value) > 0 || "Pass a valid lzEndpointId value",
-  });
-  const remoteAddress = await input({
-    message: "输入LayerZero Remote ProxyOFT地址:",
-    validate: (value = "") => isAddress(value) || "Pass a valid address value",
-  });
+
+  const remoteNetwork = await selectNetwork("Remote");
+  const remoteEndpointId = remoteNetwork.netConfig.lzEndpointId;
+  const remoteProxyOFTInfo = await selectProxyOFT(remoteNetwork.netConfig);
+  const remoteProxyOFTAddress = remoteProxyOFTInfo.address;
 
   console.log(
-    `当前链: ${green(safeHelper.netConfig.name)} (lzEndpointId: ${green(safeHelper.netConfig.lzEndpointId)})`
+    `检查当前链: ${green(safeHelper.netConfig.name)} 上TrustRemote设置 (dstEid: ${remoteEndpointId} -> ProxyOFT: ${remoteProxyOFTAddress}))`
   );
   let trustedRemoteLookup =
     await proxyContract.trustedRemoteLookup(remoteEndpointId);
 
   if (trustedRemoteLookup == "0x") {
-    await safeHelper.appendSafeTxForCall(
-      proxyContract,
-      "setTrustedRemoteAddress",
-      [remoteEndpointId, remoteAddress]
-    );
+    const needConfig = await confirm({
+      message: `未设置 dstEid: ${remoteEndpointId} 对应的 TrustedRemote，是否配置指向 ${yellow(remoteProxyOFTAddress)}？`,
+      default: true,
+    });
+    if (needConfig) {
+      await safeHelper.appendSafeTxForCall(
+        proxyContract,
+        "setTrustedRemoteAddress(uint16,bytes)",
+        [remoteEndpointId, remoteProxyOFTAddress]
+      );
+      await safeHelper.proposeSafeTx();
+    }
   } else {
     let trustedRemoteAddress =
       await proxyContract.getTrustedRemoteAddress(remoteEndpointId);
-    if (trustedRemoteAddress.toLowerCase() != remoteAddress.toLowerCase()) {
+    if (
+      trustedRemoteAddress.toLowerCase() != remoteProxyOFTAddress.toLowerCase()
+    ) {
       const needUpdate = await confirm({
-        message: `合约上读取的TrustRemote地址(${red(trustedRemoteAddress)})与输入(${yellow(remoteAddress)})不一致，是否更新合约配置？`,
-        default: false,
+        message: `合约配置的TrustRemote: ${yellow(trustedRemoteAddress)} 与输入 ${yellow(remoteProxyOFTAddress)} 不一致，是否更新合约配置？`,
+        default: true,
       });
       if (needUpdate) {
         await safeHelper.appendSafeTxForCall(
           proxyContract,
-          "setTrustedRemoteAddress",
-          [remoteEndpointId, remoteAddress]
+          "setTrustedRemoteAddress(uint16,bytes)",
+          [remoteEndpointId, remoteProxyOFTAddress]
         );
+        await safeHelper.proposeSafeTx();
       }
     } else {
-      console.log(
-        "TrustRemote地址与合约配置一致",
-        yellow(trustedRemoteAddress)
-      );
+      console.log("  本地与合约配置一致 ✅");
     }
   }
-  await safeHelper.proposeSafeTx();
 };
 
 main();
