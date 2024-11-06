@@ -75,7 +75,6 @@ export default {
     apiKey: {
       basemain: process.env.BASESCAN_API_KEY,
       ethereum: process.env.ETHERSCAN_API_KEY,
-      goerli: process.env.ETHERSCAN_API_KEY,
       sepolia: process.env.ETHERSCAN_API_KEY,
       arbitrum: process.env.ARBISCAN_API_KEY,
       mainnet: process.env.ETHERSCAN_API_KEY,
@@ -88,14 +87,6 @@ export default {
         urls: {
           apiURL: `https://api.arbiscan.io/api`,
           browserURL: "https://arbiscan.io/",
-        },
-      },
-      {
-        network: "goerli",
-        chainId: 5,
-        urls: {
-          apiURL: `https://api-goerli.etherscan.io/api`,
-          browserURL: "https://goerli.etherscan.io",
         },
       },
       {
@@ -117,7 +108,11 @@ export default {
     ],
   },
   solidity: {
-    compilers: [compileSetting("0.7.0", 200), compileSetting("0.8.19", 200)],
+    compilers: [
+      compileSetting("0.7.0", 200),
+      compileSetting("0.8.19", 200),
+      compileSetting("0.8.25", 200),
+    ],
   },
   mocha: {
     timeout: 200000,

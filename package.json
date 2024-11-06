@@ -6,13 +6,15 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy": "hardhat deploy",
-    "check":"hardhat check"
+    "check": "hardhat check"
   },
   "license": "MIT",
   "dependencies": {
     "@chainlink/contracts": "^0.6.1",
     "@chainlink/contracts-ccip": "^0.7.3",
     "@inquirer/prompts": "^3.3.0",
+    "@safe-global/api-kit": "^2.4.2",
+    "@safe-global/protocol-kit": "^4.0.2",
     "chai": "^5.0.3",
     "colors": "^1.4.0",
     "dotenv": "^16.0.0",
@@ -22,7 +24,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
-    "@nomicfoundation/hardhat-verify": "^2.0.3",
+    "@nomicfoundation/hardhat-verify": "^2.0.11",
     "@nomiclabs/hardhat-solhint": "^3.0.1",
     "@openzeppelin/contracts": "^4.8.2",
     "@openzeppelin/contracts-upgradeable": "^4.8.2",
@@ -33,9 +35,6 @@
     "@types/chai": "^4.3.11",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.7",
-    "ts-node": "^10.4.0",
-    "typechain": "^8.3.2",
-    "typescript": "^5.3.3",
     "axios": "^1.6.7",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.0.3",
@@ -48,6 +47,9 @@
     "prettier": "^3.0.0",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
     "solhint": "^4.1.1",
-    "solhint-plugin-prettier": "^0.1.0"
+    "solhint-plugin-prettier": "^0.1.0",
+    "ts-node": "^10.4.0",
+    "typechain": "^8.3.2",
+    "typescript": "^5.3.3"
   }
 }
