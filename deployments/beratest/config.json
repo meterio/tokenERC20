@@ -1,7 +1,4 @@
 {
-  "lzEndpoint": "0x6EDCE65403992e310A62460808c4b910D972f10f",
-  "lzEndpointId": "40291",
-  "rpc": "https://bartio.rpc.berachain.com/",
   "ERC20MintablePauseableUpgradeable": [
     "0xbEB120827CE309C306BAec7a4C4d0eeC9fc37F0a",
     "0xD19F596B202E17b35c091D1a7520a55b7F345EDB"

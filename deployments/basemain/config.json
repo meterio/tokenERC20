@@ -1,8 +1,4 @@
 {
-  "name": "basemain",
-  "rpc": "https://base.publicnode.com",
-  "lzEndpoint": "0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7",
-  "lzEndpointId": "184",
   "proxyAdmin": "0x7f5a7aE2688A7ba6a9B36141335044c058a08b3E",
   "oft_impl": "0x30E148a79B898EFa1Ab1285F5Eca71972a7e0acE",
   "admin": "0x5C85A7Ae2B6d29C38cdF360553F8aCBC4e684c31",

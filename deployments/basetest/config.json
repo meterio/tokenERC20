@@ -1,8 +1,4 @@
 {
-  "name": "basetest",
-  "rpc": "https://goerli.base.org",
-  "lzEndpoint": "0x6aB5Ae6822647046626e83ee6dB8187151E1d5ab",
-  "lzEndpointId": "10160",
   "proxyAdmin": "0x03fF3B40bCB607A49EdD453F3C63A1Fb525617e4",
   "oft_impl": "0x70302d7cFfCb2a56A39DAf66DC4410fFF2B0242d",
   "admin": "0x0205c2D862cA051010698b69b54278cbAf945C0b",

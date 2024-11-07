@@ -1,8 +1,4 @@
 {
-  "name": "metermain",
-  "rpc": "https://rpc.meter.io",
-  "lzEndpoint": "0xa3a8e19253Ab400acDac1cB0eA36B88664D8DedF",
-  "lzEndpointId": "176",
   "proxy": "0xbb5972e940bba6de48cf35e4b8d9389c713037a1",
   "proxyAdmin": "0x3F1c2aB9cA6b41a82aEb27A97863b53b946D1545",
   "oft_impl": "0xbd702feeb59bc2a51a4bb881352a61d0edf8def6",
