@@ -67,6 +67,11 @@ export default {
       chainId: 223,
       ethNetwork: "b2main",
     },
+    core: {
+      url: "https://rpc.coredao.org/",
+      chainId: 1116,
+      ethNetwork: "core",
+    },
   },
   sourcify: {
     enabled: false,
@@ -78,6 +83,7 @@ export default {
       sepolia: process.env.ETHERSCAN_API_KEY,
       arbitrum: process.env.ARBISCAN_API_KEY,
       mainnet: process.env.ETHERSCAN_API_KEY,
+      core: process.env.CORESCAN_API_KEY,
       b2main: "no-api-key-needed",
       beratest: "beratest", // apiKey is not required, just set a placeholder
     },
@@ -97,6 +103,14 @@ export default {
         urls: {
           apiURL: `https://api.arbiscan.io/api`,
           browserURL: "https://arbiscan.io/",
+        },
+      },
+      {
+        network: "core",
+        chainId: 1116,
+        urls: {
+          apiURL: `https://openapi.coredao.org/api`,
+          browserURL: "https://scan.coredao.org",
         },
       },
       {
