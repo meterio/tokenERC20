@@ -49,7 +49,10 @@ export type Network = {
 
 const deployDir = path.join(__dirname, "..", "deployments");
 function ensureDir(filepath: string) {
-  if (!fs.lstatSync(path.dirname(filepath)).isDirectory()) {
+  if (
+    !fs.existsSync(path.dirname(filepath)) ||
+    !fs.lstatSync(path.dirname(filepath)).isDirectory()
+  ) {
     fs.mkdirSync(path.dirname(filepath), { recursive: true });
   }
 }
@@ -271,12 +274,15 @@ export function loadNetConfigFromHardhat(net: string) {
 export function loadNetConfig(netName: string): any {
   const netConfigPath = path.join(deployDir, netName, "config.json");
   ensureDir(netConfigPath);
+  const hardhatNetConfig = loadNetConfigFromHardhat(netName);
 
   if (!fs.existsSync(netConfigPath)) {
-    return {};
+    fs.writeFileSync(fs.openSync(netConfigPath, "w"), JSON.stringify({}));
+    return { ...hardhatNetConfig, name: netName };
   }
+
   const config = JSON.parse(fs.readFileSync(netConfigPath).toString());
-  const hardhatNetConfig = loadNetConfigFromHardhat(netName);
+  console.log(`config`, config);
   return { ...config, ...hardhatNetConfig, name: netName };
 }
 
