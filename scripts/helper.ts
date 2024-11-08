@@ -124,7 +124,7 @@ export function loadContractInfoByAddress(
         q.push(filepath);
       } else if (f.endsWith(".json")) {
         const content = JSON.parse(fs.readFileSync(filepath).toString());
-        if (content.address.toLowerCase() == address.toLowerCase()) {
+        if (content.address?.toLowerCase() == address.toLowerCase()) {
           return content as ContractInfo;
         }
       }
