@@ -1,0 +1,26 @@
+{
+  "contract": "TransparentUpgradeableProxy",
+  "address": "0xF08a6547B142a9b2Aa2586F83f545383A220D372",
+  "createdBy": "0x5C85A7Ae2B6d29C38cdF360553F8aCBC4e684c31",
+  "createdAt": "2024-11-05T11:22:06-08:00",
+  "creationTx": "0xfe7c3c956851ead8acee79ef306b27b6139a97e22fcdb7bd028819cc81688f11",
+  "constructorArguments": [
+    "0xaAC83D5E45A2f67f2bFd1B804776EFa7DAF6cbF6",
+    "0xF04B152d2E27b5d975A2eb6b7F39EA42A74841Ac",
+    "0x485cc955000000000000000000000000b6319cc6c8c27a8f5daf0dd3df91ea35c4720dd7000000000000000000000000b845b42397d86cdce080644c693eeadcfa0461f4"
+  ],
+  "constructorArgumentsDefs": [
+    {
+      "name": "_logic",
+      "type": "address"
+    },
+    {
+      "name": "admin_",
+      "type": "address"
+    },
+    {
+      "name": "_data",
+      "type": "bytes"
+    }
+  ]
+}
