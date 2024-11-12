@@ -17,6 +17,7 @@ import {
   yellow,
   green,
   blue,
+  loadNetConfig,
 } from "./helper";
 import Safe from "@safe-global/protocol-kit";
 import {
@@ -97,6 +98,7 @@ export class SafeHelper {
     this.safeAddress = safeAddress;
     this.netConfig = {
       ...loadNetConfigFromHardhat(networkName),
+      ...loadNetConfig(networkName),
       name: networkName,
     };
     const provider = new JsonRpcProvider(this.netConfig.url);
@@ -151,7 +153,9 @@ export class SafeHelper {
             ? "https://safe-gateway.bsquared.network/txs/api"
             : this.netConfig.chainId == 4200
               ? "https://safewallet.merlinsecurity.io/txs/api"
-              : undefined;
+              : this.netConfig.chainId == 1116
+                ? "https://safe.coredao.org/txs"
+                : undefined;
     console.log(`txServiceUrl: ${txServiceUrl}`);
     this.apiKit = new SafeApiKit({
       chainId: BigInt(this.netConfig.chainId),
