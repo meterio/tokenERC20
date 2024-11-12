@@ -71,6 +71,11 @@ export default {
       url: "https://rpc.coredao.org/",
       chainId: 1116,
       ethNetwork: "core",
+      txServiceUrl: 'https://safe.coredao.org/txs',
+    },
+    merlin: {
+      url: 'https://merlin.blockpi.network/v1/rpc/public',
+      chainId: 4200,
     },
   },
   sourcify: {
@@ -85,6 +90,7 @@ export default {
       mainnet: process.env.ETHERSCAN_API_KEY,
       core: process.env.CORESCAN_API_KEY,
       b2main: "no-api-key-needed",
+      merlin: 'no-api-key-needed',
       beratest: "beratest", // apiKey is not required, just set a placeholder
     },
     customChains: [
@@ -119,6 +125,14 @@ export default {
         urls: {
           apiURL: "https://explorer.bsquared.network/api",
           browserURL: "https://explorer.bsquared.network/",
+        },
+      },
+      {
+        network: 'merlin',
+        chainId: 4200,
+        urls: {
+          apiURL: 'https://scan.merlinchain.io/api',
+          browserURL: 'https://scan.merlinchain.io',
         },
       },
       {
