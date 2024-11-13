@@ -154,7 +154,7 @@ export class SafeHelper {
             : this.netConfig.chainId == 4200
               ? "https://safewallet.merlinsecurity.io/txs/api"
               : this.netConfig.chainId == 1116
-                ? "https://safe.coredao.org/txs"
+                ? "https://safe.coredao.org/txs/api"
                 : undefined;
     console.log(`txServiceUrl: ${txServiceUrl}`);
     this.apiKit = new SafeApiKit({

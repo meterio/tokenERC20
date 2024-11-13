@@ -42,7 +42,6 @@ async function checkRole(
         "grantRole(bytes32,address)",
         [MINTER_ROLE, proxyAddress]
       );
-      await safeHelper.proposeSafeTx();
     }
   }
 }
@@ -82,7 +81,6 @@ async function laneExist(
           [srcChainId, srcToken, dstToken]
         );
         tokenMapping[srcChainId][srcToken] = dstToken;
-        await safeHelper.proposeSafeTx();
       }
     }
     saveTokenMapping(netConfig.name, netConfig, proxyAddr, tokenMapping);
@@ -97,8 +95,59 @@ async function laneExist(
         [srcChainId, srcToken, dstToken]
       );
       tokenMapping[srcChainId][srcToken] = dstToken;
-      await safeHelper.proposeSafeTx();
       saveTokenMapping(netConfig.name, netConfig, proxyAddr, tokenMapping);
+    }
+  }
+}
+
+async function setTrustRemote(
+  safeHelper: SafeHelper,
+  proxyAddr: string,
+  srcEndpointId: string,
+  srcProxyAddr: string
+) {
+  const proxyContract = await ethers.getContractAt(
+    "ProxyOFT",
+    proxyAddr,
+    safeHelper.signer
+  );
+
+  console.log(
+    `检查 ${green(safeHelper.netConfig.name)} 上TrustRemote设置 (srcEid: ${srcEndpointId} -> ProxyOFT: ${srcProxyAddr}))`
+  );
+  let trustedRemoteLookup =
+    await proxyContract.trustedRemoteLookup(srcEndpointId);
+
+  if (trustedRemoteLookup == "0x") {
+    const yes = await confirm({
+      message: `未设置 srcEid: ${srcEndpointId} 对应的 TrustedRemote，是否配置指向 ${yellow(srcProxyAddr)}？`,
+      default: true,
+    });
+    if (yes) {
+      await safeHelper.appendSafeTxForCall(
+        proxyContract,
+        "setTrustedRemoteAddress(uint16,bytes)",
+        [srcEndpointId, srcProxyAddr]
+      );
+    }
+  } else {
+    let trustedRemoteAddress =
+      await proxyContract.getTrustedRemoteAddress(srcEndpointId);
+    if (trustedRemoteAddress.toLowerCase() != srcProxyAddr.toLowerCase()) {
+      const yes = await confirm({
+        message: `合约上 srcEid: ${srcEndpointId} 对应的TrustRemote: ${yellow(trustedRemoteAddress)} 与输入 ${yellow(srcProxyAddr)} 不一致，是否更新合约配置？`,
+        default: true,
+      });
+      if (yes) {
+        await safeHelper.appendSafeTxForCall(
+          proxyContract,
+          "setTrustedRemoteAddress(uint16,bytes)",
+          [srcEndpointId, srcProxyAddr]
+        );
+        await safeHelper.proposeSafeTx();
+      }
+    } else {
+      console.log("  本地与合约配置一致 ✅");
     }
   }
 }
@@ -110,47 +159,78 @@ const main = async () => {
   const resA = await selectProxyOFT(safeHelperA.netConfig);
   const proxyA = resA.address;
 
-  const tokenA = await input({
-    message: `输入网络 ${blue(safeHelperA.netConfig.name)} 上Token地址:`,
-    validate: (value = "") => isAddress(value) || "Pass a valid address value",
-  });
-
   const safeHelperB = new SafeHelper();
   await safeHelperB.init(ethers);
   const resB = await selectProxyOFT(safeHelperB.netConfig);
   const proxyB = resB.address;
-  const tokenB = await input({
-    message: `输入网络 ${blue(safeHelperB.netConfig.name)} 上Token地址:`,
-    validate: (value = "") => isAddress(value) || "Pass a valid address value",
-  });
+
+  await setTrustRemote(
+    safeHelperA,
+    proxyA,
+    safeHelperB.netConfig.lzEndpointId,
+    proxyB
+  );
+  await setTrustRemote(
+    safeHelperB,
+    proxyB,
+    safeHelperA.netConfig.lzEndpointId,
+    proxyA
+  );
 
   if (safeHelperA.netConfig.name == safeHelperB.netConfig.name) {
     throw new Error(red("网络A和网络B不能相同!"));
   }
 
-  if (resA.version == "v1") {
-    await checkRole(safeHelperA, proxyA, tokenA);
+  for (;;) {
+    const tokenA = await input({
+      message: `输入网络 ${blue(safeHelperA.netConfig.name)} 上Token A地址:`,
+      validate: (value = "") =>
+        isAddress(value) || "Pass a valid address value",
+    });
+
+    const tokenB = await input({
+      message: `输入网络 ${blue(safeHelperB.netConfig.name)} 上Token B地址:`,
+      default: tokenA,
+      validate: (value = "") =>
+        isAddress(value) || "Pass a valid address value",
+    });
+
+    if (resA.version == "v1") {
+      await checkRole(safeHelperA, proxyA, tokenA);
+    }
+
+    if (resB.version == "v1") {
+      await checkRole(safeHelperB, proxyB, tokenB);
+    }
+
+    await laneExist(
+      safeHelperA,
+      proxyA,
+      safeHelperB.netConfig.lzEndpointId,
+      tokenB,
+      tokenA
+    );
+
+    await laneExist(
+      safeHelperB,
+      proxyB,
+      safeHelperA.netConfig.lzEndpointId,
+      tokenA,
+      tokenB
+    );
+
+    const more = await confirm({
+      message: "是否需要继续添加 tokenMapping ?",
+      default: false,
+    });
+    if (!more) {
+      break;
+    }
   }
 
-  if (resB.version == "v1") {
-    await checkRole(safeHelperB, proxyB, tokenB);
-  }
+  await safeHelperA.proposeSafeTx();
 
-  await laneExist(
-    safeHelperA,
-    proxyA,
-    safeHelperB.netConfig.lzEndpointId,
-    tokenB,
-    tokenA
-  );
-
-  await laneExist(
-    safeHelperB,
-    proxyB,
-    safeHelperA.netConfig.lzEndpointId,
-    tokenA,
-    tokenB
-  );
+  await safeHelperB.proposeSafeTx();
 };
 
 main();
