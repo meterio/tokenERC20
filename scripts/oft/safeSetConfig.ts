@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { selectProxyOFT } from "../helper";
+import { selectNetwork, selectProxyOFT } from "../helper";
 import { SafeHelper } from "../safeHelper";
 import { AbiCoder } from "ethers";
 import { select, input } from "@inquirer/prompts";
@@ -38,15 +38,25 @@ const main = async () => {
     ],
   });
 
+  const remoteNetwork = await selectNetwork("Remote");
+
   const configValue = await input({
     message: "输入config value (int):",
     default: "",
   });
 
   const configValueHex = parseInt(configValue).toString(16);
-  let hex = "0x" + configValueHex.padStart(64 - configValueHex.length, "0");
+  console.log("len: ", configValueHex.length);
+  console.log("pad:", 64 - configValueHex.length);
+  let hex = "0x" + configValueHex.padStart(64, "0");
+  console.log(hex.length);
 
-  const setConfigParams = [1, safeHelperA.netConfig.lzEndpointId, 2, hex];
+  const setConfigParams = [
+    1,
+    parseInt(remoteNetwork.netConfig.lzEndpointId),
+    configType,
+    hex,
+  ];
   console.log(`setConfig with `, setConfigParams);
   await safeHelperA.appendSafeTxForCall(proxyOFT, "setConfig", setConfigParams);
   await safeHelperA.proposeSafeTx();
