@@ -282,7 +282,6 @@ export function loadNetConfig(netName: string): any {
   }
 
   const config = JSON.parse(fs.readFileSync(netConfigPath).toString());
-  console.log(`config`, config);
   return { ...config, ...hardhatNetConfig, name: netName };
 }
 

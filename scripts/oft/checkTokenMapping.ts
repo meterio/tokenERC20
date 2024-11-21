@@ -24,6 +24,9 @@ const main = async () => {
   const l2n = getLZ2NetworkMap();
   const dstEndpointId = netConfig.lzEndpointId;
 
+  console.log(
+    `开始检查 ${Object.keys(netConfig.tokenMapping).length} 个TokenMapping`
+  );
   for (const dstProxyAddress in netConfig.tokenMapping) {
     const tokenMapping = loadTokenMapping(dstNetwork, dstProxyAddress);
     console.log(`检查 ${dstProxyAddress}`);
