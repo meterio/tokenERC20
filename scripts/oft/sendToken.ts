@@ -14,7 +14,7 @@ const main = async () => {
   const srcNetwork = await selectNetwork("源链");
   let { wallet, override } = srcNetwork;
 
-  const srcProxy = await selectProxyOFT(srcNetwork);
+  const srcProxy = await selectProxyOFT(srcNetwork.netConfig);
 
   const dstNetwork = await select({
     message: `选择目标链:`,

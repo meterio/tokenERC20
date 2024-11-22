@@ -1,0 +1,8 @@
+{
+  "rpc": "https://rpc.bsquared.network/",
+  "ERC20MintablePauseableUpgradeable": [
+    "0xbEB120827CE309C306BAec7a4C4d0eeC9fc37F0a",
+    "0x332F124323A1DA3Aeca4860f3B2B4a4c0df232Ae"
+  ],
+  "suUSD-proxy": "0x8BF591Eae535f93a242D5A954d3Cde648b48A5A8"
+}

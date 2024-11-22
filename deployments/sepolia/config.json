@@ -1,8 +1,4 @@
 {
-  "name": "sepolia",
-  "rpc": "https://eth-sepolia-public.unifra.io",
-  "lzEndpoint": "0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1",
-  "lzEndpointId": "10161",
   "proxyAdmin": "0x70302d7cFfCb2a56A39DAf66DC4410fFF2B0242d",
   "oft_impl": "0x8f9EC10F71AFC10b123234e470D625713fC59514",
   "admin": "0x0205c2D862cA051010698b69b54278cbAf945C0b",

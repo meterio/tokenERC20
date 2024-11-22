@@ -1,0 +1,26 @@
+{
+  "contract": "ERC20MinterBurnerPauser",
+  "address": "0xD6e37B08308bFfe239f8C31F38EF4B4a0BB4e9b1",
+  "createdBy": "0x14b27D8DC12E59a9904DaC6d17D33B8de2E80e66",
+  "createdAt": "2024-07-22T16:26:43-07:00",
+  "creationTx": "0xa6ff358e796fcddac2dcb946a91290b566695530c38666a4b6e3fb3550a7d201",
+  "constructorArguments": [
+    "TEST USDC",
+    "USDC",
+    "100000000000000000000"
+  ],
+  "constructorArgumentsDefs": [
+    {
+      "name": "_name",
+      "type": "string"
+    },
+    {
+      "name": "_symbol",
+      "type": "string"
+    },
+    {
+      "name": "initialSupply",
+      "type": "uint256"
+    }
+  ]
+}

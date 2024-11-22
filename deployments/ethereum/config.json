@@ -1,7 +1,3 @@
 {
-  "name": "ethereum",
-  "rpc": "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-  "lzEndpoint": "0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675",
-  "lzEndpointId": "101",
   "SUMER-proxy": "0x553d713e0fB958932b6C40ABAf0b5A1fFae73Da2"
 }
