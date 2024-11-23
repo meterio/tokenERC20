@@ -4,5 +4,7 @@
   "verifyURL": "https://explorer.zklink.io/contract_verification",
   "ProxyOFT": "0x724E7aEA2aA1B744B67367F75784F90ed5693ee7",
   "proxyAdmin": "0x784eD49c833392922a916f5A4cAD6798734F265d",
-  "ProxyOFT-proxy": "0x136CA376ccFcf620031d37d5299F103b44Fe8653"
+  "ProxyOFT-proxy": "0x136CA376ccFcf620031d37d5299F103b44Fe8653",
+  "ERC20MintablePauseableUpgradeable": "0x5F84CA4F896Cc4bf682B1d3661214Be0bcB89a2F",
+  "suUSD-proxy": "0x8f60c44aE3C7b1a7F53383f4AA512D482288564d"
 }
