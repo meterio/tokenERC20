@@ -15,6 +15,9 @@ const main = async () => {
   const info = loadContractInfoByAddress(hre.network.name, contractAddress);
   const contractPath = findContractPath(info.contract);
 
+  // const contractPath =
+  // "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol:TransparentUpgradeableProxy";
+
   console.log(`准备verify合约 ${contractAddress}`);
   console.log(`contract path: ${contractPath}`);
   console.log(`constructorArguments: ${info.constructorArguments}`);
