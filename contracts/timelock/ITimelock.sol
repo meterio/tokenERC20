@@ -64,6 +64,14 @@ interface ITimelock {
         address asset;
         address beneficiary;
         uint48 timestamp;
+        uint256 amount;
+    }
+
+    struct UserAgreement {
+        bool isFrozen;
+        address asset;
+        address beneficiary;
+        uint48 timestamp;
         uint256 id;
         uint256 amount;
     }

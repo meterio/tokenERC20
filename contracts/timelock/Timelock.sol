@@ -334,11 +334,22 @@ contract Timelock is
 
     function userAgreements(
         address user
-    ) external view returns (Agreement[] memory) {
+    ) external view returns (UserAgreement[] memory) {
         uint256 agreementLength = _userAgreements[user].length();
-        Agreement[] memory _agreements = new Agreement[](agreementLength);
+        UserAgreement[] memory _agreements = new UserAgreement[](
+            agreementLength
+        );
         for (uint256 i; i < agreementLength; ++i) {
-            _agreements[i] = agreements[_userAgreements[user].at(i)];
+            uint256 agreementId = _userAgreements[user].at(i);
+            Agreement memory a = agreements[agreementId];
+            _agreements[i] = UserAgreement({
+                isFrozen: a.isFrozen,
+                asset: a.asset,
+                beneficiary: a.beneficiary,
+                timestamp: a.timestamp,
+                id: agreementId,
+                amount: a.amount
+            });
         }
         return _agreements;
     }
@@ -389,7 +400,6 @@ contract Timelock is
             asset: asset,
             beneficiary: beneficiary,
             timestamp: timestamp,
-            id: agreementId,
             amount: amount
         });
         _userAgreements[beneficiary].add(agreementId);
@@ -412,12 +422,13 @@ contract Timelock is
     ) external notFrozen nonReentrant {
         uint256 len = agreementIds.length;
         for (uint256 i = 0; i < len; i++) {
-            Agreement memory agreement = agreements[agreementIds[i]];
+            uint256 agreementId = agreementIds[i];
+            Agreement memory agreement = agreements[agreementId];
 
             // check beneficiary
             if (msg.sender != agreement.beneficiary) {
                 revert SenderIsNotBeneficiary(
-                    agreement.id,
+                    agreementId,
                     msg.sender,
                     agreement.beneficiary
                 );
@@ -425,7 +436,7 @@ contract Timelock is
 
             // check frozen
             if (agreement.isFrozen) {
-                revert AgreementIsFrozen(agreement.id);
+                revert AgreementIsFrozen(agreementId);
             }
 
             // consume value
@@ -436,7 +447,7 @@ contract Timelock is
             }
 
             // delete agreement
-            _deleteAgreementInternal(agreement);
+            _deleteAgreementInternal(agreementId, agreement);
 
             // transfer & emit
             _transferAssetInternal(
@@ -445,7 +456,7 @@ contract Timelock is
                 agreement.amount
             );
             emit AgreementClaimed(
-                agreement.id,
+                agreementId,
                 agreement.beneficiary,
                 agreement.asset,
                 agreement.amount,
@@ -454,9 +465,12 @@ contract Timelock is
         }
     }
 
-    function _deleteAgreementInternal(Agreement memory agreement) internal {
-        delete agreements[agreement.id];
-        _userAgreements[agreement.beneficiary].remove(agreement.id);
+    function _deleteAgreementInternal(
+        uint256 agreementId,
+        Agreement memory agreement
+    ) internal {
+        delete agreements[agreementId];
+        _userAgreements[agreement.beneficiary].remove(agreementId);
     }
 
     function _transferAssetInternal(
@@ -483,18 +497,19 @@ contract Timelock is
     ) external notFrozen onlyExecutor nonReentrant {
         uint256 len = agreementIds.length;
         for (uint i = 0; i < len; i++) {
-            Agreement memory agreement = agreements[agreementIds[i]];
+            uint256 agreementId = agreementIds[i];
+            Agreement memory agreement = agreements[agreementId];
 
             // check frozen
             if (agreement.isFrozen) {
-                revert AgreementIsFrozen(agreement.id);
+                revert AgreementIsFrozen(agreementId);
             }
 
             // consume value forcefully so it succeeds every time
             _forceConsumeValueInternal(agreement.asset, agreement.amount);
 
             // delete agreement
-            _deleteAgreementInternal(agreement);
+            _deleteAgreementInternal(agreementId, agreement);
 
             // transfer & emit
             _transferAssetInternal(
@@ -503,7 +518,7 @@ contract Timelock is
                 agreement.amount
             );
             emit AgreementClaimed(
-                agreement.id,
+                agreementId,
                 agreement.asset,
                 agreement.beneficiary,
                 agreement.amount,
@@ -545,23 +560,24 @@ contract Timelock is
     ) external ensureNonzeroAddress(to) onlyEmergencyAdmin nonReentrant {
         uint256 len = agreementIds.length;
         for (uint256 i = 0; i < len; i++) {
-            Agreement memory agreement = agreements[agreementIds[i]];
+            uint256 agreementId = agreementIds[i];
+            Agreement memory agreement = agreements[agreementId];
 
             // check frozen
             if (!agreement.isFrozen) {
-                revert AgreementNotFrozen(agreement.id);
+                revert AgreementNotFrozen(agreementId);
             }
 
             // consume value forcefully
             _forceConsumeValueInternal(agreement.asset, agreement.amount);
 
             // delete agreement
-            _deleteAgreementInternal(agreement);
+            _deleteAgreementInternal(agreementId, agreement);
 
             // transfer & emit
             _transferAssetInternal(agreement.asset, to, agreement.amount);
             emit AgreementRescued(
-                agreement.id,
+                agreementId,
                 agreement.asset,
                 agreement.beneficiary,
                 agreement.amount,
