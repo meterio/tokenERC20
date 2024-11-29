@@ -23,8 +23,8 @@ abstract contract BaseProxyOFT is OFTCoreUpgradeable {
         address dstToken;
     }
 
-    address public override token;
-    uint256 public override circulatingSupply;
+    address public override token; // deprecated field
+    uint256 public override circulatingSupply; // deprecated field
     bool public paused;
 
     EnumerableSetUpgradeable.Bytes32Set private _laneHash;

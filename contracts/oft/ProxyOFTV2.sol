@@ -36,17 +36,29 @@ contract ProxyOFTV2 is BaseProxyOFT {
         }
         IERC20 token = IERC20(dstToken);
 
+        // if timelock is empty
+        // directly release token
+        if (timelock == address(0)) {
+            uint before = token.balanceOf(_toAddress);
+            token.transfer(_toAddress, _amount);
+            return token.balanceOf(_toAddress) - before;
+        }
+
+        // otherwise, check if timelock is needec
         bool shouldEnterTimelock = ITimelock(timelock).consumeValuePreview(
             dstToken,
             _amount
         );
 
         if (shouldEnterTimelock) {
+            // if timelock is needed
+            // release and create an agreement
             uint before = token.balanceOf(timelock);
             token.transfer(timelock, _amount);
             ITimelock(timelock).createAgreement(dstToken, _toAddress, _amount);
             return token.balanceOf(timelock) - before;
         } else {
+            // otherwise, release with consumeValue
             uint before = token.balanceOf(_toAddress);
             token.transfer(_toAddress, _amount);
             ITimelock(timelock).consumeValue(dstToken, _amount);

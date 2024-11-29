@@ -36,18 +36,31 @@ contract ProxyOFT is BaseProxyOFT {
             revert ZeroAddressNotAllowed();
         }
 
+        ERC20MintAndBurn token = ERC20MintAndBurn(dstToken);
+
+        // if timelock is empty
+        // directly mint token
+        if (timelock == address(0)) {
+            uint before = token.balanceOf(_toAddress);
+            token.mint(_toAddress, _amount);
+            return token.balanceOf(_toAddress) - before;
+        }
+
+        // otherwise, check if timelock is needed
         bool shouldEnterTimelock = ITimelock(timelock).consumeValuePreview(
             dstToken,
             _amount
         );
 
-        ERC20MintAndBurn token = ERC20MintAndBurn(dstToken);
         if (shouldEnterTimelock) {
+            // if timelock is needed
+            // mint and create an agreement
             uint before = token.balanceOf(timelock);
             token.mint(timelock, _amount);
             ITimelock(timelock).createAgreement(dstToken, _toAddress, _amount);
             return token.balanceOf(timelock) - before;
         } else {
+            // otherwise, mint with consumeValue
             uint before = token.balanceOf(_toAddress);
             token.mint(_toAddress, _amount);
             ITimelock(timelock).consumeValue(dstToken, _amount);

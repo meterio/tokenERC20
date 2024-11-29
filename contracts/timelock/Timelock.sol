@@ -63,7 +63,11 @@ contract Timelock is
 
     // errors in timelock
     error OverThreshold();
-    error NotEnoughBalance();
+    error NotEnoughBalance(
+        address asset,
+        uint256 balance,
+        uint256 recordedBalance
+    );
     error TimelockFrozen();
     error AgreementNotFrozen(uint256 agreementId);
     error NativeTransferFailed();
@@ -374,7 +378,7 @@ contract Timelock is
             balance = IERC20(asset).balanceOf(address(this));
         }
         if (balance < balances[asset] + amount) {
-            revert NotEnoughBalance();
+            revert NotEnoughBalance(asset, balance, balances[asset] + amount);
         }
         balances[asset] = balance;
 
