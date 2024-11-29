@@ -34,5 +34,9 @@
   "core": {
     "lzEndpoint": "0x9740FF91F1985D8d2B71494aE1A2f723bb3Ed9E4",
     "lzEndpointId": "153"
+  },
+  "zklink": {
+    "lzEndpoint": "0x042b8289c97896529Ec2FE49ba1A8B9C956A86cC",
+    "lzEndpointId": "301"
   }
 }
