@@ -5,7 +5,6 @@ import {
   selectNetwork,
   loadTokenMapping,
   getLZ2NetworkMap,
-  loadNetConfig,
 } from "../helper";
 import { ProxyOFT__factory } from "../../typechain-types";
 import { JsonRpcProvider } from "ethers";

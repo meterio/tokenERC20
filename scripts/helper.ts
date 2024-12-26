@@ -147,7 +147,8 @@ export function findContractPath(name: string): string {
         q.push(filepath);
       } else if (f == name + ".sol") {
         return (
-          filepath.replace(path.join(__dirname, "..") + "/", "") + `:${name}`
+          filepath.replace(path.join(__dirname, "..") + path.sep, "") +
+          `:${name}`
         );
       }
     }
