@@ -30,8 +30,13 @@ export default {
       gasPrice: 500000000000,
       accounts: [],
     },
+    arbitrumsepolia: {
+      url: "https://sepolia-rollup.arbitrum.io/rpc",
+      chainId: 421614,
+      gasPrice: 500000000000,
+    },
     sepolia: {
-      url: "https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      url: "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
       chainId: 11155111,
       gasPrice: 4000000000000,
       accounts: [],
@@ -71,10 +76,10 @@ export default {
       url: "https://rpc.coredao.org/",
       chainId: 1116,
       ethNetwork: "core",
-      txServiceUrl: 'https://safe.coredao.org/txs',
+      txServiceUrl: "https://safe.coredao.org/txs",
     },
     merlin: {
-      url: 'https://merlin.blockpi.network/v1/rpc/public',
+      url: "https://merlin.blockpi.network/v1/rpc/public",
       chainId: 4200,
     },
   },
@@ -90,7 +95,7 @@ export default {
       mainnet: process.env.ETHERSCAN_API_KEY,
       core: process.env.CORESCAN_API_KEY,
       b2main: "no-api-key-needed",
-      merlin: 'no-api-key-needed',
+      merlin: "no-api-key-needed",
       beratest: "beratest", // apiKey is not required, just set a placeholder
     },
     customChains: [
@@ -128,11 +133,11 @@ export default {
         },
       },
       {
-        network: 'merlin',
+        network: "merlin",
         chainId: 4200,
         urls: {
-          apiURL: 'https://scan.merlinchain.io/api',
-          browserURL: 'https://scan.merlinchain.io',
+          apiURL: "https://scan.merlinchain.io/api",
+          browserURL: "https://scan.merlinchain.io",
         },
       },
       {
