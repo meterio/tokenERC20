@@ -70,6 +70,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PausableUpgradeable__factory>;
     getContractFactory(
+      name: "ReentrancyGuardUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReentrancyGuardUpgradeable__factory>;
+    getContractFactory(
       name: "ERC20Upgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20Upgradeable__factory>;
@@ -278,6 +282,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PermitRouterV2__factory>;
     getContractFactory(
+      name: "BaseProxyOFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BaseProxyOFT__factory>;
+    getContractFactory(
+      name: "ERC20MintAndBurn",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20MintAndBurn__factory>;
+    getContractFactory(
       name: "ILayerZeroEndpointUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ILayerZeroEndpointUpgradeable__factory>;
@@ -333,6 +345,18 @@ declare module "hardhat/types/runtime" {
       name: "SumerProxy",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SumerProxy__factory>;
+    getContractFactory(
+      name: "ITimelock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITimelock__factory>;
+    getContractFactory(
+      name: "RateLimiter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RateLimiter__factory>;
+    getContractFactory(
+      name: "Timelock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Timelock__factory>;
     getContractFactory(
       name: "IERC20Permit",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -417,6 +441,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PausableUpgradeable>;
     getContractAt(
+      name: "ReentrancyGuardUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    getContractAt(
       name: "ERC20Upgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -677,6 +706,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PermitRouterV2>;
     getContractAt(
+      name: "BaseProxyOFT",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BaseProxyOFT>;
+    getContractAt(
+      name: "ERC20MintAndBurn",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20MintAndBurn>;
+    getContractAt(
       name: "ILayerZeroEndpointUpgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -746,6 +785,21 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.SumerProxy>;
+    getContractAt(
+      name: "ITimelock",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITimelock>;
+    getContractAt(
+      name: "RateLimiter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RateLimiter>;
+    getContractAt(
+      name: "Timelock",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Timelock>;
     getContractAt(
       name: "IERC20Permit",
       address: string | ethers.Addressable,
@@ -819,6 +873,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PausableUpgradeable>;
     deployContract(
+      name: "ReentrancyGuardUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    deployContract(
       name: "ERC20Upgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20Upgradeable>;
@@ -1027,6 +1085,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PermitRouterV2>;
     deployContract(
+      name: "BaseProxyOFT",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaseProxyOFT>;
+    deployContract(
+      name: "ERC20MintAndBurn",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MintAndBurn>;
+    deployContract(
       name: "ILayerZeroEndpointUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ILayerZeroEndpointUpgradeable>;
@@ -1082,6 +1148,18 @@ declare module "hardhat/types/runtime" {
       name: "SumerProxy",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SumerProxy>;
+    deployContract(
+      name: "ITimelock",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ITimelock>;
+    deployContract(
+      name: "RateLimiter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RateLimiter>;
+    deployContract(
+      name: "Timelock",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Timelock>;
     deployContract(
       name: "IERC20Permit",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1166,6 +1244,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PausableUpgradeable>;
     deployContract(
+      name: "ReentrancyGuardUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    deployContract(
       name: "ERC20Upgradeable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1426,6 +1509,16 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PermitRouterV2>;
     deployContract(
+      name: "BaseProxyOFT",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaseProxyOFT>;
+    deployContract(
+      name: "ERC20MintAndBurn",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20MintAndBurn>;
+    deployContract(
       name: "ILayerZeroEndpointUpgradeable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1495,6 +1588,21 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SumerProxy>;
+    deployContract(
+      name: "ITimelock",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ITimelock>;
+    deployContract(
+      name: "RateLimiter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RateLimiter>;
+    deployContract(
+      name: "Timelock",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Timelock>;
     deployContract(
       name: "IERC20Permit",
       args: any[],

@@ -1,0 +1,9 @@
+{
+  "contract": "ProxyAdmin",
+  "address": "0x96b3A1A12D2dc2a7DF4793B705768215721C39fe",
+  "createdBy": "0x14b27D8DC12E59a9904DaC6d17D33B8de2E80e66",
+  "createdAt": "2024-12-26T09:52:24+08:00",
+  "creationTx": "0xc23d8cb357f5429f233213bab9f0f6419ede1376e0bc7ee49a8b1b466d31b1ab",
+  "constructorArguments": [],
+  "constructorArgumentsDefs": []
+}

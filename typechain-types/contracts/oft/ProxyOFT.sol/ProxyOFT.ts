@@ -23,18 +23,18 @@ import type {
   TypedContractMethod,
 } from "../../../common";
 
-export declare namespace ProxyOFT {
+export declare namespace BaseProxyOFT {
   export type LaneDetailStruct = {
-    srcChainId: BigNumberish;
+    srcEid: BigNumberish;
     srcToken: AddressLike;
     dstToken: AddressLike;
   };
 
   export type LaneDetailStructOutput = [
-    srcChainId: bigint,
+    srcEid: bigint,
     srcToken: string,
     dstToken: string
-  ] & { srcChainId: bigint; srcToken: string; dstToken: string };
+  ] & { srcEid: bigint; srcToken: string; dstToken: string };
 }
 
 export interface ProxyOFTInterface extends Interface {
@@ -77,16 +77,19 @@ export interface ProxyOFTInterface extends Interface {
       | "setPrecrime"
       | "setReceiveVersion"
       | "setSendVersion"
+      | "setTimelock"
       | "setTrustedRemote"
       | "setTrustedRemoteAddress"
       | "setUseCustomAdapterParams"
       | "supportsInterface"
+      | "timelock"
       | "token"
       | "tokenMapping"
       | "trustedRemoteLookup"
       | "unPause"
       | "updateTokenMapping"
       | "useCustomAdapterParams"
+      | "version"
   ): FunctionFragment;
 
   getEvent(
@@ -246,6 +249,10 @@ export interface ProxyOFTInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setTimelock",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTrustedRemote",
     values: [BigNumberish, BytesLike]
   ): string;
@@ -261,6 +268,7 @@ export interface ProxyOFTInterface extends Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenMapping",
@@ -279,6 +287,7 @@ export interface ProxyOFTInterface extends Interface {
     functionFragment: "useCustomAdapterParams",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "version", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -387,6 +396,10 @@ export interface ProxyOFTInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setTimelock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setTrustedRemote",
     data: BytesLike
   ): Result;
@@ -402,6 +415,7 @@ export interface ProxyOFTInterface extends Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenMapping",
@@ -420,6 +434,7 @@ export interface ProxyOFTInterface extends Interface {
     functionFragment: "useCustomAdapterParams",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
 }
 
 export namespace InitializedEvent {
@@ -719,7 +734,7 @@ export interface ProxyOFT extends BaseContract {
   NO_EXTRA_GAS: TypedContractMethod<[], [bigint], "view">;
 
   addTokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -751,7 +766,7 @@ export interface ProxyOFT extends BaseContract {
 
   getAllLane: TypedContractMethod<
     [],
-    [ProxyOFT.LaneDetailStructOutput[]],
+    [BaseProxyOFT.LaneDetailStructOutput[]],
     "view"
   >;
 
@@ -807,7 +822,7 @@ export interface ProxyOFT extends BaseContract {
   >;
 
   laneExist: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [boolean],
     "view"
   >;
@@ -849,7 +864,7 @@ export interface ProxyOFT extends BaseContract {
   precrime: TypedContractMethod<[], [string], "view">;
 
   removeTokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -927,6 +942,12 @@ export interface ProxyOFT extends BaseContract {
     "nonpayable"
   >;
 
+  setTimelock: TypedContractMethod<
+    [_timelock: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setTrustedRemote: TypedContractMethod<
     [_srcChainId: BigNumberish, _path: BytesLike],
     [void],
@@ -951,11 +972,13 @@ export interface ProxyOFT extends BaseContract {
     "view"
   >;
 
+  timelock: TypedContractMethod<[], [string], "view">;
+
   token: TypedContractMethod<[], [string], "view">;
 
   tokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
-    [ProxyOFT.LaneDetailStructOutput],
+    [srcEid: BigNumberish, srcToken: AddressLike],
+    [BaseProxyOFT.LaneDetailStructOutput],
     "view"
   >;
 
@@ -968,12 +991,14 @@ export interface ProxyOFT extends BaseContract {
   unPause: TypedContractMethod<[], [void], "nonpayable">;
 
   updateTokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
 
   useCustomAdapterParams: TypedContractMethod<[], [boolean], "view">;
+
+  version: TypedContractMethod<[], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -994,7 +1019,7 @@ export interface ProxyOFT extends BaseContract {
   getFunction(
     nameOrSignature: "addTokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1029,7 +1054,7 @@ export interface ProxyOFT extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "getAllLane"
-  ): TypedContractMethod<[], [ProxyOFT.LaneDetailStructOutput[]], "view">;
+  ): TypedContractMethod<[], [BaseProxyOFT.LaneDetailStructOutput[]], "view">;
   getFunction(
     nameOrSignature: "getConfig"
   ): TypedContractMethod<
@@ -1089,7 +1114,7 @@ export interface ProxyOFT extends BaseContract {
   getFunction(
     nameOrSignature: "laneExist"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [boolean],
     "view"
   >;
@@ -1139,7 +1164,7 @@ export interface ProxyOFT extends BaseContract {
   getFunction(
     nameOrSignature: "removeTokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1214,6 +1239,9 @@ export interface ProxyOFT extends BaseContract {
     nameOrSignature: "setSendVersion"
   ): TypedContractMethod<[_version: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setTimelock"
+  ): TypedContractMethod<[_timelock: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setTrustedRemote"
   ): TypedContractMethod<
     [_srcChainId: BigNumberish, _path: BytesLike],
@@ -1238,13 +1266,16 @@ export interface ProxyOFT extends BaseContract {
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
+    nameOrSignature: "timelock"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "token"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "tokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
-    [ProxyOFT.LaneDetailStructOutput],
+    [srcEid: BigNumberish, srcToken: AddressLike],
+    [BaseProxyOFT.LaneDetailStructOutput],
     "view"
   >;
   getFunction(
@@ -1256,13 +1287,16 @@ export interface ProxyOFT extends BaseContract {
   getFunction(
     nameOrSignature: "updateTokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
   getFunction(
     nameOrSignature: "useCustomAdapterParams"
   ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "version"
+  ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
     key: "Initialized"

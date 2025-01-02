@@ -6,4 +6,5 @@ export * as erc20 from "./erc20";
 export * as gasless from "./gasless";
 export * as oft from "./oft";
 export * as proxy from "./proxy";
+export * as timelock from "./timelock";
 export * as tokenReplacement from "./tokenReplacement";

@@ -1,0 +1,7 @@
+{
+  "zksync": true,
+  "ethNetwork": "sepolia",
+  "ProxyAdmin": "0xc9d5057fE5E91D2Db0Aef46e8aC349f58D5d56dd",
+  "ERC20MintablePauseableUpgradeable": "0x737D929B1DedBf464F79a8A75da63a3149a5D94A",
+  "suUSD-proxy": "0xcBE318137617b352c767D6d0beB860Dd2b6961aE"
+}

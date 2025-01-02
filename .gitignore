@@ -6,3 +6,6 @@ flattened
 .env.development
 .env
 .DS_Store
+cache-zk
+artifacts-zk
+artifacts

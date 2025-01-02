@@ -23,18 +23,18 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export declare namespace ProxyOFTV2 {
+export declare namespace BaseProxyOFT {
   export type LaneDetailStruct = {
-    srcChainId: BigNumberish;
+    srcEid: BigNumberish;
     srcToken: AddressLike;
     dstToken: AddressLike;
   };
 
   export type LaneDetailStructOutput = [
-    srcChainId: bigint,
+    srcEid: bigint,
     srcToken: string,
     dstToken: string
-  ] & { srcChainId: bigint; srcToken: string; dstToken: string };
+  ] & { srcEid: bigint; srcToken: string; dstToken: string };
 }
 
 export interface ProxyOFTV2Interface extends Interface {
@@ -78,10 +78,12 @@ export interface ProxyOFTV2Interface extends Interface {
       | "setPrecrime"
       | "setReceiveVersion"
       | "setSendVersion"
+      | "setTimelock"
       | "setTrustedRemote"
       | "setTrustedRemoteAddress"
       | "setUseCustomAdapterParams"
       | "supportsInterface"
+      | "timelock"
       | "token"
       | "tokenMapping"
       | "trustedRemoteLookup"
@@ -252,6 +254,10 @@ export interface ProxyOFTV2Interface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setTimelock",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setTrustedRemote",
     values: [BigNumberish, BytesLike]
   ): string;
@@ -267,6 +273,7 @@ export interface ProxyOFTV2Interface extends Interface {
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(functionFragment: "timelock", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "tokenMapping",
@@ -398,6 +405,10 @@ export interface ProxyOFTV2Interface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setTimelock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setTrustedRemote",
     data: BytesLike
   ): Result;
@@ -413,6 +424,7 @@ export interface ProxyOFTV2Interface extends Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "timelock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenMapping",
@@ -731,7 +743,7 @@ export interface ProxyOFTV2 extends BaseContract {
   NO_EXTRA_GAS: TypedContractMethod<[], [bigint], "view">;
 
   addTokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -769,7 +781,7 @@ export interface ProxyOFTV2 extends BaseContract {
 
   getAllLane: TypedContractMethod<
     [],
-    [ProxyOFTV2.LaneDetailStructOutput[]],
+    [BaseProxyOFT.LaneDetailStructOutput[]],
     "view"
   >;
 
@@ -825,7 +837,7 @@ export interface ProxyOFTV2 extends BaseContract {
   >;
 
   laneExist: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [boolean],
     "view"
   >;
@@ -867,7 +879,7 @@ export interface ProxyOFTV2 extends BaseContract {
   precrime: TypedContractMethod<[], [string], "view">;
 
   removeTokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -945,6 +957,12 @@ export interface ProxyOFTV2 extends BaseContract {
     "nonpayable"
   >;
 
+  setTimelock: TypedContractMethod<
+    [_timelock: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setTrustedRemote: TypedContractMethod<
     [_srcChainId: BigNumberish, _path: BytesLike],
     [void],
@@ -969,11 +987,13 @@ export interface ProxyOFTV2 extends BaseContract {
     "view"
   >;
 
+  timelock: TypedContractMethod<[], [string], "view">;
+
   token: TypedContractMethod<[], [string], "view">;
 
   tokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
-    [ProxyOFTV2.LaneDetailStructOutput],
+    [srcEid: BigNumberish, srcToken: AddressLike],
+    [BaseProxyOFT.LaneDetailStructOutput],
     "view"
   >;
 
@@ -986,14 +1006,14 @@ export interface ProxyOFTV2 extends BaseContract {
   unPause: TypedContractMethod<[], [void], "nonpayable">;
 
   updateTokenMapping: TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
 
   useCustomAdapterParams: TypedContractMethod<[], [boolean], "view">;
 
-  version: TypedContractMethod<[], [string], "view">;
+  version: TypedContractMethod<[], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -1014,7 +1034,7 @@ export interface ProxyOFTV2 extends BaseContract {
   getFunction(
     nameOrSignature: "addTokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1056,7 +1076,7 @@ export interface ProxyOFTV2 extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "getAllLane"
-  ): TypedContractMethod<[], [ProxyOFTV2.LaneDetailStructOutput[]], "view">;
+  ): TypedContractMethod<[], [BaseProxyOFT.LaneDetailStructOutput[]], "view">;
   getFunction(
     nameOrSignature: "getConfig"
   ): TypedContractMethod<
@@ -1116,7 +1136,7 @@ export interface ProxyOFTV2 extends BaseContract {
   getFunction(
     nameOrSignature: "laneExist"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [boolean],
     "view"
   >;
@@ -1166,7 +1186,7 @@ export interface ProxyOFTV2 extends BaseContract {
   getFunction(
     nameOrSignature: "removeTokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1241,6 +1261,9 @@ export interface ProxyOFTV2 extends BaseContract {
     nameOrSignature: "setSendVersion"
   ): TypedContractMethod<[_version: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setTimelock"
+  ): TypedContractMethod<[_timelock: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setTrustedRemote"
   ): TypedContractMethod<
     [_srcChainId: BigNumberish, _path: BytesLike],
@@ -1265,13 +1288,16 @@ export interface ProxyOFTV2 extends BaseContract {
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
+    nameOrSignature: "timelock"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "token"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "tokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike],
-    [ProxyOFTV2.LaneDetailStructOutput],
+    [srcEid: BigNumberish, srcToken: AddressLike],
+    [BaseProxyOFT.LaneDetailStructOutput],
     "view"
   >;
   getFunction(
@@ -1283,7 +1309,7 @@ export interface ProxyOFTV2 extends BaseContract {
   getFunction(
     nameOrSignature: "updateTokenMapping"
   ): TypedContractMethod<
-    [srcChainId: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
+    [srcEid: BigNumberish, srcToken: AddressLike, dstToken: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1292,7 +1318,7 @@ export interface ProxyOFTV2 extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "version"
-  ): TypedContractMethod<[], [string], "view">;
+  ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
     key: "Initialized"

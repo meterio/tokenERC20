@@ -1,0 +1,9 @@
+{
+  "contract": "Timelock",
+  "address": "0x2d1eccE5BDfb6327D8908Cc576A59a1E8704ed2F",
+  "createdBy": "0xBB245d5c1D504DD5295b12b90963fD26b06BC743",
+  "createdAt": "2024-11-28T10:04:02-08:00",
+  "creationTx": "0xd30db8d0533daa9a1adedf064a0f3151e1ad915b58c9ee7fb2344abf2db56d86",
+  "constructorArguments": [],
+  "constructorArgumentsDefs": []
+}

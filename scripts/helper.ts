@@ -7,14 +7,18 @@ import {
   isAddress,
   ZeroAddress,
   Interface,
+  TransactionResponse,
 } from "ethers";
 import { HardhatEthersHelpers } from "@nomicfoundation/hardhat-ethers/types";
 import { input, select, password, confirm } from "@inquirer/prompts";
+import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
 import colors from "colors";
 colors.enable();
 import * as fs from "fs";
 import * as path from "path";
 import moment from "moment";
+import * as hre from "hardhat";
+import * as zk from "zksync-ethers";
 
 import hardhatConfig from "../hardhat.config";
 import { exit } from "process";
@@ -562,7 +566,7 @@ export async function deployContractV2(
   args: any[],
   override: any = {},
   alias = ""
-): Promise<Contract> {
+): Promise<Contract | zk.Contract> {
   const { netConfig, updateNetConfig } = network;
   override.nonce = await input({
     message: `准备部署${contract}，输入nonce:`,
@@ -574,22 +578,33 @@ export async function deployContractV2(
 
   moveContractInfo(network.name, contract);
 
-  const factory = await ethers.getContractFactory(contract, network.wallet);
-  const deployTx = await factory.getDeployTransaction(...args);
-  override.gasLimit = await network.wallet.estimateGas(deployTx);
-  console.log("Estimated Gas:", green(override.gasLimit.toString()));
+  let address = "";
+  let constructorArgumentsDefs: any[] = [];
+  let tx: TransactionResponse | null | undefined = undefined;
+  let deployed: Contract | zk.Contract;
+  if (network.netConfig.zksync) {
+    const deployer = await Deployer.fromEthWallet(hre, network.wallet);
+    const artifact = await deployer.loadArtifact(contract);
+    deployed = await deployer.deploy(artifact, args);
+    address = await deployed.getAddress();
+  } else {
+    const factory = await ethers.getContractFactory(contract, network.wallet);
+    const deployTx = await factory.getDeployTransaction(...args);
+    override.gasLimit = await network.wallet.estimateGas(deployTx);
+    console.log("Estimated Gas:", green(override.gasLimit.toString()));
 
-  const constructorFragment = factory.interface.deploy;
-  const constructorArgumentsDefs = constructorFragment.inputs.map((f) => ({
-    name: f.name,
-    type: f.type,
-  }));
-  const deploy = await factory.deploy(...args, override);
-  const deployed = await deploy.waitForDeployment();
+    const constructorFragment = factory.interface.deploy;
+    constructorArgumentsDefs = constructorFragment.inputs.map((f) => ({
+      name: f.name,
+      type: f.type,
+    }));
+    const deploy = await factory.deploy(...args, override);
+    deployed = await deploy.waitForDeployment();
 
-  const address = await deployed.getAddress();
-  const response = await deployed.deploymentTransaction();
-  const tx = await response?.getTransaction();
+    address = await deployed.getAddress();
+    const response = await deployed.deploymentTransaction();
+    tx = await response?.getTransaction();
+  }
 
   console.log(
     `${contract} deployed on ${blue(network.name)} at: ${yellow(address)}`

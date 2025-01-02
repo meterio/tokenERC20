@@ -11,5 +11,7 @@ import type * as oft from "./oft";
 export type { oft };
 import type * as proxy from "./proxy";
 export type { proxy };
+import type * as timelock from "./timelock";
+export type { timelock };
 import type * as tokenReplacement from "./tokenReplacement";
 export type { tokenReplacement };

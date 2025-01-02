@@ -3,6 +3,7 @@
   "oft_impl": "0x30E148a79B898EFa1Ab1285F5Eca71972a7e0acE",
   "admin": "0x5C85A7Ae2B6d29C38cdF360553F8aCBC4e684c31",
   "proxy": "0x9aa55bcf3e41d0d98fce816c4ec6e791b0f6d154",
+  "token": "0x0bc80966127a9701dfe5c0b1772cb57925088fda",
   "tokenMapping": {
     "0x9aa55bcf3e41d0d98fce816c4ec6e791b0f6d154": {
       "110": {
