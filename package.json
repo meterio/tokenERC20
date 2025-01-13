@@ -13,7 +13,6 @@
     "@chainlink/contracts": "^0.6.1",
     "@chainlink/contracts-ccip": "^0.7.3",
     "@inquirer/prompts": "^3.3.0",
-    "@matterlabs/hardhat-zksync-deploy": "^1.6.0",
     "@safe-global/api-kit": "^2.4.2",
     "@safe-global/protocol-kit": "^4.0.2",
     "chai": "^5.0.3",
@@ -54,7 +53,7 @@
     "typechain": "^8.3.2",
     "typescript": "^5.3.3",
     "@matterlabs/hardhat-zksync": "^1.1.0",
-    "@matterlabs/hardhat-zksync-deploy": "^1.5.0",
+    "@matterlabs/hardhat-zksync-deploy": "^1.6.0",
     "@matterlabs/hardhat-zksync-solc": "^1.2.1",
     "@matterlabs/hardhat-zksync-verify": "^1.6.0"
   }
