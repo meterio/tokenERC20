@@ -1,0 +1,6 @@
+{
+  "ethNetwork": "core",
+  "ProxyAdmin": "0x91E61a73e021D701092Abf8f0C2036c4B9711AE7",
+  "ERC20MintablePauseableUpgradeable": "0xa52A889FCA8706EB91Df92421E4303550aDfb64D",
+  "suUSD-proxy": "0x3b072FEA46117ac64F7B5baa0E60AfF4F966001b"
+}

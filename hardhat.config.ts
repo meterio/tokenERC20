@@ -14,7 +14,7 @@ import "@matterlabs/hardhat-zksync-deploy";
 const dotenv = require("dotenv");
 dotenv.config();
 export default {
-  defaultNetwork: "zksyncsepolia",
+  defaultNetwork: "bsctest",
   networks: {
     metertest: {
       url: `https://rpctest.meter.io`,
@@ -87,9 +87,27 @@ export default {
       ethNetwork: "core",
       txServiceUrl: "https://safe.coredao.org/txs",
     },
+    coretest: {
+      url: "https://rpc.test.btcs.network",
+      chainId: 1115,
+      ethNetwork: "core",
+    },
+    coretest2: {
+      url: "https://rpc.test2.btcs.network",
+      chainId: 1114,
+      ethNetwork: "core",
+    },
     merlin: {
       url: "https://merlin.blockpi.network/v1/rpc/public",
       chainId: 4200,
+    },
+    merlintest: {
+      url: "https://testnet-rpc.merlinchain.io",
+      chainId: 686868 
+    },
+    bsctest: {
+      url: "https://bsc-testnet.public.blastapi.io",
+      chainId: 97
     },
     zklink: {
       url: "https://rpc.zklink.io",
