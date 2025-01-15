@@ -1,9 +1,9 @@
 {
   "contract": "ProxyAdmin",
-  "address": "0x91E61a73e021D701092Abf8f0C2036c4B9711AE7",
+  "address": "0xc53fCf3cE027ABbb7fAaAB77eFa464eD67EE1f6f",
   "createdBy": "0x20255b38Ece64AdFF5184a29E5a9A680b88A58C6",
-  "createdAt": "2025-01-14T09:15:42+00:00",
-  "creationTx": "0x87e8135a91f928c9bb735a550380143af1499c927e5b8d3daa19f905fabe21af",
+  "createdAt": "2025-01-15T09:51:47+08:00",
+  "creationTx": "0x59191e3af6232410c2b8187b0e55b20413f67581dd14b3b917f5e590da61ddb1",
   "constructorArguments": [],
   "constructorArgumentsDefs": []
 }
