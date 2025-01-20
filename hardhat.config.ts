@@ -81,6 +81,10 @@ export default {
       chainId: 223,
       ethNetwork: "b2main",
     },
+    berabartio: {
+      url: "https://bartio.rpc.berachain.com",
+      chainId: 80084,
+    },
     core: {
       url: "https://rpc.coredao.org/",
       chainId: 1116,
@@ -103,11 +107,11 @@ export default {
     },
     merlintest: {
       url: "https://testnet-rpc.merlinchain.io",
-      chainId: 686868 
+      chainId: 686868,
     },
     bsctest: {
       url: "https://bsc-testnet.public.blastapi.io",
-      chainId: 97
+      chainId: 97,
     },
     zklink: {
       url: "https://rpc.zklink.io",
