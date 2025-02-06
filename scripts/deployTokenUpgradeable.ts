@@ -5,6 +5,7 @@ import {
   deployContractV2,
   green,
   sendTransaction,
+  loadContractInfo,
 } from "./helper";
 import { isAddress } from "ethers";
 
@@ -37,9 +38,14 @@ const main = async () => {
     );
     implAddress = await implementation.getAddress();
   } else {
+    const defaultValue = loadContractInfo(
+      network.name,
+      "ERC20MintablePauseableUpgradeable"
+    );
     implAddress = await input({
       message: "输入Token Impl地址:",
       validate: (value = "") => isAddress(value) || "Pass a valid value",
+      default: defaultValue.address || "",
     });
   }
 
