@@ -18,10 +18,10 @@ const main = async () => {
   console.log(`准备verify合约 ${contractAddress}`);
   console.log(`contract path: ${contractPath}`);
   console.log(`constructorArguments: ${info.constructorArguments}`);
-  await hre.run("verify:verify", {
+  await hre.run("verify", {
     address: contractAddress,
     contract: contractPath,
-    constructorArguments: info.constructorArguments,
+    constructorArgsParams: info.constructorArguments,
   });
 };
 

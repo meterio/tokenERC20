@@ -2,14 +2,15 @@ import "@typechain/hardhat";
 import "@nomicfoundation/hardhat-ethers";
 // import "@openzeppelin/hardhat-upgrades";
 import { compileSetting } from "./scripts/compilerConfig";
-// import "@nomicfoundation/hardhat-verify";
+import "@nomicfoundation/hardhat-verify";
 
 // const { setGlobalDispatcher, ProxyAgent } = require("undici");
 // const proxyAgent = new ProxyAgent("http://127.0.0.1:7890");
 // setGlobalDispatcher(proxyAgent);
-import "@matterlabs/hardhat-zksync";
+// import "@matterlabs/hardhat-zksync";
 import "@matterlabs/hardhat-zksync-solc";
 import "@matterlabs/hardhat-zksync-deploy";
+// import "@matterlabs/hardhat-zksync-verify";
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -136,11 +137,11 @@ export default {
       ethNetwork: "sepolia",
     },
     monadtest: {
-      url: 'https://testnet-rpc2.monad.xyz/52227f026fa8fac9e2014c58fbf5643369b3bfc6',
+      url: "https://testnet-rpc2.monad.xyz/52227f026fa8fac9e2014c58fbf5643369b3bfc6",
       chainId: 10143,
     },
     beramain: {
-      url: 'https://rpc.berachain.com',
+      url: "https://rpc.berachain.com",
       chainId: 80094,
     },
   },
@@ -213,11 +214,11 @@ export default {
         },
       },
       {
-        network: 'beramain',
+        network: "beramain",
         chainId: 80094,
         urls: {
-          apiURL: 'https://api.berascan.com/api',
-          browserURL: 'https://berascan.com/',
+          apiURL: "https://api.berascan.com/api",
+          browserURL: "https://berascan.com/",
         },
       },
     ],
