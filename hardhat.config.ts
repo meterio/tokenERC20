@@ -160,6 +160,7 @@ export default {
       beratest: "beratest", // apiKey is not required, just set a placeholder
       arbitrumSepolia: process.env.ARBISCAN_API_KEY,
       baseSepolia: process.env.BASESCAN_API_KEY,
+      beramain: process.env.BERASCAN_API_KEY,
     },
     customChains: [
       {
@@ -209,6 +210,14 @@ export default {
         urls: {
           apiURL: "https://api.basescan.org/api",
           browserURL: "https://basescan.org",
+        },
+      },
+      {
+        network: 'beramain',
+        chainId: 80094,
+        urls: {
+          apiURL: 'https://api.berascan.com/api',
+          browserURL: 'https://berascan.com/',
         },
       },
     ],
