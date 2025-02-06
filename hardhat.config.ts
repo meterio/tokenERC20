@@ -135,6 +135,14 @@ export default {
       zksync: true,
       ethNetwork: "sepolia",
     },
+    monadtest: {
+      url: 'https://testnet-rpc2.monad.xyz/52227f026fa8fac9e2014c58fbf5643369b3bfc6',
+      chainId: 10143,
+    },
+    beramain: {
+      url: 'https://rpc.berachain.com',
+      chainId: 80094,
+    },
   },
   sourcify: {
     enabled: false,
