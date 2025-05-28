@@ -119,7 +119,7 @@ export default {
       chainId: 810180,
       // safeTxServiceUrl: '',
       zksync: true,
-      ethNetwork: "mainnet",
+      ethNetwork: "zklink",
       verifyURL: "https://explorer.zklink.io/contract_verification",
     },
     zklinksepolia: {
@@ -144,6 +144,13 @@ export default {
       url: "https://rpc.berachain.com",
       chainId: 80094,
     },
+    bitlayer: {
+      url: "https://rpc.bitlayer.org",
+      chainId: 200901,
+      // safeTxServiceUrl: '',
+      ethNetwork: "bitlayer",
+      verifyURL: "https://api.btrscan.com/scan/api"
+    }
   },
   sourcify: {
     enabled: false,
