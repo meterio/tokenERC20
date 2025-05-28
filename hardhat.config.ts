@@ -149,8 +149,8 @@ export default {
       chainId: 200901,
       // safeTxServiceUrl: '',
       ethNetwork: "bitlayer",
-      verifyURL: "https://api.btrscan.com/scan/api"
-    }
+      verifyURL: "https://api.btrscan.com/scan/api",
+    },
   },
   sourcify: {
     enabled: false,
@@ -169,6 +169,8 @@ export default {
       arbitrumSepolia: process.env.ARBISCAN_API_KEY,
       baseSepolia: process.env.BASESCAN_API_KEY,
       beramain: process.env.BERASCAN_API_KEY,
+      bitlayertest: "1234",
+      bitlayer: "1234",
     },
     customChains: [
       {
@@ -226,6 +228,22 @@ export default {
         urls: {
           apiURL: "https://api.berascan.com/api",
           browserURL: "https://berascan.com/",
+        },
+      },
+      {
+        network: "bitlayertest",
+        chainId: 200810,
+        urls: {
+          apiURL: "https://api-testnet.btrscan.com/scan/api",
+          browserURL: "https://testnet.btrscan.com/",
+        },
+      },
+      {
+        network: "bitlayer",
+        chainId: 200901,
+        urls: {
+          apiURL: "https://api.btrscan.com/scan/api",
+          browserURL: "https://www.btrscan.com/",
         },
       },
     ],
