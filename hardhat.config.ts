@@ -151,6 +151,13 @@ export default {
       ethNetwork: "bitlayer",
       verifyURL: "https://api.btrscan.com/scan/api",
     },
+    goat: {
+      url: 'https://rpc.goat.network',
+      chainId: 2345,
+      // safeTxServiceUrl: '',
+      ethNetwork: 'goat',
+      verifyURL: 'https://explorer.goat.network/api',
+    },
   },
   sourcify: {
     enabled: false,
@@ -171,6 +178,7 @@ export default {
       beramain: process.env.BERASCAN_API_KEY,
       bitlayertest: "1234",
       bitlayer: "1234",
+      goat: 'no-api-key-needed',
     },
     customChains: [
       {
@@ -244,6 +252,14 @@ export default {
         urls: {
           apiURL: "https://api.btrscan.com/scan/api",
           browserURL: "https://www.btrscan.com/",
+        },
+      },
+      {
+        network: 'goat',
+        chainId: 2345,
+        urls: {
+          apiURL: 'https://rpc.goat.network',
+          browserURL: 'https://explorer.goat.network/api',
         },
       },
     ],
