@@ -1,0 +1,12 @@
+{
+  "ethNetwork": "goat",
+  "verifyURL": "https://explorer.goat.network/api",
+  "ERC20MintablePauseableUpgradeable": "0xbEB120827CE309C306BAec7a4C4d0eeC9fc37F0a",
+  "suUSD-proxy": "0x8BF591Eae535f93a242D5A954d3Cde648b48A5A8",
+  "suETH-proxy": "0x1c22531AA9747d76fFF8F0A43b37954ca67d28e0",
+  "suBTC-proxy": [
+    "0x553d713e0fB958932b6C40ABAf0b5A1fFae73Da2",
+    "0xe85411C030fB32A9D8b14Bbbc6CB19417391F711"
+  ],
+  "SUMER-proxy": "0xBF50F3cE463564648586DDc74C500c1FdD3819b1"
+}

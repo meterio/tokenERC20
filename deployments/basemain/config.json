@@ -20,5 +20,6 @@
     }
   },
   "ProxyOFT": "0x30E148a79B898EFa1Ab1285F5Eca71972a7e0acE",
-  "ProxyOFT-proxy": "0x9aa55bcf3e41d0d98fce816c4ec6e791b0f6d154"
+  "ProxyOFT-proxy": "0x9aa55bcf3e41d0d98fce816c4ec6e791b0f6d154",
+  "ERC20MinterBurnerPauser": "0xc3D3A755F391b40D94EEd8283134c0323DB49209"
 }
