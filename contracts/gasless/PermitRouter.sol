@@ -6,10 +6,11 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./interfaces/IUniswapV2Pair.sol";
 import "./interfaces/IWMTR.sol";
 import "./interfaces/IEIP712.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract PermitRouter is Ownable {
+contract PermitRouter is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
     // event
     event GaslessSwap(
@@ -61,7 +62,7 @@ contract PermitRouter is Ownable {
         IUniswapV2Pair(pair).swap(amount0Out, amount1Out, _to, new bytes(0));
     }
 
-    function _handleFee(address to) internal {
+    function _handleFee(address to) internal nonReentrant {
         uint256 balance = IERC20(path[1]).balanceOf(address(this));
         wmtr.withdraw(balance);
         _safeTransferMTR(to, (balance * (10000 - fee)) / 10000);

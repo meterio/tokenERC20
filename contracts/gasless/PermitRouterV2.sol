@@ -3,16 +3,18 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./interfaces/IEIP712.sol";
 import "./interfaces/IWMTR.sol";
 import "./interfaces/IUniswapV2Pair.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract PermitRouterV2 is Ownable {
+contract PermitRouterV2 is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     uint256 public fee;
-    IWMTR public constant wmtr = IWMTR(0x160361ce13ec33C993b5cCA8f62B6864943eb083);
+    IWMTR public constant wmtr =
+        IWMTR(0x160361ce13ec33C993b5cCA8f62B6864943eb083);
 
     modifier ensure(uint256 deadline) {
         require(deadline >= block.timestamp, "UniswapV2Router: EXPIRED");
@@ -23,7 +25,7 @@ contract PermitRouterV2 is Ownable {
         require(msg.sender == address(wmtr), "Router: NOT_WMTR");
     }
 
-    constructor( uint256 _fee) {
+    constructor(uint256 _fee) {
         fee = _fee;
     }
 
@@ -31,7 +33,7 @@ contract PermitRouterV2 is Ownable {
         fee = _fee;
     }
 
-    function _handleFee(uint256 balance, address to) internal {
+    function _handleFee(uint256 balance, address to) internal nonReentrant {
         wmtr.withdraw(balance);
         _safeTransferMTR(to, (balance * (10000 - fee)) / 10000);
         uint256 feeBalance = address(this).balance;
@@ -47,16 +49,19 @@ contract PermitRouterV2 is Ownable {
         address[] memory path,
         bytes memory signature
     ) external ensure(deadline) returns (uint256[] memory amounts) {
-        
-        require(path.length>0, "invalid path");
-        require(IUniswapV2Pair(path[0]).token0() == tokenIn || IUniswapV2Pair(path[0]).token1()==tokenIn, "invalid path: not include tokenIn");
+        require(path.length > 0, "invalid path");
+        require(
+            IUniswapV2Pair(path[0]).token0() == tokenIn ||
+                IUniswapV2Pair(path[0]).token1() == tokenIn,
+            "invalid path: not include tokenIn"
+        );
         IEIP712(tokenIn).permit(
             _owner,
             address(this),
             amountIn,
             deadline,
             signature
-        ); 
+        );
         TransferHelper.safeTransferFrom(tokenIn, _owner, path[0], amountIn);
 
         amounts = new uint256[](path.length + 1);
@@ -74,7 +79,12 @@ contract PermitRouterV2 is Ownable {
                 ? (uint256(0), amountOut)
                 : (amountOut, uint256(0));
             address to = i == path.length - 1 ? address(this) : path[i + 1];
-            IUniswapV2Pair(_pair).swap(amountOut0, amountOut1, to, new bytes(0));
+            IUniswapV2Pair(_pair).swap(
+                amountOut0,
+                amountOut1,
+                to,
+                new bytes(0)
+            );
             amounts[i + 1] = amountOut;
             currentToken = currentToken == token0 ? token1 : token0;
         }
@@ -93,8 +103,12 @@ contract PermitRouterV2 is Ownable {
     ) external view returns (uint256[] memory) {
         uint256[] memory amounts = new uint256[](path.length + 1);
         amounts[0] = amountIn;
-        require(path.length>0, "invalid path");
-        require(IUniswapV2Pair(path[0]).token0() == tokenIn || IUniswapV2Pair(path[0]).token1()==tokenIn, "invalid path: not include tokenIn");
+        require(path.length > 0, "invalid path");
+        require(
+            IUniswapV2Pair(path[0]).token0() == tokenIn ||
+                IUniswapV2Pair(path[0]).token1() == tokenIn,
+            "invalid path: not include tokenIn"
+        );
         address currentToken = tokenIn;
 
         for (uint256 i = 0; i < path.length; ++i) {
